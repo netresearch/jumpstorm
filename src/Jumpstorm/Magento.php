@@ -1,6 +1,8 @@
 <?php
 namespace Jumpstorm;
 
+use Netresearch\Logger;
+
 use Netresearch\Config;
 use Netresearch\Source\Git;
 
@@ -18,32 +20,42 @@ use Symfony\Component\Console\Output\Output;
  * @subpackage Jumpstorm
  * @author     Thomas Birke <thomas.birke@netresearch.de>
  */
-class Magento extends Command
+class Magento extends Base
 {
     const ASSETS_URL = 'http://www.magentocommerce.com/downloads/assets/';
 
     const SAMPLEDATA_SQL = 'magento_sample_data_for_1.2.0.sql';
-
-    /* stdClass */
-    private $config;
-
-    /* Git */
-    private $git;
-    
-    private $supportedFiletypes = array('sh', 'php');
 
     /**
      * @see vendor/symfony/src/Symfony/Component/Console/Command/Symfony\Component\Console\Command.Command::configure()
      */
     protected function configure()
     {
-        $mode = InputOption::VALUE_REQUIRED;
-        $this
-            ->setName('magento')
-            ->addOption('config',  'c', InputOption::VALUE_OPTIONAL, 'provide a configuration file')
-            ->addOption('branch',  'b', InputOption::VALUE_OPTIONAL, 'branch of Magento');
+        parent::configure();
+        $this->setName('magento');
     }
 
+    protected function validateTarget($target)
+    {
+        if (!$target) {
+            throw new \Exception('Please set common.magento.target in ini-file.');
+        }
+        
+        if (!is_dir($target)) {
+            mkdir($installPath);
+        }
+        
+        if (!is_dir($target)) {
+            throw new \Exception("Target is not a directory: $target");
+        }
+        
+        if (!is_writable($target)) {
+            throw new \Exception("Target directory is not writeable: $target");
+        }
+        
+        return $target;
+    }
+    
     /**
      * @see vendor/symfony/src/Symfony/Component/Console/Command/Symfony\Component\Console\Command.Command::execute()
      */
@@ -51,42 +63,25 @@ class Magento extends Command
     {
         $this->preExecute($input, $output);
 
-        $branch = $input->getOption(
-            'branch',
-            (is_null($this->config->getMagentoCheckout())) ? 'master' : $this->config->getMagentoCheckout()
-        );
+        // set the path where magento should get installed
+        $target = $this->validateTarget($this->config->getTarget());
 
-        $path = $this->config->getMagentoPath();
-
-        if (strlen($this->config->getInstallPath()) && file_exists($this->config->getInstallPath())) {
-            $output->writeln(sprintf(
-                '<comment>Delete existing Magento at %s</comment>',
-                $this->config->getInstallPath()
-            ));
-            exec(sprintf('rm -rf %s/*', $this->config->getInstallPath()));
-            exec(sprintf('rm -rf %s/.[a-zA-Z0-9]*', $this->config->getInstallPath()));
+        // empty target directory if it already exists 
+        if (file_exists($target)) {
+            Logger::log('Delete existing Magento at %s', array($target));
+            exec(sprintf('rm -rf %s/*', $target));
+            exec(sprintf('rm -rf %s/.[a-zA-Z0-9]*', $target));
         }
+        
+        // set the source where magento should get retrieved from
+        $source = $this->config->getMagentoSource();
+        $sourceModel = \SourceBase::getSourceModel($source);
+        
+        // copy from source to install directory
+        $sourceModel->copy($source, $target);
+        
 
-        // Create magento folder and run magento install process
-        if (Git::isRepo($path)) {
-            $this->git = new Git($path);
-
-            try {
-                $output->writeln('<comment>Cloning Git repo</comment>');
-                $this->git->clonerepo($this->config->getInstallPath());
-
-                if (is_null($branch)) {
-                }
-                $output->writeln("<comment>Git checkout $branch<comment>");
-                $this->git->checkout($this->config->getInstallPath(), $branch);
-            } catch (Exception $e) {
-                $output->writeln('<error>' . $e->getMessage() . '</error>');
-            }
-        } else {
-            if (!$this->copyMagentoFiles()) {
-                $output->writeln('<error>Could not copy magento files to desired location</error>');
-            }
-        }
+        // TODO: ab hier weiteres refactoring
         if (file_exists($this->config->getInstallPath() . '/htdocs')
             && is_dir($this->config->getInstallPath() . '/htdocs')
             && file_exists($this->config->getInstallPath() . '/htdocs/.htaccess')
@@ -145,11 +140,8 @@ class Magento extends Command
         $installPath = $this->config->getInstallPath();
 
         if (!is_dir($installPath)) {
-            //Logger::notice('Creating destination folder');
             mkdir($installPath);
         }
-
-        //Logger::notice('Copying magento files to ' . $installPath);
 
         $command = sprintf('rsync -a -h --exclude="var/*" --exclude="*.git" %s %s 2>&1', $this->config->getMagentoPath(), $installPath);
         exec($command, $result, $return);

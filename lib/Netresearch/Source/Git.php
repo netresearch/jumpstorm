@@ -4,21 +4,36 @@ namespace Netresearch\Source;
 /**
  * Git Handler for jumpstorm
  */
-class Git
-{
-    private $repo;
+use Netresearch\Logger;
 
-    public function __construct($repo)
+class Git extends \SourceBase implements \SourceInterface
+{
+    const GIT_DEFAULT_BRANCH = 'master';
+    
+    /**
+     * @see SourceInterface::copy()
+     */
+    public function copy($source, $target, $branch = self::GIT_DEFAULT_BRANCH)
     {
-        $this->repo = $repo;
+        if (!\SourceBase::isGitRepo($repoUrl)) {
+            throw new \Exception("Provided source is not a Git repository: $repoUrl");
+        }
+        
+        $this->_cloneRepository($repoUrl, $targetPath);
+        
+        if ($branch != self::GIT_DEFAULT_BRANCH) {
+            $this->_checkout($targetPath, $branch);
+        }
     }
 
     /**
      * Clone git repo to desired location
      */
-    public function clonerepo($path = '.')
+    protected function _cloneRepository($repoUrl, $targetPath)
     {
-        $command = sprintf('git clone %s %s 2>&1', $this->repo, $path);
+        Logger::log('Cloning Git repository');
+
+        $command = sprintf('git clone %s %s 2>&1', $repoUrl, $targetPath);
         exec($command, $result, $return);
 
         if (0 !== $return) {
@@ -26,9 +41,11 @@ class Git
         }
     }
 
-    public function checkout($path, $branch)
+    protected function _checkout($targetPath, $branch)
     {
-        $command = sprintf('cd %s; git checkout %s 2>&1; cd -', $path, $branch);
+        Logger::log('Git checkout %s', array($branch));
+        
+        $command = sprintf('cd %s; git checkout %s 2>&1; cd -', $targetPath, $branch);
         exec($command, $result, $return);
 
         if (0 !== $return) {

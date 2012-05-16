@@ -19,7 +19,7 @@ class Config extends \Zend_Config_Ini
      */
     public function getTarget()
     {
-        $target = $this->common->target;
+        $target = $this->common->magento->target;
         if (!$target) {
             throw new \Exception('target path is not set');
         }

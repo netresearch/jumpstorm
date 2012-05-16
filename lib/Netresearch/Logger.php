@@ -1,25 +1,54 @@
 <?php
 namespace Netresearch;
 
+use Symfony\Component\Console\Output\OutputInterface;
+
 /**
  * Simple logger
  */
 class Logger
 {
-    public static function log($message)
+    // log => comment
+    // question
+    // info => notice
+    // error => error
+    
+    const TYPE_LOG = 'comment';
+    
+    const TYPE_NOTICE = 'info';
+    
+    const TYPE_ERROR = 'error';
+    
+    protected static $output;
+    
+    public static function setOutputInterface(OutputInterface $output)
     {
-        echo sprintf("\033[32m==>\033[37m %s %s", $message, PHP_EOL); 
+        $this->output = $output;
+    }
+    
+    public static function writeln($message, array $args = array(), $type = self::TYPE_LOG)
+    {
+        if (!self::$output) {
+            throw new Exception('No output interface given');
+        }
+        self::$output->writeln(sprintf("<$type>$message</$type>", $args));
+    }
+    
+    public static function log($message, array $args = array())
+    {
+        self::writeln($message, $args, self::TYPE_LOG);
     }
 
-    public static function notice($message)
+    public static function notice($message, array $args = array())
     {
-        self::log(sprintf("\033[33mNotice\033[37m: %s", $message));
+        self::writeln($message, $args, self::TYPE_NOTICE);
     }
 
-    public static function error($message, $stopExecution = true)
+    public static function error($message, $message, array $args = array(), $stopExecution = true)
     {
-        self::log(sprintf("\033[31mError\033[37m: %s", $message));
-
-        if ($stopExecution) exit;
+        self::writeln($message, $args, self::TYPE_ERROR);
+        if ($stopExecution) {
+            exit;
+        }
     }
 }

@@ -35,6 +35,8 @@ class Unittesting extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->preExecute($input, $output);
+
         $this->config = new Config($input->getOption('config'), null, array('allowModifications' => true));
         $this->output = $output;
 

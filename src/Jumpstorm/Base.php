@@ -31,12 +31,10 @@ class Base extends Command
         $this->addOption('config',  'c', InputOption::VALUE_OPTIONAL, 'provide a configuration file');
     }
 
-    /**
-     * @see vendor/symfony/src/Symfony/Component/Console/Command/Symfony\Component\Console\Command.Command::execute()
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function preExecute(InputInterface $input, OutputInterface $output)
     {
         $this->config = new Config($input->getOption('config'), null, array('allowModifications' => true));
         $this->output = $output;
+        Logger::setOutputInterface($output);
     }
 }

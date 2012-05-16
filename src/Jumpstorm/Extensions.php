@@ -35,7 +35,7 @@ class Extensions extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        parent::execute($input, $output);
+        $this->preExecute($input, $output);
 
         foreach ($this->config->getExtensions() as $name=>$extension) {
             $this->installExtension($name, $extension);

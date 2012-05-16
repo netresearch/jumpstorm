@@ -49,7 +49,7 @@ class Magento extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->config = new Config($input->getOption('config'), null, array('allowModifications' => true));
+        $this->preExecute($input, $output);
 
         $branch = $input->getOption(
             'branch',

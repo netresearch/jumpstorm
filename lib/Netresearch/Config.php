@@ -86,9 +86,24 @@ class Config extends \Zend_Config_Ini
         return $this->common->environment;
     }
 
+    /**
+     * get extensions as array (name => [branch, source])
+     * 
+     * @return array
+     */
     public function getExtensions()
     {
-        return $this->extensions;
+        $extensions = array();
+        foreach ($this->extensions as $name=>$extension) {
+            if (!is_string($extension)) {
+                $extensions[$name] = $extension;
+            } else {
+                $extensions[$name] = new \StdClass();
+                $extensions[$name]->branch = 'master';
+                $extensions[$name]->source = $extension;
+            }
+        }
+        return $extensions;
     }
 
     public function getDbName()

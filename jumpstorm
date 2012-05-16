@@ -26,6 +26,6 @@ use Symfony\Component\Console\Application;
 
 $console = new Application();
 $console->add(new Jumpstorm\Magento());
-//$console->add(new Jumpstorm\Unittests());
+$console->add(new Jumpstorm\Unittesting());
 $console->add(new Jumpstorm\Extensions());
 $console->run();

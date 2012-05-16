@@ -25,8 +25,9 @@ class Extensions extends Command
      */
     protected function configure()
     {
-        $this->setName('extensions');
         parent::configure();
+        $this->setName('extensions');
+        $this->setDescription('Install extensions');
     }
 
     /**
@@ -37,26 +38,37 @@ class Extensions extends Command
         parent::execute($input, $output);
 
         foreach ($this->config->getExtensions() as $name=>$extension) {
-
-            $output->writeln(sprintf(
-                '<comment>Installing extension %s from %s</comment>',
-                $name,
-                $extension->source
-            ));
-
-            $source = $extension->source;
-
-            if (Git::isRepo($extension->source)) {
-                $this->cloneFromGit($name, $extension);
-                $source = $this->getExtensionFolder() . DIRECTORY_SEPARATOR . $name;
-            }
-
-            $this->deployExtension($name, $source);
-            $output->writeln(sprintf(
-                '<info>Installed extension %s</info>',
-                $name
-            ));
+            $this->installExtension($name, $extension);
         }
+    }
+
+    /**
+     * install extension 
+     * 
+     * @param string $name 
+     * @param object $extension 
+     * @return void
+     */
+    protected function installExtension($name, $extension)
+    {
+        $this->output->writeln(sprintf(
+            '<comment>Installing extension %s from %s</comment>',
+            $name,
+            $extension->source
+        ));
+
+        $source = $extension->source;
+
+        if (Git::isRepo($extension->source)) {
+            $this->cloneFromGit($name, $extension);
+            $source = $this->getExtensionFolder() . DIRECTORY_SEPARATOR . $name;
+        }
+
+        $this->deployExtension($name, $source);
+        $this->output->writeln(sprintf(
+            '<info>Installed extension %s</info>',
+            $name
+        ));
     }
 
     /**

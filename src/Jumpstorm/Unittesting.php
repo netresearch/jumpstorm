@@ -1,45 +1,53 @@
 <?php
+namespace Jumpstorm;
+
+use Netresearch\Config;
+use Netresearch\Source\Git;
+
+use Jumpstorm\Extensions as Command;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Output\Output;
+
 /**
- * Magento environment builder for jenkins, demo hosts and developers
+ * install unittesting extension
  *
- * Known issues:
- * 
- * Prio 1:
- * - Path of ini-file can not be specified as param on CLI (!!!)
- *
- * Prio 2:
- * - Clone from gitorious is not working
- * - installPath can not create folder recursivly
- *
+ * @package    Jumpstorm
+ * @subpackage Jumpstorm
+ * @author     Thomas Birke <thomas.birke@netresearch.de>
  */
-
-class Unittesting
+class Unittesting extends Command
 {
-    /* stdClass */
-    private $config;
-
-    /* Git */
-    private $git;
-    
-    private $supportedFiletypes = array('sh', 'php');
-
-    public function __construct($configpath = null)
+    /**
+     * @see vendor/symfony/src/Symfony/Component/Console/Command/Symfony\Component\Console\Command.Command::configure()
+     */
+    protected function configure()
     {
-        // Parse ini file
-        $this->config = new Config($configpath, null, array('allowModifications' => true));
+        parent::configure();
+        $this->setName('unittesting');
+        $this->setDescription('Install framework for unittests and prepare test database');
     }
 
-    public function run()
+    /**
+     * @see vendor/symfony/src/Symfony/Component/Console/Command/Symfony\Component\Console\Command.Command::execute()
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
-        Logger::notice('Preparing unit testing framework');
+        $this->config = new Config($input->getOption('config'), null, array('allowModifications' => true));
+        $this->output = $output;
 
-        $extensionfolder = $this->config->getInstallPath() . DIRECTORY_SEPARATOR . '.modman';
-        $cmd = sprintf('git clone https://github.com/IvanChepurnyi/EcomDev_PHPUnit.git %s/ecomdev', $extensionfolder);
-        exec($cmd, $result, $return);
-        
-        $cmd = sprintf('cd %s && modman deploy ecomdev', $extensionfolder);
-        exec($cmd, $result, $return);
+        $config = $this->config->unittesting;
+        $this->installExtension($config->framework, $config->extension);
 
+        $this->setupTestDatabase();
+
+        $this->output->writeln('<info>Done</info>');
+    }
+
+    protected function setupTestDatabase()
+    {
         $mysql = sprintf(
             'mysql -u%s -h%s',
             $this->config->getDbUser(),
@@ -53,17 +61,17 @@ class Unittesting
         ), $result, $return);
 
         if (0 !== $return) {
-            throw new Exception('Could not create test database');
+            throw new \Exception('Could not create test database');
         }
 
-        $file = $this->config->getInstallPath() . '/app/etc/local.xml.phpunit';
+        $file = $this->config->getTarget() . '/app/etc/local.xml.phpunit';
         $db = sprintf('<dbname><\![CDATA[%s_test]]><\/dbname>', $this->config->getDbName());
 
         $cmd = sprintf('sed -i "s/<dbname>.*<\/dbname>/%s/g" %s', $db, $file);
         exec($cmd, $result, $return);
 
         if (0 !== $return) {
-            Logger::error('Failed to set db name for unit testing framework');
+            $this->output->writeln('<error>Failed to set db name for unit testing framework</error>');
         }
 
         $baseUrl = '<base_url>' . str_replace('/', '\\/', $this->config->getMagentoBaseUrl()) . '<\/base_url>';
@@ -71,21 +79,7 @@ class Unittesting
         exec($cmd, $result, $return);
 
         if (0 !== $return) {
-            Logger::error('Failed to set base url for unit testing framework');
+            $this->output->writeln('<error>Failed to set base url for unit testing framework</error>');
         }
-
-        Logger::notice('Done');
-    }
-
-    private function createExtensionfolder()
-    {
-        $extensionfolder = $this->config->getInstallPath() . DIRECTORY_SEPARATOR . '.modman';
-
-        if (!is_dir($extensionfolder)) {
-            Logger::notice('Creating extension folder ' . $extensionfolder);
-            mkdir($extensionfolder);
-        }
-
-        return $extensionfolder;
     }
 }

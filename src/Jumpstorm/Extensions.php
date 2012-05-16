@@ -80,7 +80,7 @@ class Extensions extends Command
 
         $command = sprintf(
             'cd %s/.modman/%s && git pull origin %s 2>&1 && cd -',
-            $this->config->getInstallPath(),
+            $this->config->getTarget(),
             $name,
             $extension->branch
         );
@@ -95,7 +95,7 @@ class Extensions extends Command
         $command = sprintf(
             'rsync -a -h --exclude="doc/*" --exclude="*.git" %s %s 2>&1',
             $source . DIRECTORY_SEPARATOR,
-            $this->config->getInstallPath()
+            $this->config->getTarget()
         );
         exec($command, $result, $return);
 
@@ -106,8 +106,8 @@ class Extensions extends Command
 
     protected function storePermissions()
     {
-        file_put_contents($this->config->getInstallPath() . DIRECTORY_SEPARATOR . 'added_permissions.txt', serialize($this->config->getAddedPermissions()));
-        file_put_contents($this->config->getInstallPath() . DIRECTORY_SEPARATOR . 'removed_permissions.txt', serialize($this->config->getRemovedPermissions()));
+        file_put_contents($this->config->getTarget() . DIRECTORY_SEPARATOR . 'added_permissions.txt', serialize($this->config->getAddedPermissions()));
+        file_put_contents($this->config->getTarget() . DIRECTORY_SEPARATOR . 'removed_permissions.txt', serialize($this->config->getRemovedPermissions()));
 
     }
     private function createExtensionfolder()
@@ -127,6 +127,6 @@ class Extensions extends Command
 
     protected function getExtensionFolder()
     {
-        return $this->config->getInstallPath() . DIRECTORY_SEPARATOR . '.modman';
+        return $this->config->getTarget() . DIRECTORY_SEPARATOR . '.modman';
     }
 }

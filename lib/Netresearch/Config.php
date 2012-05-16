@@ -11,8 +11,13 @@ class Config extends \Zend_Config_Ini
     protected $sampleDataVersions = array(
         '1', '1.1.2', '1.2.0', '1.6.1.0'
     );
-    
-    public function getInstallPath()
+
+    /**
+     * get target path
+     * 
+     * @return string
+     */
+    public function getTarget()
     {
         $target = $this->common->target;
         if (!$target) {
@@ -20,8 +25,13 @@ class Config extends \Zend_Config_Ini
         }
         return $target;
     }
-
-    public function getMagentoPath()
+    
+    /**
+     * get Magento source path
+     *
+     * @return string
+     */
+    public function getMagentoSource()
     {
         $source = $this->magento->source;
         if (!$source) {

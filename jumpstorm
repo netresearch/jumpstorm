@@ -1,0 +1,56 @@
+#!/usr/bin/php
+<?php
+set_include_path(get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
+
+require 'lib/Netresearch/Logger.php';
+require 'src/magento.php';
+require 'src/unittesting.php';
+require 'src/extensions.php';
+require 'lib/Netresearch/Source/Git.php';
+require 'lib/Zend/Exception.php';
+require 'lib/Zend/Config.php';
+require 'lib/Zend/Config/Exception.php';
+require 'lib/Zend/Config/Ini.php';
+require 'lib/Netresearch/Config.php';
+
+// Check for required arguments
+if (count($argv) < 2) {
+    return displayHelp();
+}
+
+// Put arguments into variables
+list($scriptname, $task, $option1, $option2, $option3) = $argv + array(null, null, null, null, null);
+
+if ('-i' == $task) {
+    // Bootup jumpstorm
+    $command = ucfirst($option2);
+    $option  = $option3;
+    $task = new $command($option1);
+} else {
+    $task = ucfirst();
+    $task = new $command();
+}
+
+try {
+    $task->run($option);
+} catch (\Exception $e) {
+    echo Logger::error($e->getMessage());
+}
+
+
+function displayHelp()
+{
+    $help = array(
+        'Usage: jumpstorm [-i /path/to/ini/file] [magento|unittesting|extensions]',
+        '',
+        'Futher information',
+        '------------------',
+        '',
+        '* -i: Bypass path to ini file',
+        '* magento: Copy files, run install, sample data if necessary',
+        '* unittesting: Install unit testing framework, specified in ini file',
+        '* extensions: Copy files of extensions, specified in ini file',
+    );
+
+    Logger::log(implode(PHP_EOL . '    ', $help));
+}

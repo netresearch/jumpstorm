@@ -1,24 +1,28 @@
 <?php
-/**
- * Magento environment builder for jenkins, demo hosts and developers
- *
- * Known issues:
- * 
- * Prio 1:
- * - Path of ini-file can not be specified as param on CLI (!!!)
- *
- * Prio 2:
- * - Clone from gitorious is not working
- * - installPath can not create folder recursivly
- *
- */
+namespace Jumpstorm;
 
-class Magento
+use Netresearch\Config;
+use Netresearch\Source\Git;
+
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Output\Output;
+
+/**
+ * Setup Magento
+ *
+ * @package    Jumpstorm
+ * @subpackage Jumpstorm
+ * @author     Thomas Birke <thomas.birke@netresearch.de>
+ */
+class Magento extends Command
 {
     const ASSETS_URL = 'http://www.magentocommerce.com/downloads/assets/';
 
     const SAMPLEDATA_SQL = 'magento_sample_data_for_1.2.0.sql';
-
 
     /* stdClass */
     private $config;
@@ -28,18 +32,37 @@ class Magento
     
     private $supportedFiletypes = array('sh', 'php');
 
-    public function __construct($configpath = null)
+    /**
+     * @see vendor/symfony/src/Symfony/Component/Console/Command/Symfony\Component\Console\Command.Command::configure()
+     */
+    protected function configure()
     {
-        // Parse ini file
-        $this->config = new Config($configpath, null, array('allowModifications' => true));
+        $mode = InputOption::VALUE_REQUIRED;
+        $this
+            ->setName('magento')
+            ->addOption('config',  'c', InputOption::VALUE_OPTIONAL, 'provide a configuration file')
+            ->addOption('branch',  'b', InputOption::VALUE_OPTIONAL, 'branch of Magento');
     }
 
-    public function run($checkout=null)
+    /**
+     * @see vendor/symfony/src/Symfony/Component/Console/Command/Symfony\Component\Console\Command.Command::execute()
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->config = new Config($input->getOption('config'), null, array('allowModifications' => true));
+
+        $branch = $input->getOption(
+            'branch',
+            (is_null($this->config->getMagentoCheckout())) ? 'master' : $this->config->getMagentoCheckout()
+        );
+
         $path = $this->config->getMagentoPath();
 
         if (strlen($this->config->getInstallPath()) && file_exists($this->config->getInstallPath())) {
-            Logger::notice('Delete existing Magento at ' . $this->config->getInstallPath());
+            $output->writeln(sprintf(
+                '<comment>Delete existing Magento at %s</comment>',
+                $this->config->getInstallPath()
+            ));
             exec(sprintf('rm -rf %s/*', $this->config->getInstallPath()));
             exec(sprintf('rm -rf %s/.[a-zA-Z0-9]*', $this->config->getInstallPath()));
         }
@@ -49,22 +72,19 @@ class Magento
             $this->git = new Git($path);
 
             try {
-                Logger::notice('Cloning git repo');
+                $output->writeln('<comment>Cloning Git repo</comment>');
                 $this->git->clonerepo($this->config->getInstallPath());
 
-                if (is_null($checkout)) {
-                    $checkout = (is_null($this->config->getMagentoCheckout()))
-                        ? 'master'
-                        : $this->config->getMagentoCheckout();
+                if (is_null($branch)) {
                 }
-                Logger::notice("Git checkout $checkout");
-                $this->git->checkout($this->config->getInstallPath(), $checkout);
+                $output->writeln("<comment>Git checkout $branch<comment>");
+                $this->git->checkout($this->config->getInstallPath(), $branch);
             } catch (Exception $e) {
-                Logger::error($e->getMessage());
+                $output->writeln('<error>' . $e->getMessage() . '</error>');
             }
         } else {
             if (!$this->copyMagentoFiles()) {
-                Logger::error('Could not copy magento files to desired location');
+                $output->writeln('<error>Could not copy magento files to desired location</error>');
             }
         }
         if (file_exists($this->config->getInstallPath() . '/htdocs')
@@ -82,22 +102,19 @@ class Magento
             exec(sprintf('mv %s %s', $this->config->getInstallPath() . '/magento/*', $this->config->getInstallPath()));
         }
 
-        try {
-            if (false !== $this->config->getMagentoSampleDataVersion()) {
-                $this->installSampleData($this->config->getMagentoSampleDataVersion());
-            }
-
-            $this->runMageScript();
-        } catch (Exception $e) {
-            Logger::error($e->getMessage());
+        if (false !== $this->config->getMagentoSampleDataVersion()) {
+            $this->installSampleData($this->config->getMagentoSampleDataVersion());
         }
+
+        $this->runMageScript($output);
+
         exec(sprintf('rm -rf %s/var/cache/*', $this->config->getInstallPath()));
         exec(sprintf('cd %s && modman init && cd -', $this->config->getInstallPath()));
 
-        Logger::notice('Done');
+        $output->writeln('<notice>Done</notice>');
     }
 
-    protected function createDatabase()
+    protected function createDatabase($output)
     {
         $mysql = sprintf(
             'mysql -u%s -h%s',
@@ -106,7 +123,10 @@ class Magento
         );
 
         // create new database
-        Logger::notice('Creating database ' . $this->config->getDbName());
+        $output->writeln(sprintf(
+            '<comment>Creating database %s</comment>',
+            $this->config->getDbName()
+        ));
 
         exec(sprintf(
             '%s -e \'CREATE DATABASE IF NOT EXISTS `%s`\'',
@@ -115,7 +135,7 @@ class Magento
         ), $result, $return);
 
         if (0 !== $return) {
-            throw new Exception('Could not create live database');
+            throw new \Exception('Could not create live database');
         }
     }
 
@@ -125,11 +145,11 @@ class Magento
         $installPath = $this->config->getInstallPath();
 
         if (!is_dir($installPath)) {
-            Logger::notice('Creating destination folder');
+            //Logger::notice('Creating destination folder');
             mkdir($installPath);
         }
 
-        Logger::notice('Copying magento files to ' . $installPath);
+        //Logger::notice('Copying magento files to ' . $installPath);
 
         $command = sprintf('rsync -a -h --exclude="var/*" --exclude="*.git" %s %s 2>&1', $this->config->getMagentoPath(), $installPath);
         exec($command, $result, $return);
@@ -156,7 +176,7 @@ class Magento
 
         exec(sprintf($mysql . ' -e \'show databases like "%s"\' | wc -l', $this->config->getDbName()), $result, $return);
         if (0 < (int) $result[0]) {
-            Logger::notice('Drop existing database ' . $this->config->getDbName());
+            //Logger::notice('Drop existing database ' . $this->config->getDbName());
             exec(sprintf($mysql . ' -e \'drop database `%s`\'', $this->config->getDbName()), $result, $return);
             if (0 !== $return) {
                 throw new Exception('Could not drop old database ' . $this->config->getDbName());
@@ -167,7 +187,7 @@ class Magento
         $this->downloadSampleData($version);
 
         // insert sample data to database
-        Logger::notice('Importing sample data from file ' . $sampledataSql);
+        //Logger::notice('Importing sample data from file ' . $sampledataSql);
 
         exec(sprintf(
             '%s %s < %s',
@@ -213,7 +233,7 @@ class Magento
 
     private function setPermissions($installPath)
     {
-        Logger::notice('Setting file permissions');
+        //Logger::notice('Setting file permissions');
         $exec = sprintf('chmod -R 0777 %s/app/etc %s/var/ %s/media/', $installPath, $installPath, $installPath);
         exec($exec, $result, $return);
 
@@ -222,17 +242,17 @@ class Magento
         }
     }
 
-    private function runMageScript()
+    private function runMageScript($output)
     {
         $this->setPermissions($this->config->getInstallPath());
         if (file_exists($this->config->getInstallPath() . '/app/etc/local.xml')) {
             unlink($this->config->getInstallPath() . '/app/etc/local.xml');
         }
 
-        $this->createDatabase();
+        $this->createDatabase($output);
 
-        Logger::notice('Installing magento via install.php');
-        Logger::notice('This could take a few minutes... Or more...');
+        //Logger::notice('Installing magento via install.php');
+        //Logger::notice('This could take a few minutes... Or more...');
 
         $cmd = sprintf('php %s%sinstall.php -- ', $this->config->getInstallPath(), DIRECTORY_SEPARATOR);
         $cmd .= implode(' ', array(
@@ -266,7 +286,7 @@ class Magento
             throw new Exception(sprintf('Installation via install.php failed, result: %s', implode(PHP_EOL . '    ', $result)));
         }
 
-        Logger::notice('Reindexing data');
+        //Logger::notice('Reindexing data');
 
         $cmd = sprintf('php %s%sshell/indexer.php reindexall', $this->config->getInstallPath(), DIRECTORY_SEPARATOR);
         exec($cmd, $result, $return);

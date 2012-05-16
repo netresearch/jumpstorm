@@ -1,5 +1,7 @@
 <?php
-class Config extends Zend_Config_Ini
+namespace Netresearch;
+
+class Config extends \Zend_Config_Ini
 {
     protected $_dbName;
 

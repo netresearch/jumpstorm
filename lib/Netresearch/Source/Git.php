@@ -1,4 +1,6 @@
 <?php
+namespace Netresearch\Source;
+
 /**
  * Git Handler for jumpstorm
  */
@@ -17,22 +19,20 @@ class Git
     public function clonerepo($path = '.')
     {
         $command = sprintf('git clone %s %s 2>&1', $this->repo, $path);
-        Logger::notice($command);
         exec($command, $result, $return);
 
         if (0 !== $return) {
-            throw new Exception(implode(PHP_EOL, $result));
+            throw new \Exception(implode(PHP_EOL, $result));
         }
     }
 
     public function checkout($path, $branch)
     {
         $command = sprintf('cd %s; git checkout %s 2>&1; cd -', $path, $branch);
-        Logger::notice($command);
         exec($command, $result, $return);
 
         if (0 !== $return) {
-            throw new Exception(implode(PHP_EOL, $result));
+            throw new \Exception(implode(PHP_EOL, $result));
         }
     }
 

@@ -1,4 +1,6 @@
 <?php
+namespace Netresearch;
+
 /**
  * Simple logger
  */

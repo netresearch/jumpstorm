@@ -4,7 +4,7 @@ namespace Jumpstorm;
 use Netresearch\Logger;
 
 use Netresearch\Config;
-use Netresearch\Source\Git;
+use Netresearch\Source\SourceBase;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -33,27 +33,6 @@ class Magento extends Base
     {
         parent::configure();
         $this->setName('magento');
-    }
-
-    protected function validateTarget($target)
-    {
-        if (!$target) {
-            throw new \Exception('Please set common.magento.target in ini-file.');
-        }
-        
-        if (!is_dir($target)) {
-            mkdir($installPath);
-        }
-        
-        if (!is_dir($target)) {
-            throw new \Exception("Target is not a directory: $target");
-        }
-        
-        if (!is_writable($target)) {
-            throw new \Exception("Target directory is not writeable: $target");
-        }
-        
-        return $target;
     }
     
     /**

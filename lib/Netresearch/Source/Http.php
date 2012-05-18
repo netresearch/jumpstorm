@@ -1,14 +1,15 @@
 <?php
 namespace Netresearch\Source;
 
-class Http extends \SourceBase implements SourceInterface
+use Netresearch\Source\SourceInterface;
+use Netresearch\Source\SourceBase as Source;
+
+class Http extends Source implements SourceInterface
 {
-    
     /**
-     * @param string $source
      * @param string $target
      */
-    public function copy($source, $target) {
+    public function copy($target) {
         // TODO: Auto-generated method stub
     }
 }

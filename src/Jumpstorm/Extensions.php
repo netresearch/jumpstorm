@@ -2,7 +2,7 @@
 namespace Jumpstorm;
 
 use Netresearch\Config;
-use Netresearch\Source\Git;
+use Netresearch\Source\Base as Source;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
+use \Exception as Exception;
 
 /**
  * install extensions
@@ -35,75 +36,74 @@ class Extensions extends Base
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->config = new Config($input->getOption('config'), null, array('allowModifications' => true));
+        $this->preExecute($input, $output);
 
-        file_put_contents($this->config->getInstallPath() . DIRECTORY_SEPARATOR . 'added_permissions.txt', serialize($this->config->getAddedPermissions()));
-        file_put_contents($this->config->getInstallPath() . DIRECTORY_SEPARATOR . 'removed_permissions.txt', serialize($this->config->getRemovedPermissions()));
+        $this->createExtensionFolder();
 
-        foreach ($this->config->getExtensions() as $key=>$extension) {
-            $checkout = 'master';
-
-            if (!is_string($extension)) {
-                $checkout  = $extension->branch;
-                $extension = $extension->source;
-            }
-
-            $output->writeln(sprintf(
-                '<comment>Installing extension %s from %s</comment>',
-                $key,
-                $extension
-            ));
-
-            $path = $extension;
-            if (Git::isRepo($extension)) {
-                $folder = $this->createExtensionfolder();
-
-                $this->git = new Git($extension);
-
-                $path = $folder . DIRECTORY_SEPARATOR . $key;
-                $this->git->clonerepo($path);
-
-                $output->writeln(sprintf(
-                    '<comment>Git checkout %s</comment>',
-                    $checkout
-                ));
-
-                $command = sprintf(
-                     'cd %s/.modman/%s && git pull origin %s && cd -',
-                     $this->config->getInstallPath(),
-                     $key,
-                     $checkout
-                 );
-                exec($command, $result, $return);
-                if (0 !== $return) {
-                    throw new Exception("Could not update extension $key");
-                }
-            }
-
-            $command = sprintf('rsync -a -h --exclude="doc/*" --exclude="*.git" %s %s 2>&1', $path . DIRECTORY_SEPARATOR, $this->config->getInstallPath());
-            exec($command, $result, $return);
-
-            if (0 !== $return) {
-                throw new Exception("Could not copy extension from $key");
-            }
+        foreach ($this->config->getExtensions() as $name=>$extension) {
+            $this->installExtension($name, $extension);
         }
+    }
 
-        $scriptPath = implode(DIRECTORY_SEPARATOR, array(
-            $this->config->getInstallPath(),
-            'deployment',
-            $this->config->getEnvironment(),
+    /**
+     * install extension
+     *
+     * @param string $name
+     * @param object $extension
+     * @return void
+     */
+    protected function installExtension($name, $extension)
+    {
+        $this->output->writeln(sprintf(
+            '<comment>Installing extension %s from %s</comment>',
+            $name,
+            $extension->source
+        ));
+        // copy from source to install directory
+        $sourceModel = Source::getSourceModel($extension->source);
+        $sourceModel->copy($target);
+
+        $this->deployExtension($name);
+        $this->output->writeln(sprintf(
+            '<info>Installed extension %s</info>',
+            $name
         ));
     }
 
-    private function createExtensionfolder()
+    protected function deployExtension($name)
     {
-        $extensionfolder = $this->config->getInstallPath() . DIRECTORY_SEPARATOR . '.modman';
+        $source = $this->getExtensionFolder() . DIRECTORY_SEPARATOR . $name;
+        $command = sprintf(
+            'rsync -a -h --exclude="doc/*" --exclude="*.git" %s %s 2>&1',
+            $source . DIRECTORY_SEPARATOR,
+            $this->config->getTarget()
+        );
+        exec($command, $result, $return);
 
-        if (!is_dir($extensionfolder)) {
-            Logger::notice('Creating extension folder ' . $extensionfolder);
-            mkdir($extensionfolder);
+        if (0 !== $return) {
+            throw new Exception("Could not copy extension $name");
+        }
+    }
+
+    private function createExtensionFolder()
+    {
+        $this->validateTarget($this->config->getTarget());
+
+        $folder = $this->getExtensionFolder();
+
+        if (!is_dir($folder)) {
+            $this->output->writeln(sprintf(
+                '<comment>Creating extension folder %s</comment>',
+                $folder
+            ));
+            mkdir($folder);
         }
 
-        return $extensionfolder;
+        return $folder;
+    }
+
+    protected function getExtensionFolder()
+    {
+        return $this->config->getTarget() . DIRECTORY_SEPARATOR . '.modman';
     }
 }

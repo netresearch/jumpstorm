@@ -23,7 +23,7 @@ class Logger
     
     public static function setOutputInterface(OutputInterface $output)
     {
-        $this->output = $output;
+        self::$output = $output;
     }
     
     public static function writeln($message, array $args = array(), $type = self::TYPE_LOG)

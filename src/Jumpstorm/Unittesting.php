@@ -2,7 +2,7 @@
 namespace Jumpstorm;
 
 use Netresearch\Config;
-use Netresearch\Source\Git;
+use Netresearch\Source\SourceBase as Source;
 
 use Jumpstorm\Extensions as Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
+use \Exception as Exception;
 
 /**
  * install unittesting extension
@@ -63,7 +64,7 @@ class Unittesting extends Command
         ), $result, $return);
 
         if (0 !== $return) {
-            throw new \Exception('Could not create test database');
+            throw new Exception('Could not create test database');
         }
 
         $file = $this->config->getTarget() . '/app/etc/local.xml.phpunit';

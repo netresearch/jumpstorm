@@ -1,7 +1,7 @@
 <?php
-
+namespace Netresearch\Source;
 
 interface SourceInterface
 {
-    public function copy($source, $target, $branch = 'master');
+    public function copy($target, $branch = 'master');
 }

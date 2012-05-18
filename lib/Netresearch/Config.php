@@ -48,7 +48,9 @@ class Config extends \Zend_Config_Ini
 
     public function getMagentoSampledataSource()
     {
-        return ($this->magento->sampledata->source) ? $this->magento->sampledata->source : null;
+        return ($this->magento->sampledata && $this->magento->sampledata->source)
+            ? $this->magento->sampledata->source
+            : null;
     }
 
     /**

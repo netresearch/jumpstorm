@@ -148,7 +148,7 @@ endobj
  /Dest [ 19 0 R
  /XYZ
  68.69291
- 516.9843
+ 392.1553
  0 ]
  /Rect [ 500.5951
  693.7736
@@ -166,7 +166,7 @@ endobj
  /Dest [ 19 0 R
  /XYZ
  68.69291
- 516.9843
+ 392.1553
  0 ]
  /Rect [ 447.0578
  633.7736
@@ -184,7 +184,7 @@ endobj
  /Dest [ 19 0 R
  /XYZ
  68.69291
- 516.9843
+ 392.1553
  0 ]
  /Rect [ 239.4529
  460.5736
@@ -224,9 +224,9 @@ endobj
  0
  0 ]
  /Rect [ 117.6346
- 696.7736
+ 571.9447
  161.3252
- 708.7736 ]
+ 583.9447 ]
  /Subtype /Link
  /Type /Annot >>
 endobj
@@ -242,9 +242,9 @@ endobj
  707.0236
  0 ]
  /Rect [ 77.58291
- 503.7343
+ 378.9053
  83.14291
- 515.7343 ]
+ 390.9053 ]
  /Subtype /Link
  /Type /Annot >>
 endobj
@@ -260,9 +260,9 @@ endobj
  647.0236
  0 ]
  /Rect [ 88.70291
- 503.7343
+ 378.9053
  94.26291
- 515.7343 ]
+ 390.9053 ]
  /Subtype /Link
  /Type /Annot >>
 endobj
@@ -278,9 +278,9 @@ endobj
  473.8236
  0 ]
  /Rect [ 99.82291
- 503.7343
+ 378.9053
  105.3829
- 515.7343 ]
+ 390.9053 ]
  /Subtype /Link
  /Type /Annot >>
 endobj
@@ -319,7 +319,7 @@ endobj
 % 'R21': class PDFInfo 
 21 0 obj
 << /Author ()
- /CreationDate (D:20120518114527-01'00')
+ /CreationDate (D:20120518131914-01'00')
  /Creator (\(unspecified\))
  /Keywords ()
  /Producer (ReportLab PDF Library - www.reportlab.com)
@@ -411,7 +411,7 @@ endobj
  /Dest [ 19 0 R
  /XYZ
  62.69291
- 765.0236
+ 640.1947
  0 ]
  /First 30 0 R
  /Last 31 0 R
@@ -424,7 +424,7 @@ endobj
 << /Dest [ 19 0 R
  /XYZ
  62.69291
- 732.0236
+ 607.1947
  0 ]
  /Next 31 0 R
  /Parent 29 0 R
@@ -435,7 +435,7 @@ endobj
 << /Dest [ 19 0 R
  /XYZ
  62.69291
- 660.0236
+ 535.1947
  0 ]
  /Parent 29 0 R
  /Prev 30 0 R
@@ -763,7 +763,7 @@ endobj
 % 'R34': class PDFStream 
 34 0 obj
 % page stream
-<< /Length 5984 >>
+<< /Length 6371 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
 q
@@ -976,54 +976,93 @@ q
 BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (Please note, that option ) Tj /F4 10 Tf (-c /path/to/my/ini ) Tj /F1 10 Tf (is optional.) Tj T* ET
 Q
 Q
+q
+1 0 0 1 62.69291 78.22362 cm
+q
+BT 1 0 0 1 0 14 Tm .069398 Tw 12 TL /F1 10 Tf 0 0 0 rg (Plugins follow a simple structure. They are placed in ) Tj /F4 10 Tf (plugins ) Tj /F1 10 Tf (directory. Each plugin is a directory with at ) Tj T* 0 Tw .392093 Tw (least one php file inside, which contains a php class. This directory, the php file and php class must have) Tj T* 0 Tw ET
+Q
+Q
  
 endstream
 endobj
 % 'R35': class PDFStream 
 35 0 obj
 % page stream
-<< /Length 2089 >>
+<< /Length 3225 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
 q
-1 0 0 1 62.69291 744.0236 cm
+1 0 0 1 62.69291 741.0236 cm
+q
+BT 1 0 0 1 0 14 Tm 1.51881 Tw 12 TL /F1 10 Tf 0 0 0 rg (the same name \(with uppercase first letter\), which is used as key in configuration file. Plugins can be) Tj T* 0 Tw (disabled by either not mentioning them in configuration or by setting its configuration value to ) Tj /F4 10 Tf (0) Tj /F1 10 Tf (.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 723.0236 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Plugin configuration can be achieved by dot syntax:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 652.1947 cm
+q
+q
+.737429 0 0 .737429 0 0 cm
+q
+1 0 0 1 6.6 8.950014 cm
+q
+.662745 .662745 .662745 RG
+.5 w
+.960784 .960784 .862745 rg
+n -6 -6 636 84 re B*
+Q
+q
+BT 1 0 0 1 0 62 Tm 12 TL /F4 10 Tf 0 0 0 rg (PluginA = 0         =) Tj (>) Tj ( plugin will be skipped) Tj T*  T* (PluginB = someValue =) Tj (>) Tj ( plugin will be active and will have that single configuration value "someValue") Tj T*  T* (PluginC.foo = 0     =) Tj (>) Tj ( plugin will be active and will have configuration ['foo' =) Tj (>) Tj ( 0, 'bar' =) Tj (>) Tj ( 'foobar']) Tj T* (PluginC.bar = foobar) Tj T* ET
+Q
+Q
+Q
+Q
+Q
+q
+1 0 0 1 62.69291 619.1947 cm
 q
 BT 1 0 0 1 0 3.5 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Upcoming features) Tj T* ET
 Q
 Q
 q
-1 0 0 1 62.69291 714.0236 cm
+1 0 0 1 62.69291 589.1947 cm
 q
 BT 1 0 0 1 0 3 Tm 18 TL /F2 15 Tf 0 0 0 rg (Modman support) Tj T* ET
 Q
 Q
 q
-1 0 0 1 62.69291 672.0236 cm
+1 0 0 1 62.69291 547.1947 cm
 q
 BT 1 0 0 1 0 26 Tm 2.010574 Tw 12 TL /F1 10 Tf 0 0 0 rg (As we use ) Tj 0 0 .501961 rg (modman ) Tj 0 0 0 rg (for all our extensions, we will implement ) Tj /F3 10 Tf (Jumpstorm ) Tj /F1 10 Tf (to support this as soon as) Tj T* 0 Tw .892651 Tw (possible. Currently we only copy \(or clone\) the extensions to the ) Tj /F4 10 Tf (.modman ) Tj /F1 10 Tf (directory, but deployment is) Tj T* 0 Tw (still not made via ) Tj /F3 10 Tf (modman) Tj /F1 10 Tf (.) Tj T* ET
 Q
 Q
 q
-1 0 0 1 62.69291 642.0236 cm
+1 0 0 1 62.69291 517.1947 cm
 q
 BT 1 0 0 1 0 3 Tm 18 TL /F2 15 Tf 0 0 0 rg (Interactive mode) Tj T* ET
 Q
 Q
 q
-1 0 0 1 62.69291 600.0236 cm
+1 0 0 1 62.69291 475.1947 cm
 q
 BT 1 0 0 1 0 26 Tm .185777 Tw 12 TL /F1 10 Tf 0 0 0 rg (If you use ) Tj /F3 10 Tf (Jumpstorm ) Tj /F1 10 Tf (for a bunch of different projects on and on, you become tired of changing the config) Tj T* 0 Tw 1.681163 Tw (file. So it would be nice to specify some settings to be confirmed \(and corrected\) during execution of) Tj T* 0 Tw /F3 10 Tf (Jumpstorm) Tj /F1 10 Tf (. This mode will be suppressed by the built-in option ) Tj /F4 10 Tf (-n ) Tj /F1 10 Tf (\() Tj /F4 10 Tf (--no-interaction) Tj /F1 10 Tf (\).) Tj T* ET
 Q
 Q
 q
-1 0 0 1 62.69291 543.3307 cm
+1 0 0 1 62.69291 418.5018 cm
 Q
 q
-1 0 0 1 62.69291 514.9843 cm
+1 0 0 1 62.69291 390.1553 cm
 n 0 14.17323 m 469.8898 14.17323 l S
 Q
 q
-1 0 0 1 62.69291 490.9843 cm
+1 0 0 1 62.69291 366.1553 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
@@ -1109,19 +1148,19 @@ xref
 0000006795 00000 n
 0000006921 00000 n
 0000013618 00000 n
-0000019701 00000 n
-0000021893 00000 n
-0000022012 00000 n
-0000022089 00000 n
-0000022166 00000 n
+0000020088 00000 n
+0000023416 00000 n
+0000023535 00000 n
+0000023612 00000 n
+0000023689 00000 n
 trailer
 << /ID 
  % ReportLab generated PDF document -- digest (http://www.reportlab.com) 
- [(\001\237"T\260\373\3056\335*-\225\222\0022L) (\001\237"T\260\373\3056\335*-\225\222\0022L)] 
+ [(\356K\265\337\014\365\340\335\236`}u\353i\257[) (\356K\265\337\014\365\340\335\236`}u\353i\257[)] 
 
  /Info 21 0 R
  /Root 20 0 R
  /Size 40 >>
 startxref
-22213
+23736
 %%EOF

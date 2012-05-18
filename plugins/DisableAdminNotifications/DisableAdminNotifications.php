@@ -1,11 +1,11 @@
 <?php
 use Netresearch\Config;
-use Netresearch\Logger;
+use Netresearch\PluginInterface as JumpstormPlugin;
 
 /**
  * disable admin notifications
  */
-class DisableAdminNotifications
+class DisableAdminNotifications implements JumpstormPlugin
 {
     protected $config;
 

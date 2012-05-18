@@ -148,6 +148,27 @@ mentioned here will be executed by running
 
 Please note, that option ``-c /path/to/my/ini`` is optional.
 
+How to write your own plugins?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Plugins follow a simple structure. They are placed in ``plugins`` directory. Each plugin is a directory with at least
+one php file inside, which contains a php class. This directory, the php file and php class must have the same name
+(with uppercase first letter), which is used as key in configuration file. Plugins can be disabled by either not
+mentioning them in configuration or by setting its configuration value to ``0``.
+
+Plugin configuration can be achieved by dot syntax:
+
+::
+
+  PluginA = 0         => plugin will be skipped
+
+  PluginB = someValue => plugin will be active and will have that single configuration value "someValue"
+
+  PluginC.foo = 0     => plugin will be active and will have configuration ['foo' => 0, 'bar' => 'foobar']
+  PluginC.bar = foobar
+
+The plugin's main php class must implement Netresearch\PluginInterface.
+
 Upcoming features
 =================
 

@@ -35,6 +35,7 @@ class Magento extends Base
     {
         parent::configure();
         $this->setName('magento');
+        $this->setDescription('Install Magento');
     }
     
     protected function installMagento($source, $target)

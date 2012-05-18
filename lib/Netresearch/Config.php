@@ -57,7 +57,7 @@ class Config extends \Zend_Config_Ini
 
     public function getMagentoSampledataSource()
     {
-        return $this->magento->sampledata->source;
+        return ($this->magento->sampledata->source) ? $this->magento->sampledata->source : null;
     }
 
     /**
@@ -105,7 +105,7 @@ class Config extends \Zend_Config_Ini
 
     public function getDbPass()
     {
-        return $this->common->db->pass;
+        return ($this->common->db->pass) ? $this->common->db->pass : null;
     }
 
     public function getDbPrefix()

@@ -4,7 +4,7 @@ namespace Jumpstorm;
 use Netresearch\Logger;
 
 use Netresearch\Config;
-use Netresearch\Source\SourceBase;
+use Netresearch\Source\Base as Source;
 use Netresearch\Source\Git;
 use Netresearch\Source\Filesystem;
 
@@ -24,10 +24,6 @@ use Symfony\Component\Console\Output\Output;
  */
 class Magento extends Base
 {
-    const ASSETS_URL = 'http://www.magentocommerce.com/downloads/assets/';
-
-    const SAMPLEDATA_SQL = 'magento_sample_data_for_1.2.0.sql';
-
     /**
      * @see vendor/symfony/src/Symfony/Component/Console/Command/Symfony\Component\Console\Command.Command::configure()
      */
@@ -37,14 +33,47 @@ class Magento extends Base
         $this->setName('magento');
     }
     
-    protected function installMagento($source, $target)
+    protected function prepareMysqlCommand()
     {
-        $sourceModel = \SourceBase::getSourceModel($source);
+        $mysql = sprintf(
+                'mysql -u%s -h%s',
+                $this->config->getDbUser(),
+                $this->config->getDbHost()
+        );
         
-        // copy from source to install directory
-        $sourceModel->copy($source, $target);
+        // prepare mysql command: password
+        if (!is_null($this->config->getDbPass())) {
+            $mysql .= sprintf(' -p%s', $this->config->getDbPass());
+        }
+        
+        return $mysql;
     }
     
+    protected function createDatabase()
+    {
+        // prepare mysql command: user, host and password
+        $mysql = $this->prepareMysqlCommand();
+        
+        // recreate database if it already exists
+        Logger::log('Creating database %s', array($this->config->getDbName()));
+
+        exec(sprintf(
+            '%s -e \'DROP DATABASE IF EXISTS `%s`\'',
+            $mysql,
+            $this->config->getDbName()
+        ), $result, $return);
+        
+        exec(sprintf(
+            '%s -e \'CREATE DATABASE IF NOT EXISTS `%s`\'',
+            $mysql,
+            $this->config->getDbName()
+        ), $result, $return);
+
+        if (0 !== $return) {
+            throw new \Exception('Could not create live database');
+        }
+    }
+
     /**
      * Assuming that we copied another folder into the target directory,
      * we move all files one level up.
@@ -67,6 +96,48 @@ class Magento extends Base
         }
     }
     
+    protected function installMagento($source, $target)
+    {
+        $sourceModel = Source::getSourceModel($source);
+        
+        // copy from source to install directory
+        $sourceModel->copy($source, $target);
+    }
+    
+    protected function installSampledata($source, $target)
+    {
+        // glob for sql file in $source
+        $files = glob($source . DIRECTORY_SEPARATOR . '*.sql');
+        if (false === $files || count($files) !== 1) {
+            throw new Exception("Could not detect sample data sql file in source directory $source");
+        }
+        $sampledataSql = $files[0];
+
+        // create empty database with credentials from ini file
+        $this->createDatabase();
+
+        // prepare mysql command: user, host and password
+        $mysql = $this->prepareMysqlCommand();
+        
+        // insert sample data to database
+        exec(sprintf(
+            '%s %s < %s',
+            $mysql,
+            $this->config->getDbName(),
+            $sampledataSql 
+        ), $result, $return);
+
+        if (0 !== $return) {
+            throw new Exception('Could not import sample data into database');
+        }
+
+        // copy sample data images
+        $sourceMediaDir = $source . DIRECTORY_SEPARATOR . 'media';
+        $targetMediaDir = $target . DIRECTORY_SEPARATOR . 'media';
+        $sourceModel = Source::getSourceModel($sourceMediaDir);
+        $sourceModel->copy($targetMediaDir);
+    }
+
     /**
      * @see vendor/symfony/src/Symfony/Component/Console/Command/Symfony\Component\Console\Command.Command::execute()
      */
@@ -88,143 +159,30 @@ class Magento extends Base
         $source = $this->config->getMagentoSource();
         // copy files from source to target
         $this->installMagento($source, $target);
-        // 
+        // move installed files to docroot
         $this->moveToDocroot($target, 'htdocs');
         $this->moveToDocroot($target, 'magento');
         
-
-        if (false !== $this->config->getMagentoSampledataSource()) {
+        // install sample data
+        if (null !== $this->config->getMagentoSampledataSource()) {
             $this->installSampledata(
                 $this->config->getMagentoSampledataSource(),
                 $target
             );
         }
 
-        $this->runMageScript($output);
+        // run install.php
+        $this->runMageScript($target);
 
-        exec(sprintf('rm -rf %s/var/cache/*', $this->config->getInstallPath()));
+        // clean cache
+        exec(sprintf('rm -rf %s/var/cache/*', $target));
 
         Logger::notice('Done');
     }
 
-    protected function createDatabase($output)
+    private function setPermissions($target)
     {
-        $mysql = sprintf(
-            'mysql -u%s -h%s',
-            $this->config->getDbUser(),
-            $this->config->getDbHost()
-        );
-
-        // create new database
-        $output->writeln(sprintf(
-            '<comment>Creating database %s</comment>',
-            $this->config->getDbName()
-        ));
-
-        exec(sprintf(
-            '%s -e \'CREATE DATABASE IF NOT EXISTS `%s`\'',
-            $mysql,
-            $this->config->getDbName()
-        ), $result, $return);
-
-        if (0 !== $return) {
-            throw new \Exception('Could not create live database');
-        }
-    }
-
-
-    private function copyMagentoFiles()
-    {
-        $installPath = $this->config->getInstallPath();
-
-        if (!is_dir($installPath)) {
-            mkdir($installPath);
-        }
-
-        $command = sprintf('rsync -a -h --exclude="var/*" --exclude="*.git" %s %s 2>&1', $this->config->getMagentoPath(), $installPath);
-        exec($command, $result, $return);
-
-        return (0 === $return);
-    }
-
-    private function installSampledata($version = '1.2.0')
-    {
-        $sampleDataFile = "magento-sample-data-$version.tar.gz";
-        $sampleDataFolder = str_replace('.tar.gz', '', $sampleDataFile) . DIRECTORY_SEPARATOR;
-        $sampledataSql = $sampleDataFolder . "magento_sample_data_for_$version.sql";
-        
-        // drop database, if it already exists
-        $mysql = sprintf(
-            'mysql -u%s -h%s',
-            $this->config->getDbUser(),
-            $this->config->getDbHost()
-        );
-
-        if (!is_null($this->config->getDbPass()) && '' !== $this->config->getDbPass()) {
-            $mysql .= sprintf(' -p%s', $this->config->getDbPass());
-        }
-
-        exec(sprintf($mysql . ' -e \'show databases like "%s"\' | wc -l', $this->config->getDbName()), $result, $return);
-        if (0 < (int) $result[0]) {
-            //Logger::notice('Drop existing database ' . $this->config->getDbName());
-            exec(sprintf($mysql . ' -e \'drop database `%s`\'', $this->config->getDbName()), $result, $return);
-            if (0 !== $return) {
-                throw new Exception('Could not drop old database ' . $this->config->getDbName());
-            }
-        }
-        
-        // download sample data
-        $this->downloadSampleData($version);
-
-        // insert sample data to database
-        //Logger::notice('Importing sample data from file ' . $sampledataSql);
-
-        exec(sprintf(
-            '%s %s < %s',
-            $mysql,
-            $this->config->getDbName(),
-            $sampledataSql 
-        ), $result, $return);
-
-        if (0 !== $return) {
-            throw new Exception('Could not import sample data into database');
-        }
-
-        // copy sample data images
-        $installPath = $this->config->getInstallPath();
-        exec(sprintf('cp -R %s/media/* %s/media/ 2>&1', $sampleDataFolder, $installPath), $result, $return);
-
-        if (0 !== $return) {
-            throw new Exception('Could not copy sample data images');
-        }
-
-        // remove downloaded sample data
-        exec(sprintf('rm -rf %s', $sampleDataFolder));
-        unlink($sampleDataFile);
-    }
-
-    private function downloadSampleData($version)
-    {
-        $sampleDataFile = "magento-sample-data-$version.tar.gz";
-        $sampleDataUrl = self::ASSETS_URL . $version . '/';
-        
-        exec(sprintf('wget %s%s 2>&1', $sampleDataUrl, $sampleDataFile), $result, $return);
-
-        if (0 !== $return) {
-            throw new Exception('Could not download sample data');
-        }
-
-        exec(sprintf('tar -zxvf %s 2>&1', $sampleDataFile), $result, $return);
-
-        if (0 !== $return) {
-            throw new Exception('Unable to unpack sample data');
-        }
-    }
-
-    private function setPermissions($installPath)
-    {
-        //Logger::notice('Setting file permissions');
-        $exec = sprintf('chmod -R 0777 %s/app/etc %s/var/ %s/media/', $installPath, $installPath, $installPath);
+        $exec = sprintf('chmod -R 0777 %s/app/etc %s/var/ %s/media/', $target, $target, $target);
         exec($exec, $result, $return);
 
         if (0 !== $return) {
@@ -232,19 +190,16 @@ class Magento extends Base
         }
     }
 
-    private function runMageScript($output)
+    protected function runMageScript($target)
     {
-        $this->setPermissions($this->config->getInstallPath());
-        if (file_exists($this->config->getInstallPath() . '/app/etc/local.xml')) {
-            unlink($this->config->getInstallPath() . '/app/etc/local.xml');
+        $this->setPermissions($target);
+        if (file_exists($target . '/app/etc/local.xml')) {
+            unlink($target . '/app/etc/local.xml');
         }
 
-        $this->createDatabase($output);
+        $this->createDatabase();
 
-        //Logger::notice('Installing magento via install.php');
-        //Logger::notice('This could take a few minutes... Or more...');
-
-        $cmd = sprintf('php %s%sinstall.php -- ', $this->config->getInstallPath(), DIRECTORY_SEPARATOR);
+        $cmd = sprintf('php %s%sinstall.php -- ', $target, DIRECTORY_SEPARATOR);
         $cmd .= implode(' ', array(
             '--license_agreement_accepted "yes"',
             '--locale "de_DE"',
@@ -276,8 +231,7 @@ class Magento extends Base
             throw new Exception(sprintf('Installation via install.php failed, result: %s', implode(PHP_EOL . '    ', $result)));
         }
 
-        //Logger::notice('Reindexing data');
-
+        // reindexing data
         $cmd = sprintf('php %s%sshell/indexer.php reindexall', $this->config->getInstallPath(), DIRECTORY_SEPARATOR);
         exec($cmd, $result, $return);
 
@@ -285,6 +239,6 @@ class Magento extends Base
             throw new Exception('Failed to rebuild index');
         }
 
-        $this->setPermissions($this->config->getInstallPath());
+        $this->setPermissions($target);
     }
 }

@@ -119,9 +119,9 @@ class Config extends \Zend_Config_Ini
     public function getDbName()
     {
         if (is_null($this->_dbName)) {
-            $this->_dbName = $this->db->dbName;
+            $this->_dbName = $this->common->db->name;
            
-            if ($this->db->dbTimestamp) {
+            if ($this->common->db->timestamp) {
                 $this->_dbName .= '_' . time();
             }
         }
@@ -131,22 +131,22 @@ class Config extends \Zend_Config_Ini
 
     public function getDbUser()
     {
-        return $this->db->dbUser;
+        return $this->common->db->user;
     }
 
     public function getDbHost()
     {
-        return $this->db->dbHost;
+        return $this->common->db->host;
     }
 
     public function getDbPass()
     {
-        return $this->db->dbPass;
+        return $this->common->db->pass;
     }
 
     public function getDbPrefix()
     {
-        return $this->db->dbPrefix;
+        return $this->common->db->prefix;
     }
 
     public function getAdminFirstname()

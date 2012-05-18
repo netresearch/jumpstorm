@@ -15,6 +15,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
 
+use \Exception as Exception;
+
 /**
  * Setup Magento
  *
@@ -41,12 +43,12 @@ class Magento extends Base
                 $this->config->getDbUser(),
                 $this->config->getDbHost()
         );
-        
+
         // prepare mysql command: password
         if (!is_null($this->config->getDbPass())) {
             $mysql .= sprintf(' -p%s', $this->config->getDbPass());
         }
-        
+
         return $mysql;
     }
     
@@ -106,7 +108,7 @@ class Magento extends Base
     protected function installMagento($source, $target, $branch)
     {
         $sourceModel = Source::getSourceModel($source);
-        
+
         // copy from source to install directory
         $sourceModel->copy($target, $branch);
     }
@@ -148,12 +150,11 @@ class Magento extends Base
     {
         $exec = sprintf('chmod -R 0777 %s/app/etc %s/var/ %s/media/', $target, $target, $target);
         exec($exec, $result, $return);
-    
+
         if (0 !== $return) {
             throw new Exception('Could not set permissions for folders app/etc, var and media');
         }
     }
-    
     
     protected function runMageScript($target)
     {

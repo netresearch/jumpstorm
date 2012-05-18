@@ -5,6 +5,8 @@ use Netresearch\Logger;
 
 use Netresearch\Config;
 use Netresearch\Source\SourceBase;
+use Netresearch\Source\Git;
+use Netresearch\Source\Filesystem;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -35,6 +37,36 @@ class Magento extends Base
         $this->setName('magento');
     }
     
+    protected function installMagento($source, $target)
+    {
+        $sourceModel = \SourceBase::getSourceModel($source);
+        
+        // copy from source to install directory
+        $sourceModel->copy($source, $target);
+    }
+    
+    /**
+     * Assuming that we copied another folder into the target directory,
+     * we move all files one level up.
+     * 
+     * @param string $target The install path (docroot)
+     * @param string $root The top level source directory
+     */
+    protected function moveToDocroot($target, $root = 'magento')
+    {
+        $fileRoot = $target . DIRECTORY_SEPARATOR . $root;
+        $fileTest = $fileRoot . DIRECTORY_SEPARATOR . '.htaccess';
+        
+        if (file_exists($fileRoot) && is_dir($fileRoot) && file_exists($fileTest)) {
+            // move hidden file to docroot
+            exec(sprintf('mv %s %s', $fileTest, $target));
+            // move all the rest to docroot
+            exec(sprintf('mv %s %s', $fileRoot . DIRECTORY_SEPARATOR . '*', $target));
+            // delete the now empty source directory
+            exec(sprintf('rmdir %s %s', $fileRoot));
+        }
+    }
+    
     /**
      * @see vendor/symfony/src/Symfony/Component/Console/Command/Symfony\Component\Console\Command.Command::execute()
      */
@@ -54,38 +86,25 @@ class Magento extends Base
         
         // set the source where magento should get retrieved from
         $source = $this->config->getMagentoSource();
-        $sourceModel = \SourceBase::getSourceModel($source);
-        
-        // copy from source to install directory
-        $sourceModel->copy($source, $target);
+        // copy files from source to target
+        $this->installMagento($source, $target);
+        // 
+        $this->moveToDocroot($target, 'htdocs');
+        $this->moveToDocroot($target, 'magento');
         
 
-        // TODO: ab hier weiteres refactoring
-        if (file_exists($this->config->getInstallPath() . '/htdocs')
-            && is_dir($this->config->getInstallPath() . '/htdocs')
-            && file_exists($this->config->getInstallPath() . '/htdocs/.htaccess')
-        ) {
-            exec(sprintf('mv %s %s', $this->config->getInstallPath() . '/htdocs/.htaccess', $this->config->getInstallPath()));
-            exec(sprintf('mv %s %s', $this->config->getInstallPath() . '/htdocs/*', $this->config->getInstallPath()));
-        }
-        if (file_exists($this->config->getInstallPath() . '/magento')
-            && is_dir($this->config->getInstallPath() . '/magento')
-            && file_exists($this->config->getInstallPath() . '/magento/.htaccess')
-        ) {
-            exec(sprintf('mv %s %s', $this->config->getInstallPath() . '/magento/.htaccess', $this->config->getInstallPath()));
-            exec(sprintf('mv %s %s', $this->config->getInstallPath() . '/magento/*', $this->config->getInstallPath()));
-        }
-
-        if (false !== $this->config->getMagentoSampleDataVersion()) {
-            $this->installSampleData($this->config->getMagentoSampleDataVersion());
+        if (false !== $this->config->getMagentoSampledataSource()) {
+            $this->installSampledata(
+                $this->config->getMagentoSampledataSource(),
+                $target
+            );
         }
 
         $this->runMageScript($output);
 
         exec(sprintf('rm -rf %s/var/cache/*', $this->config->getInstallPath()));
-        exec(sprintf('cd %s && modman init && cd -', $this->config->getInstallPath()));
 
-        $output->writeln('<notice>Done</notice>');
+        Logger::notice('Done');
     }
 
     protected function createDatabase($output)
@@ -128,7 +147,7 @@ class Magento extends Base
         return (0 === $return);
     }
 
-    private function installSampleData($version = '1.2.0')
+    private function installSampledata($version = '1.2.0')
     {
         $sampleDataFile = "magento-sample-data-$version.tar.gz";
         $sampleDataFolder = str_replace('.tar.gz', '', $sampleDataFile) . DIRECTORY_SEPARATOR;

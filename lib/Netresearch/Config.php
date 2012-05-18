@@ -9,7 +9,7 @@ class Config extends \Zend_Config_Ini
     protected $removedPermissions;
 
     protected $sampleDataVersions = array(
-        '1', '1.1.2', '1.2.0', '1.6.1.0'
+        '1.1.2', '1.2.0', '1.6.1.0'
     );
 
     /**
@@ -55,45 +55,9 @@ class Config extends \Zend_Config_Ini
         return $this->magento->magentoTesting;
     }
 
-    /**
-     * @deprecated
-     * @see Config::getMagentoSampleDataVersion()
-     */
-    public function hasMagentoSampleData()
+    public function getMagentoSampledataSource()
     {
-        return (1 == $this->magento->magentoSampledata);
-    }
-
-    /**
-     * 
-     * @return string|false Sample data version if valid, false otherwise
-     */
-    public function getMagentoSampleDataVersion()
-    {
-        if (empty($this->magento->magentoSampledata)) {
-            return false;
-        }
-        // default version for backwards compatibility with older ini files
-        if ($this->magento->magentoSampledata === '1') {
-            return '1.2.0';
-        }
-        
-        // version as given in ini-file
-        if (in_array($this->magento->magentoSampledata, $this->sampleDataVersions)) {
-            return $this->magento->magentoSampledata;
-        }
-
-        // inform user about valid sample data if nothing is known about the specified version
-        throw new Exception(sprintf(
-            'Invalid sample data version given in jumpstorm.ini: %s – Use one out of %s',
-            $this->magento->magentoSampledata,
-            implode(', ', $this->sampleDataVersions)
-        ));
-    }
-    
-    public function getEnvironment()
-    {
-        return $this->common->environment;
+        return $this->magento->sampledata->source;
     }
 
     /**

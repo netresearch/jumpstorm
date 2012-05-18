@@ -164,4 +164,9 @@ class Config extends \Zend_Config_Ini
         }
         return $this->addedPermissions;
     }
+
+    public function getPlugins()
+    {
+        return $this->plugins;
+    }
 }

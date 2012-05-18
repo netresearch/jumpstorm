@@ -64,4 +64,59 @@ class Base extends Command
         
         return $target;
     }
+    
+    /**
+     * Prepare command for database access, including:
+     * <ul>
+     * <li>username</li>
+     * <li>host</li>
+     * <li>password</li>
+     * </ul>
+     * 
+     * @return string MySQL command line string including credentials
+     */
+    protected function prepareMysqlCommand()
+    {
+        $mysql = sprintf(
+            'mysql -u%s -h%s',
+            $this->config->getDbUser(),
+            $this->config->getDbHost()
+        );
+
+        // prepare mysql command: password
+        if (!is_null($this->config->getDbPass())) {
+            $mysql .= sprintf(' -p%s', $this->config->getDbPass());
+        }
+
+        return $mysql;
+    }
+    
+    /**
+     * Create empty database. Any old database with the same name gets dropped.
+     * 
+     * @return boolean true on success, false otherwise
+     */
+    protected function createDatabase($dbName)
+    {
+        // prepare mysql command: user, host and password
+        $mysql = $this->prepareMysqlCommand();
+        
+        // recreate database if it already exists
+        Logger::log('Creating database %s', array($dbName));
+
+        exec(sprintf(
+            '%s -e \'DROP DATABASE IF EXISTS `%s`\'',
+            $mysql,
+            $dbName
+        ), $result, $return);
+        
+        exec(sprintf(
+            '%s -e \'CREATE DATABASE `%s`\'',
+            $mysql,
+            $dbName
+        ), $result, $return);
+
+        return (0 === $return);
+    }
+
 }

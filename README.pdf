@@ -6,7 +6,8 @@
 << /F1 2 0 R
  /F2 3 0 R
  /F3 4 0 R
- /F4 5 0 R >>
+ /F4 5 0 R
+ /F5 15 0 R >>
 endobj
 % 'F1': class PDFType1Font 
 2 0 obj
@@ -123,12 +124,12 @@ endobj
  7 0 R
  8 0 R
  9 0 R ]
- /Contents 33 0 R
+ /Contents 35 0 R
  /MediaBox [ 0
  0
  595.2756
  841.8898 ]
- /Parent 32 0 R
+ /Parent 34 0 R
  /Resources << /Font 1 0 R
  /ProcSet [ /PDF
  /Text
@@ -145,10 +146,10 @@ endobj
  0
  0 ]
  /Contents ()
- /Dest [ 19 0 R
+ /Dest [ 20 0 R
  /XYZ
  68.69291
- 392.1553
+ 327.1553
  0 ]
  /Rect [ 500.5951
  693.7736
@@ -163,10 +164,10 @@ endobj
  0
  0 ]
  /Contents ()
- /Dest [ 19 0 R
+ /Dest [ 20 0 R
  /XYZ
  68.69291
- 392.1553
+ 327.1553
  0 ]
  /Rect [ 447.0578
  633.7736
@@ -181,10 +182,10 @@ endobj
  0
  0 ]
  /Contents ()
- /Dest [ 19 0 R
+ /Dest [ 20 0 R
  /XYZ
  68.69291
- 392.1553
+ 327.1553
  0 ]
  /Rect [ 239.4529
  460.5736
@@ -199,12 +200,12 @@ endobj
 << /Annots [ 11 0 R
  12 0 R
  13 0 R ]
- /Contents 34 0 R
+ /Contents 36 0 R
  /MediaBox [ 0
  0
  595.2756
  841.8898 ]
- /Parent 32 0 R
+ /Parent 34 0 R
  /Resources << /Font 1 0 R
  /ProcSet [ /PDF
  /Text
@@ -215,8 +216,17 @@ endobj
  /Trans <<  >>
  /Type /Page >>
 endobj
-% 'Annot.NUMBER8': class PDFDictionary 
+% 'F5': class PDFType1Font 
 15 0 obj
+% Font Helvetica-BoldOblique
+<< /BaseFont /Helvetica-BoldOblique
+ /Encoding /WinAnsiEncoding
+ /Name /F5
+ /Subtype /Type1
+ /Type /Font >>
+endobj
+% 'Annot.NUMBER8': class PDFDictionary 
+16 0 obj
 << /A << /S /URI
  /Type /Action
  /URI (https://github.com/colinmollenhour/modman) >>
@@ -224,14 +234,14 @@ endobj
  0
  0 ]
  /Rect [ 117.6346
- 571.9447
+ 506.9447
  161.3252
- 583.9447 ]
+ 518.9447 ]
  /Subtype /Link
  /Type /Annot >>
 endobj
 % 'Annot.NUMBER9': class LinkAnnotation 
-16 0 obj
+17 0 obj
 << /Border [ 0
  0
  0 ]
@@ -242,14 +252,14 @@ endobj
  707.0236
  0 ]
  /Rect [ 77.58291
- 378.9053
+ 313.9053
  83.14291
- 390.9053 ]
+ 325.9053 ]
  /Subtype /Link
  /Type /Annot >>
 endobj
 % 'Annot.NUMBER10': class LinkAnnotation 
-17 0 obj
+18 0 obj
 << /Border [ 0
  0
  0 ]
@@ -260,14 +270,14 @@ endobj
  647.0236
  0 ]
  /Rect [ 88.70291
- 378.9053
+ 313.9053
  94.26291
- 390.9053 ]
+ 325.9053 ]
  /Subtype /Link
  /Type /Annot >>
 endobj
 % 'Annot.NUMBER11': class LinkAnnotation 
-18 0 obj
+19 0 obj
 << /Border [ 0
  0
  0 ]
@@ -278,25 +288,25 @@ endobj
  473.8236
  0 ]
  /Rect [ 99.82291
- 378.9053
+ 313.9053
  105.3829
- 390.9053 ]
+ 325.9053 ]
  /Subtype /Link
  /Type /Annot >>
 endobj
 % 'Page3': class PDFPage 
-19 0 obj
+20 0 obj
 % Page dictionary
-<< /Annots [ 15 0 R
- 16 0 R
+<< /Annots [ 16 0 R
  17 0 R
- 18 0 R ]
- /Contents 35 0 R
+ 18 0 R
+ 19 0 R ]
+ /Contents 37 0 R
  /MediaBox [ 0
  0
  595.2756
  841.8898 ]
- /Parent 32 0 R
+ /Parent 34 0 R
  /Resources << /Font 1 0 R
  /ProcSet [ /PDF
  /Text
@@ -307,151 +317,164 @@ endobj
  /Trans <<  >>
  /Type /Page >>
 endobj
-% 'R20': class PDFCatalog 
-20 0 obj
+% 'R21': class PDFCatalog 
+21 0 obj
 % Document Root
-<< /Outlines 22 0 R
- /PageLabels 36 0 R
+<< /Outlines 23 0 R
+ /PageLabels 38 0 R
  /PageMode /UseNone
- /Pages 32 0 R
+ /Pages 34 0 R
  /Type /Catalog >>
 endobj
-% 'R21': class PDFInfo 
-21 0 obj
+% 'R22': class PDFInfo 
+22 0 obj
 << /Author ()
- /CreationDate (D:20120518131914-01'00')
+ /CreationDate (D:20120518172751-01'00')
  /Creator (\(unspecified\))
  /Keywords ()
  /Producer (ReportLab PDF Library - www.reportlab.com)
  /Subject (\(unspecified\))
  /Title (JUMPSTORM) >>
 endobj
-% 'R22': class PDFOutlines 
-22 0 obj
-<< /Count 11
- /First 23 0 R
- /Last 29 0 R
+% 'R23': class PDFOutlines 
+23 0 obj
+<< /Count 13
+ /First 24 0 R
+ /Last 31 0 R
  /Type /Outlines >>
 endobj
 % 'Outline.0': class OutlineEntryObject 
-23 0 obj
+24 0 obj
 << /Dest [ 10 0 R
  /XYZ
  62.69291
  665.0236
  0 ]
- /Next 24 0 R
- /Parent 22 0 R
+ /Next 25 0 R
+ /Parent 23 0 R
  /Title (Installation) >>
 endobj
 % 'Outline.1': class OutlineEntryObject 
-24 0 obj
-<< /Count 4
+25 0 obj
+<< /Count 5
  /Dest [ 10 0 R
  /XYZ
  62.69291
  423.6236
  0 ]
- /First 25 0 R
- /Last 28 0 R
- /Next 29 0 R
- /Parent 22 0 R
- /Prev 23 0 R
+ /First 26 0 R
+ /Last 29 0 R
+ /Next 31 0 R
+ /Parent 23 0 R
+ /Prev 24 0 R
  /Title (Usage) >>
 endobj
-% 'Outline.10.0': class OutlineEntryObject 
-25 0 obj
+% 'Outline.11.0': class OutlineEntryObject 
+26 0 obj
 << /Dest [ 14 0 R
  /XYZ
  62.69291
  765.0236
  0 ]
- /Next 26 0 R
- /Parent 24 0 R
+ /Next 27 0 R
+ /Parent 25 0 R
  /Title (Magento) >>
 endobj
-% 'Outline.10.1': class OutlineEntryObject 
-26 0 obj
+% 'Outline.11.1': class OutlineEntryObject 
+27 0 obj
 << /Dest [ 14 0 R
  /XYZ
  62.69291
  537.8236
  0 ]
- /Next 27 0 R
- /Parent 24 0 R
- /Prev 25 0 R
+ /Next 28 0 R
+ /Parent 25 0 R
+ /Prev 26 0 R
  /Title (Extensions) >>
 endobj
-% 'Outline.10.2': class OutlineEntryObject 
-27 0 obj
+% 'Outline.11.2': class OutlineEntryObject 
+28 0 obj
 << /Dest [ 14 0 R
  /XYZ
  62.69291
  376.6236
  0 ]
- /Next 28 0 R
- /Parent 24 0 R
- /Prev 26 0 R
+ /Next 29 0 R
+ /Parent 25 0 R
+ /Prev 27 0 R
  /Title (Unittesting) >>
 endobj
-% 'Outline.10.3': class OutlineEntryObject 
-28 0 obj
-<< /Dest [ 14 0 R
+% 'Outline.11.3': class OutlineEntryObject 
+29 0 obj
+<< /Count 1
+ /Dest [ 14 0 R
  /XYZ
  62.69291
  221.4236
  0 ]
- /Parent 24 0 R
- /Prev 27 0 R
+ /First 30 0 R
+ /Last 30 0 R
+ /Parent 25 0 R
+ /Prev 28 0 R
  /Title (Plugins) >>
 endobj
-% 'Outline.2': class OutlineEntryObject 
-29 0 obj
-<< /Count 2
- /Dest [ 19 0 R
+% 'Outline.12.0': class OutlineEntryObject 
+30 0 obj
+<< /Dest [ 20 0 R
  /XYZ
  62.69291
- 640.1947
+ 765.0236
  0 ]
- /First 30 0 R
- /Last 31 0 R
- /Parent 22 0 R
- /Prev 24 0 R
+ /Parent 29 0 R
+ /Title (How to write your own plugins?) >>
+endobj
+% 'Outline.2': class OutlineEntryObject 
+31 0 obj
+<< /Count 2
+ /Dest [ 20 0 R
+ /XYZ
+ 62.69291
+ 575.1947
+ 0 ]
+ /First 32 0 R
+ /Last 33 0 R
+ /Parent 23 0 R
+ /Prev 25 0 R
  /Title (Upcoming features) >>
 endobj
-% 'Outline.11.0': class OutlineEntryObject 
-30 0 obj
-<< /Dest [ 19 0 R
+% 'Outline.13.0': class OutlineEntryObject 
+32 0 obj
+<< /Dest [ 20 0 R
  /XYZ
  62.69291
- 607.1947
+ 542.1947
  0 ]
- /Next 31 0 R
- /Parent 29 0 R
+ /Next 33 0 R
+ /Parent 31 0 R
  /Title (Modman support) >>
 endobj
-% 'Outline.11.1': class OutlineEntryObject 
-31 0 obj
-<< /Dest [ 19 0 R
+% 'Outline.13.1': class OutlineEntryObject 
+33 0 obj
+<< /Dest [ 20 0 R
  /XYZ
  62.69291
- 535.1947
+ 470.1947
  0 ]
- /Parent 29 0 R
- /Prev 30 0 R
+ /Parent 31 0 R
+ /Prev 32 0 R
  /Title (Interactive mode) >>
 endobj
-% 'R32': class PDFPages 
-32 0 obj
+% 'R34': class PDFPages 
+34 0 obj
 % page tree
 << /Count 3
  /Kids [ 10 0 R
  14 0 R
- 19 0 R ]
+ 20 0 R ]
  /Type /Pages >>
 endobj
-% 'R33': class PDFStream 
-33 0 obj
+% 'R35': class PDFStream 
+35 0 obj
 % page stream
 << /Length 6598 >>
 stream
@@ -760,10 +783,10 @@ Q
  
 endstream
 endobj
-% 'R34': class PDFStream 
-34 0 obj
+% 'R36': class PDFStream 
+36 0 obj
 % page stream
-<< /Length 6371 >>
+<< /Length 5987 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
 q
@@ -900,14 +923,14 @@ Q
 q
 1 0 0 1 62.69291 304.6236 cm
 q
-BT 1 0 0 1 0 38 Tm .38332 Tw 12 TL /F1 10 Tf 0 0 0 rg (We are big fans of test driven development. So unit testing is essential. In our sample configuration file is) Tj T* 0 Tw 2.083555 Tw (EcomDev_PHPUnit used as default testing framework. We recommend to use this, so just copy this) Tj T* 0 Tw .249988 Tw (section to your configuration file \(you could set its branch to ) Tj /F4 10 Tf (dev) Tj /F1 10 Tf (, if you want to use its latest features and) Tj T* 0 Tw (bugfixes\).) Tj T* ET
+BT 1 0 0 1 0 38 Tm .830574 Tw 12 TL /F1 10 Tf 0 0 0 rg (We are big fans of test driven development. So unit testing is essential. In our sample configuration file,) Tj T* 0 Tw 1.277984 Tw (EcomDev_PHPUnit is used as default testing framework. We recommend to use this, so just copy this) Tj T* 0 Tw .249988 Tw (section to your configuration file \(you could set its branch to ) Tj /F4 10 Tf (dev) Tj /F1 10 Tf (, if you want to use its latest features and) Tj T* 0 Tw (bugfixes\).) Tj T* ET
 Q
 Q
 q
 1 0 0 1 62.69291 286.6236 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (No just run the following command and start testing and developing:) Tj T* ET
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Now just run the following command and start testing and developing:) Tj T* ET
 Q
 Q
 q
@@ -976,36 +999,36 @@ q
 BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (Please note, that option ) Tj /F4 10 Tf (-c /path/to/my/ini ) Tj /F1 10 Tf (is optional.) Tj T* ET
 Q
 Q
-q
-1 0 0 1 62.69291 78.22362 cm
-q
-BT 1 0 0 1 0 14 Tm .069398 Tw 12 TL /F1 10 Tf 0 0 0 rg (Plugins follow a simple structure. They are placed in ) Tj /F4 10 Tf (plugins ) Tj /F1 10 Tf (directory. Each plugin is a directory with at ) Tj T* 0 Tw .392093 Tw (least one php file inside, which contains a php class. This directory, the php file and php class must have) Tj T* 0 Tw ET
-Q
-Q
  
 endstream
 endobj
-% 'R35': class PDFStream 
-35 0 obj
+% 'R37': class PDFStream 
+37 0 obj
 % page stream
-<< /Length 3225 >>
+<< /Length 3820 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
 q
-1 0 0 1 62.69291 741.0236 cm
+1 0 0 1 62.69291 750.0236 cm
 q
-BT 1 0 0 1 0 14 Tm 1.51881 Tw 12 TL /F1 10 Tf 0 0 0 rg (the same name \(with uppercase first letter\), which is used as key in configuration file. Plugins can be) Tj T* 0 Tw (disabled by either not mentioning them in configuration or by setting its configuration value to ) Tj /F4 10 Tf (0) Tj /F1 10 Tf (.) Tj T* ET
+BT 1 0 0 1 0 2.5 Tm 15 TL /F5 12.5 Tf 0 0 0 rg (How to write your own plugins?) Tj T* ET
 Q
 Q
 q
-1 0 0 1 62.69291 723.0236 cm
+1 0 0 1 62.69291 696.0236 cm
+q
+BT 1 0 0 1 0 38 Tm .069398 Tw 12 TL /F1 10 Tf 0 0 0 rg (Plugins follow a simple structure. They are placed in ) Tj /F4 10 Tf (plugins ) Tj /F1 10 Tf (directory. Each plugin is a directory with at) Tj T* 0 Tw .392093 Tw (least one php file inside, which contains a php class. This directory, the php file and php class must have) Tj T* 0 Tw 1.51881 Tw (the same name \(with uppercase first letter\), which is used as key in configuration file. Plugins can be) Tj T* 0 Tw (disabled by either not mentioning them in configuration or by setting its configuration value to ) Tj /F4 10 Tf (0) Tj /F1 10 Tf (.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 678.0236 cm
 q
 0 0 0 rg
 BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Plugin configuration can be achieved by dot syntax:) Tj T* ET
 Q
 Q
 q
-1 0 0 1 62.69291 652.1947 cm
+1 0 0 1 62.69291 607.1947 cm
 q
 q
 .737429 0 0 .737429 0 0 cm
@@ -1025,44 +1048,51 @@ Q
 Q
 Q
 q
-1 0 0 1 62.69291 619.1947 cm
+1 0 0 1 62.69291 587.1947 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (The plugin's main php class must implement NetresearchPluginInterface.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 554.1947 cm
 q
 BT 1 0 0 1 0 3.5 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Upcoming features) Tj T* ET
 Q
 Q
 q
-1 0 0 1 62.69291 589.1947 cm
+1 0 0 1 62.69291 524.1947 cm
 q
 BT 1 0 0 1 0 3 Tm 18 TL /F2 15 Tf 0 0 0 rg (Modman support) Tj T* ET
 Q
 Q
 q
-1 0 0 1 62.69291 547.1947 cm
+1 0 0 1 62.69291 482.1947 cm
 q
-BT 1 0 0 1 0 26 Tm 2.010574 Tw 12 TL /F1 10 Tf 0 0 0 rg (As we use ) Tj 0 0 .501961 rg (modman ) Tj 0 0 0 rg (for all our extensions, we will implement ) Tj /F3 10 Tf (Jumpstorm ) Tj /F1 10 Tf (to support this as soon as) Tj T* 0 Tw .892651 Tw (possible. Currently we only copy \(or clone\) the extensions to the ) Tj /F4 10 Tf (.modman ) Tj /F1 10 Tf (directory, but deployment is) Tj T* 0 Tw (still not made via ) Tj /F3 10 Tf (modman) Tj /F1 10 Tf (.) Tj T* ET
+BT 1 0 0 1 0 26 Tm 2.010574 Tw 12 TL /F1 10 Tf 0 0 0 rg (As we use ) Tj 0 0 .501961 rg (modman ) Tj 0 0 0 rg (for all our extensions, we will implement ) Tj /F3 10 Tf (Jumpstorm ) Tj /F1 10 Tf (to support this as soon as) Tj T* 0 Tw .892651 Tw (possible. Currently we only copy \(or clone\) the extensions to the ) Tj /F4 10 Tf (.modman ) Tj /F1 10 Tf (directory, but deployment is) Tj T* 0 Tw (not yet done via ) Tj /F3 10 Tf (modman) Tj /F1 10 Tf (.) Tj T* ET
 Q
 Q
 q
-1 0 0 1 62.69291 517.1947 cm
+1 0 0 1 62.69291 452.1947 cm
 q
 BT 1 0 0 1 0 3 Tm 18 TL /F2 15 Tf 0 0 0 rg (Interactive mode) Tj T* ET
 Q
 Q
 q
-1 0 0 1 62.69291 475.1947 cm
+1 0 0 1 62.69291 410.1947 cm
 q
 BT 1 0 0 1 0 26 Tm .185777 Tw 12 TL /F1 10 Tf 0 0 0 rg (If you use ) Tj /F3 10 Tf (Jumpstorm ) Tj /F1 10 Tf (for a bunch of different projects on and on, you become tired of changing the config) Tj T* 0 Tw 1.681163 Tw (file. So it would be nice to specify some settings to be confirmed \(and corrected\) during execution of) Tj T* 0 Tw /F3 10 Tf (Jumpstorm) Tj /F1 10 Tf (. This mode will be suppressed by the built-in option ) Tj /F4 10 Tf (-n ) Tj /F1 10 Tf (\() Tj /F4 10 Tf (--no-interaction) Tj /F1 10 Tf (\).) Tj T* ET
 Q
 Q
 q
-1 0 0 1 62.69291 418.5018 cm
+1 0 0 1 62.69291 353.5018 cm
 Q
 q
-1 0 0 1 62.69291 390.1553 cm
+1 0 0 1 62.69291 325.1553 cm
 n 0 14.17323 m 469.8898 14.17323 l S
 Q
 q
-1 0 0 1 62.69291 366.1553 cm
+1 0 0 1 62.69291 301.1553 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
@@ -1083,84 +1113,86 @@ Q
  
 endstream
 endobj
-% 'R36': class PDFPageLabels 
-36 0 obj
+% 'R38': class PDFPageLabels 
+38 0 obj
 % Document Root
 << /Nums [ 0
- 37 0 R
+ 39 0 R
  1
- 38 0 R
+ 40 0 R
  2
- 39 0 R ] >>
-endobj
-% 'R37': class PDFPageLabel 
-37 0 obj
-% None
-<< /S /D
- /St 1 >>
-endobj
-% 'R38': class PDFPageLabel 
-38 0 obj
-% None
-<< /S /D
- /St 2 >>
+ 41 0 R ] >>
 endobj
 % 'R39': class PDFPageLabel 
 39 0 obj
 % None
 << /S /D
+ /St 1 >>
+endobj
+% 'R40': class PDFPageLabel 
+40 0 obj
+% None
+<< /S /D
+ /St 2 >>
+endobj
+% 'R41': class PDFPageLabel 
+41 0 obj
+% None
+<< /S /D
  /St 3 >>
 endobj
 xref
-0 40
+0 42
 0000000000 65535 f
 0000000113 00000 n
-0000000245 00000 n
-0000000410 00000 n
-0000000585 00000 n
-0000000766 00000 n
-0000000940 00000 n
-0000001181 00000 n
-0000001422 00000 n
-0000001663 00000 n
-0000001889 00000 n
-0000002228 00000 n
-0000002470 00000 n
-0000002711 00000 n
-0000002938 00000 n
-0000003271 00000 n
-0000003532 00000 n
-0000003775 00000 n
-0000004018 00000 n
-0000004245 00000 n
-0000004574 00000 n
-0000004733 00000 n
-0000004990 00000 n
-0000005116 00000 n
-0000005289 00000 n
-0000005515 00000 n
-0000005686 00000 n
-0000005875 00000 n
-0000006065 00000 n
-0000006233 00000 n
-0000006456 00000 n
-0000006634 00000 n
-0000006795 00000 n
-0000006921 00000 n
-0000013618 00000 n
-0000020088 00000 n
-0000023416 00000 n
-0000023535 00000 n
-0000023612 00000 n
-0000023689 00000 n
+0000000258 00000 n
+0000000423 00000 n
+0000000598 00000 n
+0000000779 00000 n
+0000000953 00000 n
+0000001194 00000 n
+0000001435 00000 n
+0000001676 00000 n
+0000001902 00000 n
+0000002241 00000 n
+0000002483 00000 n
+0000002724 00000 n
+0000002951 00000 n
+0000003272 00000 n
+0000003474 00000 n
+0000003735 00000 n
+0000003978 00000 n
+0000004221 00000 n
+0000004448 00000 n
+0000004777 00000 n
+0000004936 00000 n
+0000005193 00000 n
+0000005319 00000 n
+0000005492 00000 n
+0000005718 00000 n
+0000005889 00000 n
+0000006078 00000 n
+0000006268 00000 n
+0000006481 00000 n
+0000006657 00000 n
+0000006880 00000 n
+0000007058 00000 n
+0000007219 00000 n
+0000007345 00000 n
+0000014042 00000 n
+0000020128 00000 n
+0000024051 00000 n
+0000024170 00000 n
+0000024247 00000 n
+0000024324 00000 n
 trailer
 << /ID 
  % ReportLab generated PDF document -- digest (http://www.reportlab.com) 
- [(\356K\265\337\014\365\340\335\236`}u\353i\257[) (\356K\265\337\014\365\340\335\236`}u\353i\257[)] 
+ [(\017\021tJ\247\221\243\366\234\241\335\333-\232\014\266) (\017\021tJ\247\221\243\366\234\241\335\333-\232\014\266)] 
 
- /Info 21 0 R
- /Root 20 0 R
- /Size 40 >>
+ /Info 22 0 R
+ /Root 21 0 R
+ /Size 42 >>
 startxref
-23736
+24371
 %%EOF

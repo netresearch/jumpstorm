@@ -123,11 +123,11 @@ Unittesting
 -----------
 
 We are big fans of test driven development. So unit testing is essential.
-In our sample configuration file is EcomDev_PHPUnit used as default testing framework. We recommend to use this, so just
+In our sample configuration file, EcomDev_PHPUnit is used as default testing framework. We recommend to use this, so just
 copy this section to your configuration file (you could set its branch to ``dev``, if you want to use its latest
 features and bugfixes).
 
-No just run the following command and start testing and developing:
+Now just run the following command and start testing and developing:
 
 ::
 
@@ -176,7 +176,7 @@ Modman support
 --------------
 
 As we use modman_ for all our extensions, we will implement *Jumpstorm* to support this as soon as possible. Currently
-we only copy (or clone) the extensions to the ``.modman`` directory, but deployment is still not made via *modman*.
+we only copy (or clone) the extensions to the ``.modman`` directory, but deployment is not yet done via *modman*.
 
 .. _modman: https://github.com/colinmollenhour/modman
 

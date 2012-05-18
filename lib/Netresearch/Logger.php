@@ -8,11 +8,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class Logger
 {
-    // log => comment
-    // question
-    // info => notice
-    // error => error
-    
     const TYPE_COMMENT = 'comment';
     
     const TYPE_NOTICE = 'info';

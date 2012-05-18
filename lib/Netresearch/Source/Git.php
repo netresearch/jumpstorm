@@ -23,10 +23,10 @@ class Git extends Source implements SourceInterface
             throw new Exception('Provided source is not a Git repository: ' . $this->source);
         }
         
-        $this->_cloneRepository($this->source, $targetPath);
+        $this->_cloneRepository($this->source, $target);
         
         if ($branch != self::GIT_DEFAULT_BRANCH) {
-            $this->_checkout($targetPath, $branch);
+            $this->_checkout($target, $branch);
         }
     }
 

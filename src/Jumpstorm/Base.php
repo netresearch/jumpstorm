@@ -35,6 +35,8 @@ class Base extends Command
     protected function preExecute(InputInterface $input, OutputInterface $output)
     {
         $this->config = new Config($input->getOption('config'), null, array('allowModifications' => true));
+        $this->config->setOutput($output);
+        $this->config->setCommand($this);
         Logger::setOutputInterface($output);
     }
 

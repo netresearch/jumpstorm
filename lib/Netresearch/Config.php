@@ -43,7 +43,7 @@ class Config extends \Zend_Config_Ini
 
     public function getMagentoBaseUrl()
     {
-        return $this->magento->magentoBaseUrl;
+        return $this->magento->baseUrl;
     }
 
     public function getMagentoSampledataSource()

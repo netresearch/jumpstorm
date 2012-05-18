@@ -13,7 +13,7 @@ class Logger
     // info => notice
     // error => error
     
-    const TYPE_LOG = 'comment';
+    const TYPE_COMMENT = 'comment';
     
     const TYPE_NOTICE = 'info';
     
@@ -26,17 +26,26 @@ class Logger
         self::$output = $output;
     }
     
-    protected static function writeln($message, array $args = array(), $type = self::TYPE_LOG)
+    protected static function writeln($message, array $args = array(), $type = null)
     {
         if (!self::$output) {
             throw new Exception('No output interface given');
         }
-        self::$output->writeln(vsprintf("<$type>$message</$type>", $args));
+        self::$output->writeln(
+            is_null($type)
+            ? vsprintf("$message", $args)
+            : vsprintf("<$type>$message</$type>", $args)
+        );
     }
     
     public static function log($message, array $args = array())
     {
-        self::writeln($message, $args, self::TYPE_LOG);
+        self::writeln($message, $args);
+    }
+    
+    public static function comment($message, array $args = array())
+    {
+        self::writeln($message, $args, self::TYPE_COMMENT);
     }
 
     public static function notice($message, array $args = array())
@@ -44,7 +53,7 @@ class Logger
         self::writeln($message, $args, self::TYPE_NOTICE);
     }
 
-    public static function error($message, $message, array $args = array(), $stopExecution = true)
+    public static function error($message, array $args = array(), $stopExecution = true)
     {
         self::writeln($message, $args, self::TYPE_ERROR);
         if ($stopExecution) {

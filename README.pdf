@@ -319,7 +319,7 @@ endobj
 % 'R21': class PDFInfo 
 21 0 obj
 << /Author ()
- /CreationDate (D:20120518114527-01'00')
+ /CreationDate (D:20120521080826-01'00')
  /Creator (\(unspecified\))
  /Keywords ()
  /Producer (ReportLab PDF Library - www.reportlab.com)
@@ -763,7 +763,7 @@ endobj
 % 'R34': class PDFStream 
 34 0 obj
 % page stream
-<< /Length 5984 >>
+<< /Length 5987 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
 q
@@ -900,14 +900,14 @@ Q
 q
 1 0 0 1 62.69291 304.6236 cm
 q
-BT 1 0 0 1 0 38 Tm .38332 Tw 12 TL /F1 10 Tf 0 0 0 rg (We are big fans of test driven development. So unit testing is essential. In our sample configuration file is) Tj T* 0 Tw 2.083555 Tw (EcomDev_PHPUnit used as default testing framework. We recommend to use this, so just copy this) Tj T* 0 Tw .249988 Tw (section to your configuration file \(you could set its branch to ) Tj /F4 10 Tf (dev) Tj /F1 10 Tf (, if you want to use its latest features and) Tj T* 0 Tw (bugfixes\).) Tj T* ET
+BT 1 0 0 1 0 38 Tm .830574 Tw 12 TL /F1 10 Tf 0 0 0 rg (We are big fans of test driven development. So unit testing is essential. In our sample configuration file,) Tj T* 0 Tw 1.277984 Tw (EcomDev_PHPUnit is used as default testing framework. We recommend to use this, so just copy this) Tj T* 0 Tw .249988 Tw (section to your configuration file \(you could set its branch to ) Tj /F4 10 Tf (dev) Tj /F1 10 Tf (, if you want to use its latest features and) Tj T* 0 Tw (bugfixes\).) Tj T* ET
 Q
 Q
 q
 1 0 0 1 62.69291 286.6236 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (No just run the following command and start testing and developing:) Tj T* ET
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Now just run the following command and start testing and developing:) Tj T* ET
 Q
 Q
 q
@@ -982,7 +982,7 @@ endobj
 % 'R35': class PDFStream 
 35 0 obj
 % page stream
-<< /Length 2089 >>
+<< /Length 2087 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
 q
@@ -1000,7 +1000,7 @@ Q
 q
 1 0 0 1 62.69291 672.0236 cm
 q
-BT 1 0 0 1 0 26 Tm 2.010574 Tw 12 TL /F1 10 Tf 0 0 0 rg (As we use ) Tj 0 0 .501961 rg (modman ) Tj 0 0 0 rg (for all our extensions, we will implement ) Tj /F3 10 Tf (Jumpstorm ) Tj /F1 10 Tf (to support this as soon as) Tj T* 0 Tw .892651 Tw (possible. Currently we only copy \(or clone\) the extensions to the ) Tj /F4 10 Tf (.modman ) Tj /F1 10 Tf (directory, but deployment is) Tj T* 0 Tw (still not made via ) Tj /F3 10 Tf (modman) Tj /F1 10 Tf (.) Tj T* ET
+BT 1 0 0 1 0 26 Tm 2.010574 Tw 12 TL /F1 10 Tf 0 0 0 rg (As we use ) Tj 0 0 .501961 rg (modman ) Tj 0 0 0 rg (for all our extensions, we will implement ) Tj /F3 10 Tf (Jumpstorm ) Tj /F1 10 Tf (to support this as soon as) Tj T* 0 Tw .892651 Tw (possible. Currently we only copy \(or clone\) the extensions to the ) Tj /F4 10 Tf (.modman ) Tj /F1 10 Tf (directory, but deployment is) Tj T* 0 Tw (not yet done via ) Tj /F3 10 Tf (modman) Tj /F1 10 Tf (.) Tj T* ET
 Q
 Q
 q
@@ -1109,19 +1109,19 @@ xref
 0000006795 00000 n
 0000006921 00000 n
 0000013618 00000 n
-0000019701 00000 n
-0000021893 00000 n
-0000022012 00000 n
-0000022089 00000 n
-0000022166 00000 n
+0000019704 00000 n
+0000021894 00000 n
+0000022013 00000 n
+0000022090 00000 n
+0000022167 00000 n
 trailer
 << /ID 
  % ReportLab generated PDF document -- digest (http://www.reportlab.com) 
- [(\001\237"T\260\373\3056\335*-\225\222\0022L) (\001\237"T\260\373\3056\335*-\225\222\0022L)] 
+ [(\364\212UHc\264 \352\207\2761B\220\251\260\261) (\364\212UHc\264 \352\207\2761B\220\251\260\261)] 
 
  /Info 21 0 R
  /Root 20 0 R
  /Size 40 >>
 startxref
-22213
+22214
 %%EOF

@@ -1,6 +1,8 @@
 <?php
 namespace Jumpstorm;
 
+use Netresearch\Logger;
+
 use Netresearch\Config;
 use Netresearch\Source\SourceBase as Source;
 
@@ -13,7 +15,8 @@ use Symfony\Component\Console\Output\Output;
 use \Exception as Exception;
 
 /**
- * install unittesting extension
+ * Install unittesting extension.
+ * By now, only {@link https://github.com/IvanChepurnyi/EcomDev_PHPUnit} is supported
  *
  * @package    Jumpstorm
  * @subpackage Jumpstorm
@@ -38,35 +41,28 @@ class Unittesting extends Command
     {
         $this->preExecute($input, $output);
 
-        $this->config = new Config($input->getOption('config'), null, array('allowModifications' => true));
-        $this->output = $output;
-
+        // deploy unittesting framework using extensions command
         $config = $this->config->unittesting;
         $this->installExtension($config->framework, $config->extension);
 
+        // apply some configuration
         $this->setupTestDatabase();
 
-        $this->output->writeln('<info>Done</info>');
+        Logger::notice('Done');
     }
 
+    /**
+     * Create test database and provide information for database access
+     * @throws Exception
+     */
     protected function setupTestDatabase()
     {
-        $mysql = sprintf(
-            'mysql -u%s -h%s',
-            $this->config->getDbUser(),
-            $this->config->getDbHost()
-        );
-
-        exec(sprintf(
-            '%s -e \'CREATE DATABASE IF NOT EXISTS `%s`\'',
-            $mysql,
-            $this->config->getDbName() . '_test'
-        ), $result, $return);
-
-        if (0 !== $return) {
+        // create database, same name as magento database, only appending '_test'
+        if (false === $this->createDatabase($this->config->getDbName() . '_test')) {
             throw new Exception('Could not create test database');
         }
 
+        // set access information in local.xml.phpunit
         $file = $this->config->getTarget() . '/app/etc/local.xml.phpunit';
         $db = sprintf('<dbname><\![CDATA[%s_test]]><\/dbname>', $this->config->getDbName());
 
@@ -74,15 +70,20 @@ class Unittesting extends Command
         exec($cmd, $result, $return);
 
         if (0 !== $return) {
-            $this->output->writeln('<error>Failed to set db name for unit testing framework</error>');
+            Logger::error('Failed to set db name for unit testing framework');
         }
 
-        $baseUrl = '<base_url>' . str_replace('/', '\\/', $this->config->getMagentoBaseUrl()) . '<\/base_url>';
+        // unify base url, as ecomdev/magento needs it with protocol and trailing slash given
+        $baseUrl = ltrim($this->config->getMagentoBaseUrl(), 'http://');
+        $baseUrl = rtrim($baseUrl, '/');
+        $baseUrl = "http://$baseUrl/";
+        
+        $baseUrl = '<base_url>' . str_replace('/', '\\/', $baseUrl) . '<\/base_url>';
         $cmd = sprintf('sed -i "s/<base_url>.*<\/base_url>/%s/g" %s', $baseUrl, $file);
         exec($cmd, $result, $return);
 
         if (0 !== $return) {
-            $this->output->writeln('<error>Failed to set base url for unit testing framework</error>');
+            Logger::error('Failed to set base url for unit testing framework');
         }
     }
 }

@@ -44,13 +44,13 @@ class Plugins extends Base
         $plugins = $this->config->getPlugins();
         foreach ($plugins as $name=>$settings) {
             if ($settings === 0) {
-                Logger::log(sprintf('Skipping plugin "%s"', $name));
+                Logger::log('Skipping plugin "%s"', array($name));
                 continue;
             }
             $file = 'plugins' . DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR . $name . '.php';
             if (false == file_exists($file)) {
                 Logger::error('Could not find plugin "%s"', array($name), $stop=false);
-                Logger::log(sprintf('Expected it at path "%s"', $file));
+                Logger::log('Expected it at path "%s"', array($file));
                 continue;
             }
             require_once($file);
@@ -59,6 +59,8 @@ class Plugins extends Base
             $plugin->execute();
             Logger::notice(sprintf('Finished running plugin "%s"', $name));
         }
+
+        Logger::notice('Done');
     }
 
     protected function initMagento()

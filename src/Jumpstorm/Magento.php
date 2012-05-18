@@ -37,63 +37,7 @@ class Magento extends Base
     }
     
     /**
-     * Prepare command for database access, including:
-     * <ul>
-     * <li>username</li>
-     * <li>host</li>
-     * <li>password</li>
-     * </ul>
-     * 
-     * @return string MySQL command line string including credentials
-     */
-    protected function prepareMysqlCommand()
-    {
-        $mysql = sprintf(
-            'mysql -u%s -h%s',
-            $this->config->getDbUser(),
-            $this->config->getDbHost()
-        );
-
-        // prepare mysql command: password
-        if (!is_null($this->config->getDbPass())) {
-            $mysql .= sprintf(' -p%s', $this->config->getDbPass());
-        }
-
-        return $mysql;
-    }
-    
-    /**
-     * Create empty database. Any old database with the same name gets dropped.
-     * 
-     * @throws Exception
-     */
-    protected function createDatabase()
-    {
-        // prepare mysql command: user, host and password
-        $mysql = $this->prepareMysqlCommand();
-        
-        // recreate database if it already exists
-        Logger::log('Creating database %s', array($this->config->getDbName()));
-
-        exec(sprintf(
-            '%s -e \'DROP DATABASE IF EXISTS `%s`\'',
-            $mysql,
-            $this->config->getDbName()
-        ), $result, $return);
-        
-        exec(sprintf(
-            '%s -e \'CREATE DATABASE `%s`\'',
-            $mysql,
-            $this->config->getDbName()
-        ), $result, $return);
-
-        if (0 !== $return) {
-            throw new Exception('Could not create live database');
-        }
-    }
-
-    /**
-     * Assuming that we copied another folder into the target directory,
+     * Assuming that we cloned another folder into the target directory,
      * we move all files one level up.
      * 
      * @param string $target The install path (docroot)
@@ -105,10 +49,15 @@ class Magento extends Base
         $fileTest = $fileRoot . DIRECTORY_SEPARATOR . '.htaccess';
         
         if (file_exists($fileRoot) && is_dir($fileRoot) && file_exists($fileTest)) {
-            // move hidden file to docroot
-            exec(sprintf('mv %s %s', $fileTest, $target));
-            // move all the rest to docroot
-            exec(sprintf('mv %s %s', $fileRoot . DIRECTORY_SEPARATOR . '*', $target));
+            // move files to docroot
+            exec(sprintf(
+                'mv %s %s %s %s',
+                $fileRoot . DIRECTORY_SEPARATOR . '*', // regular files
+                $fileRoot . DIRECTORY_SEPARATOR . '.htaccess', // hidden files
+                $fileRoot . DIRECTORY_SEPARATOR . '.htaccess.sample', // hidden files
+                $target
+            ));
+
             // delete the now empty source directory
             if (is_link($fileRoot)) {
                 // symlink
@@ -167,7 +116,7 @@ class Magento extends Base
         // copy sample data images
         Logger::log("Copying sample data media files");
         $sourceMediaDir = $source . DIRECTORY_SEPARATOR . 'media';
-        $targetMediaDir = $target . DIRECTORY_SEPARATOR;
+        $targetMediaDir = $target . DIRECTORY_SEPARATOR . 'media';
         $sourceModel = Source::getSourceModel($sourceMediaDir);
         $sourceModel->copy($targetMediaDir);
     }
@@ -271,7 +220,9 @@ class Magento extends Base
         $this->moveToDocroot($target, 'magento');
         
         // create empty database with credentials from ini file
-        $this->createDatabase();
+        if (false === $this->createDatabase($this->config->getDbName())) {
+            throw new Exception('Could not create live database');
+        }
 
         // install sample data
         if (null !== $this->config->getMagentoSampledataSource()) {

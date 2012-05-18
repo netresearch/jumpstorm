@@ -36,12 +36,22 @@ class Magento extends Base
         $this->setDescription('Install Magento');
     }
     
+    /**
+     * Prepare command for database access, including:
+     * <ul>
+     * <li>username</li>
+     * <li>host</li>
+     * <li>password</li>
+     * </ul>
+     * 
+     * @return string MySQL command line string including credentials
+     */
     protected function prepareMysqlCommand()
     {
         $mysql = sprintf(
-                'mysql -u%s -h%s',
-                $this->config->getDbUser(),
-                $this->config->getDbHost()
+            'mysql -u%s -h%s',
+            $this->config->getDbUser(),
+            $this->config->getDbHost()
         );
 
         // prepare mysql command: password
@@ -52,6 +62,11 @@ class Magento extends Base
         return $mysql;
     }
     
+    /**
+     * Create empty database. Any old database with the same name gets dropped.
+     * 
+     * @throws Exception
+     */
     protected function createDatabase()
     {
         // prepare mysql command: user, host and password
@@ -67,13 +82,13 @@ class Magento extends Base
         ), $result, $return);
         
         exec(sprintf(
-            '%s -e \'CREATE DATABASE IF NOT EXISTS `%s`\'',
+            '%s -e \'CREATE DATABASE `%s`\'',
             $mysql,
             $this->config->getDbName()
         ), $result, $return);
 
         if (0 !== $return) {
-            throw new \Exception('Could not create live database');
+            throw new Exception('Could not create live database');
         }
     }
 
@@ -82,7 +97,7 @@ class Magento extends Base
      * we move all files one level up.
      * 
      * @param string $target The install path (docroot)
-     * @param string $root The top level source directory
+     * @param string $root The name of the directory where Magento's index.php resides in
      */
     protected function moveToDocroot($target, $root = 'magento')
     {
@@ -105,14 +120,25 @@ class Magento extends Base
         }
     }
     
+    /**
+     * Copy Magento files from source to target directory
+     * @param string $source Absolute directory name or repository 
+     * @param string $target Absolute directory name (Magento root)
+     * @param string $branch Branch identifier in case of repository checkout
+     */
     protected function installMagento($source, $target, $branch)
     {
         $sourceModel = Source::getSourceModel($source);
-
         // copy from source to install directory
         $sourceModel->copy($target, $branch);
     }
     
+    /**
+     * Install Magento Sample Data, including db tables and media files
+     * @param string $source Absolute directory name or repository
+     * @param string $target Absolute directory name (Magento root)
+     * @throws Exception
+     */
     protected function installSampledata($source, $target)
     {
         // glob for sql file in $source
@@ -141,11 +167,16 @@ class Magento extends Base
         // copy sample data images
         Logger::log("Copying sample data media files");
         $sourceMediaDir = $source . DIRECTORY_SEPARATOR . 'media';
-        $targetMediaDir = $target . DIRECTORY_SEPARATOR . 'media';
+        $targetMediaDir = $target . DIRECTORY_SEPARATOR;
         $sourceModel = Source::getSourceModel($sourceMediaDir);
         $sourceModel->copy($targetMediaDir);
     }
 
+    /**
+     * Set permissions for web server access
+     * @param string $target Absolute directory name (Magento root)
+     * @throws Exception
+     */
     protected function setPermissions($target)
     {
         $exec = sprintf('chmod -R 0777 %s/app/etc %s/var/ %s/media/', $target, $target, $target);
@@ -156,6 +187,12 @@ class Magento extends Base
         }
     }
     
+    /**
+     * Execute Magento's install.php
+     * 
+     * @param string $target Absolute directory name (Magento root)
+     * @throws Exception
+     */
     protected function runMageScript($target)
     {
         Logger::log("Executing installation via install.php");

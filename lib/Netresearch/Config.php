@@ -8,10 +8,6 @@ class Config extends \Zend_Config_Ini
     protected $addedPermissions;
     protected $removedPermissions;
 
-    protected $sampleDataVersions = array(
-        '1.1.2', '1.2.0', '1.6.1.0'
-    );
-
     /**
      * get target path
      * 
@@ -40,19 +36,14 @@ class Config extends \Zend_Config_Ini
         return $source;
     }
 
+    public function getMagentoBranch()
+    {
+        return $this->magento->branch ? $this->magento->branch : null;
+    }
+
     public function getMagentoBaseUrl()
     {
         return $this->magento->magentoBaseUrl;
-    }
-
-    public function getMagentoCheckout()
-    {
-        return $this->magento->magentoCheckout;
-    }
-
-    public function getTesting()
-    {
-        return $this->magento->magentoTesting;
     }
 
     public function getMagentoSampledataSource()

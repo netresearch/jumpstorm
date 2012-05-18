@@ -25,7 +25,7 @@ class Git extends Source implements SourceInterface
         
         $this->_cloneRepository($this->source, $target);
         
-        if ($branch != self::GIT_DEFAULT_BRANCH) {
+        if ((null !== $branch) && (self::GIT_DEFAULT_BRANCH !== $branch)) {
             $this->_checkout($target, $branch);
         }
     }

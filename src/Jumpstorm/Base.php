@@ -51,7 +51,7 @@ class Base extends Command
         }
         
         if (!is_dir($target)) {
-            mkdir($installPath);
+            mkdir($target);
         }
         
         if (!is_dir($target)) {

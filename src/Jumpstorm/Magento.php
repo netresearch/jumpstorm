@@ -93,16 +93,22 @@ class Magento extends Base
             // move all the rest to docroot
             exec(sprintf('mv %s %s', $fileRoot . DIRECTORY_SEPARATOR . '*', $target));
             // delete the now empty source directory
-            exec(sprintf('rmdir %s %s', $fileRoot));
+            if (is_link($fileRoot)) {
+                // symlink
+                exec(sprintf('rm %s', $fileRoot));
+            } elseif (is_dir($fileRoot)) {
+                // regular empty directory
+                exec(sprintf('rmdir %s', $fileRoot));
+            }
         }
     }
     
-    protected function installMagento($source, $target)
+    protected function installMagento($source, $target, $branch)
     {
         $sourceModel = Source::getSourceModel($source);
         
         // copy from source to install directory
-        $sourceModel->copy($source, $target);
+        $sourceModel->copy($target, $branch);
     }
     
     protected function installSampledata($source, $target)
@@ -113,9 +119,7 @@ class Magento extends Base
             throw new Exception("Could not detect sample data sql file in source directory $source");
         }
         $sampledataSql = $files[0];
-
-        // create empty database with credentials from ini file
-        $this->createDatabase();
+        Logger::log("Importing sample data from $sampledataSql");
 
         // prepare mysql command: user, host and password
         $mysql = $this->prepareMysqlCommand();
@@ -133,72 +137,32 @@ class Magento extends Base
         }
 
         // copy sample data images
+        Logger::log("Copying sample data media files");
         $sourceMediaDir = $source . DIRECTORY_SEPARATOR . 'media';
         $targetMediaDir = $target . DIRECTORY_SEPARATOR . 'media';
         $sourceModel = Source::getSourceModel($sourceMediaDir);
         $sourceModel->copy($targetMediaDir);
     }
 
-    /**
-     * @see vendor/symfony/src/Symfony/Component/Console/Command/Symfony\Component\Console\Command.Command::execute()
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $this->preExecute($input, $output);
-
-        // set the path where magento should get installed
-        $target = $this->validateTarget($this->config->getTarget());
-
-        // empty target directory if it already exists 
-        if (file_exists($target)) {
-            Logger::log('Delete existing Magento at %s', array($target));
-            exec(sprintf('rm -rf %s/*', $target));
-            exec(sprintf('rm -rf %s/.[a-zA-Z0-9]*', $target));
-        }
-        
-        // set the source where magento should get retrieved from
-        $source = $this->config->getMagentoSource();
-        // copy files from source to target
-        $this->installMagento($source, $target);
-        // move installed files to docroot
-        $this->moveToDocroot($target, 'htdocs');
-        $this->moveToDocroot($target, 'magento');
-        
-        // install sample data
-        if (null !== $this->config->getMagentoSampledataSource()) {
-            $this->installSampledata(
-                $this->config->getMagentoSampledataSource(),
-                $target
-            );
-        }
-
-        // run install.php
-        $this->runMageScript($target);
-
-        // clean cache
-        exec(sprintf('rm -rf %s/var/cache/*', $target));
-
-        Logger::notice('Done');
-    }
-
-    private function setPermissions($target)
+    protected function setPermissions($target)
     {
         $exec = sprintf('chmod -R 0777 %s/app/etc %s/var/ %s/media/', $target, $target, $target);
         exec($exec, $result, $return);
-
+    
         if (0 !== $return) {
             throw new Exception('Could not set permissions for folders app/etc, var and media');
         }
     }
-
+    
+    
     protected function runMageScript($target)
     {
+        Logger::log("Executing installation via install.php");
+        
         $this->setPermissions($target);
         if (file_exists($target . '/app/etc/local.xml')) {
             unlink($target . '/app/etc/local.xml');
         }
-
-        $this->createDatabase();
 
         $cmd = sprintf('php %s%sinstall.php -- ', $target, DIRECTORY_SEPARATOR);
         $cmd .= implode(' ', array(
@@ -233,7 +197,7 @@ class Magento extends Base
         }
 
         // reindexing data
-        $cmd = sprintf('php %s%sshell/indexer.php reindexall', $this->config->getInstallPath(), DIRECTORY_SEPARATOR);
+        $cmd = sprintf('php %s%sshell/indexer.php reindexall', $target, DIRECTORY_SEPARATOR);
         exec($cmd, $result, $return);
 
         if (0 !== $return) {
@@ -242,4 +206,50 @@ class Magento extends Base
 
         $this->setPermissions($target);
     }
+    
+    /**
+     * @see vendor/symfony/src/Symfony/Component/Console/Command/Symfony\Component\Console\Command.Command::execute()
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $this->preExecute($input, $output);
+
+        // set the path where magento should get installed
+        $target = $this->validateTarget($this->config->getTarget());
+
+        // empty target directory if it already exists 
+        if (file_exists($target)) {
+            Logger::log('Delete existing Magento at %s', array($target));
+            exec(sprintf('rm -rf %s/*', $target));
+            exec(sprintf('rm -rf %s/.[a-zA-Z0-9]*', $target));
+        }
+        
+        // set the source where magento should get retrieved from
+        $source = $this->config->getMagentoSource();
+        // copy files from source to target
+        $this->installMagento($source, $target, $this->config->getMagentoBranch());
+        // move installed files to docroot
+        $this->moveToDocroot($target, 'htdocs');
+        $this->moveToDocroot($target, 'magento');
+        
+        // create empty database with credentials from ini file
+        $this->createDatabase();
+
+        // install sample data
+        if (null !== $this->config->getMagentoSampledataSource()) {
+            $this->installSampledata(
+                $this->config->getMagentoSampledataSource(),
+                $target
+            );
+        }
+
+        // run install.php
+        $this->runMageScript($target);
+
+        // clean cache
+        exec(sprintf('rm -rf %s/var/cache/*', $target));
+
+        Logger::notice('Done');
+    }
+
 }

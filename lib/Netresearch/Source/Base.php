@@ -31,12 +31,12 @@ abstract class Base
     
     public static function isFilesystemPath($sourcePath)
     {
-        return (0 === strpos($repoUrl, '/')); // path is absolute filesystem path
+        return (0 === strpos($sourcePath, '/')); // path is absolute filesystem path
     }
     
     public static function isHttpUrl($sourceUrl)
     {
-        return (0 === strpos($repoUrl, 'http://')); // path is web path
+        return (0 === strpos($sourceUrl, 'http://')); // path is web path
     }
     
     /**
@@ -52,5 +52,7 @@ abstract class Base
         } elseif (self::isHttpUrl($source)) {
             return new Http($source);
         }
+        
+        throw new Exception("No applicable source model found for source '$source'");
     }
 }

@@ -26,12 +26,12 @@ class Logger
         self::$output = $output;
     }
     
-    public static function writeln($message, array $args = array(), $type = self::TYPE_LOG)
+    protected static function writeln($message, array $args = array(), $type = self::TYPE_LOG)
     {
         if (!self::$output) {
             throw new Exception('No output interface given');
         }
-        self::$output->writeln(sprintf("<$type>$message</$type>", $args));
+        self::$output->writeln(vsprintf("<$type>$message</$type>", $args));
     }
     
     public static function log($message, array $args = array())

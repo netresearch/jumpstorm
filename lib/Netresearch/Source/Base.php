@@ -2,6 +2,7 @@
 namespace Netresearch\Source;
 
 use Netresearch\Source\Git;
+use \Exception as Exception;
 
 abstract class Base
 {

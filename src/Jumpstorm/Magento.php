@@ -206,7 +206,7 @@ class Magento extends Base
 
         // empty target directory if it already exists 
         if (file_exists($target)) {
-            Logger::log('Delete existing Magento at %s', array($target));
+            Logger::comment('Delete existing Magento at %s', array($target));
             exec(sprintf('rm -rf %s/*', $target));
             exec(sprintf('rm -rf %s/.[a-zA-Z0-9]*', $target));
         }

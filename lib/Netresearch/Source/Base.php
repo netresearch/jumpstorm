@@ -26,7 +26,6 @@ abstract class Base
             || (0 === strpos($repoUrl, 'git://')) // path starts with "git://"
             || (0 === strpos($repoUrl, 'http://')) // path starts with "http://"
             || (0 === strpos($repoUrl, 'ssh://')) // path starts with "ssh://"
-            || (is_dir($repoUrl . DIRECTORY_SEPARATOR . '.git')) // dir contains .git folder
         );
     }
     

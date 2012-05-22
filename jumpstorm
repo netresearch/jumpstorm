@@ -24,7 +24,7 @@ $loader->register();
 
 use Symfony\Component\Console\Application;
 
-$console = new Application();
+$console = new Application('Jumpstorm', '0.1');
 $console->add(new Jumpstorm\Magento());
 $console->add(new Jumpstorm\Unittesting());
 $console->add(new Jumpstorm\Extensions());

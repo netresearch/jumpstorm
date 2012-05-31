@@ -1,5 +1,4 @@
 <?php
-
 use Netresearch\Config;
 use \Exception as Exception;
 
@@ -40,7 +39,7 @@ class UserCreator extends AbstractCreator
         } elseif ($key === 'password' && empty($value)) {
             throw new Exception('Please set \'password\' in ini file.');
         } elseif ($key === 'is_active' && !is_bool($value)) {
-            throw new Exception('Please set boolean value \'is_active\' in ini file.');
+            $this->{$key} = (bool)$value;
         }
         
         return true;

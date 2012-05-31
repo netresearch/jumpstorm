@@ -44,7 +44,7 @@ class Plugins extends Base
         $plugins = $this->config->getPlugins();
         foreach ($plugins as $name => $settings) {
             // check if plugin was defined in ini, but disabled
-            if ($settings === '0') {
+            if ('0' === $settings->enabled) {
                 Logger::log('Skipping plugin "%s"', array($name));
                 continue;
             }
@@ -62,6 +62,7 @@ class Plugins extends Base
             require_once($file);
             
             // load additional configuration, if given
+            $configPlugin = $this->config;
             $ini = $path . $name . '.ini';
             if (file_exists($ini)) {
                 $configPlugin = new Config($ini, null, array('allowModifications' => true));

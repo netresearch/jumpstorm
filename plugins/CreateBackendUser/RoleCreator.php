@@ -37,22 +37,48 @@ class RoleCreator extends AbstractCreator
         return true;
     }
         
+    /**
+     * (non-PHPdoc)
+     * @see AbstractCreator::getAllowedProperties()
+     */
+    protected function getAllowedProperties()
+    {
+        return array(
+            'name',
+        );
+    }
+    
+    /**
+     * Create a new group.
+     * 
+     * @param Mage_Admin_Model_Role $role
+     */
     public function createGroupRole(Mage_Admin_Model_Role $role)
     {
+        $role->load($this->name, 'role_name');
+        if ($role->getId()) {
+            return $role;
+        }
+        
         return $role
             ->setRoleName($this->name)
-//             ->setUserId(0)
             ->setRoleType(self::TYPE_GROUP)
             ->setTreeLevel(self::TREE_LEVEL_GROUP)
-//             ->setParentId(0)
             ->save();
     }
     
+    /**
+     * Add a user to a group.
+     * 
+     * @param Mage_Admin_Model_Role $role
+     * @param Mage_Admin_Model_Role $parentRole
+     * @param Mage_Admin_Model_User $user
+     */
     public function createUserRole(Mage_Admin_Model_Role $role,
             Mage_Admin_Model_Role $parentRole, Mage_Admin_Model_User $user)
     {
         return $role
-            ->setRoleName($this->name)
+            ->setRoleName($parentRole->getRoleName())
             ->setUserId($user->getId())
             ->setRoleType(self::TYPE_USER)
             ->setTreeLevel(self::TREE_LEVEL_USER)

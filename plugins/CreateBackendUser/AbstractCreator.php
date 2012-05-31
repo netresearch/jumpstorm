@@ -1,5 +1,7 @@
 <?php
 
+use Netresearch\Logger;
+
 use Netresearch\Config;
 use \Exception as Exception;
 
@@ -15,11 +17,13 @@ abstract class AbstractCreator
     /**
      * Set config and perform validation of the given config values
      * @param Config $config
+     * @param string $key The config key for the current object's properties
      */
-    public function __construct(Config $config)
+    public function __construct(Config $config, $key)
     {
         $this->config = $config;
-        foreach ($config->toArray() as $key => $value) {
+
+        foreach ($config->plugins->CreateBackendUser->{$key}->toArray() as $key => $value) {
             $this->validateProperty($key, $value);
             $this->{$key} = $value;
         }

@@ -3,8 +3,13 @@
 use Netresearch\Config;
 use Netresearch\PluginInterface as JumpstormPlugin;
 
+require_once 'AbstractCreator.php';
+require_once 'UserCreator.php';
+require_once 'RoleCreator.php';
+require_once 'PermissionsCreator.php';
+
 /**
- * disable admin notifications
+ * Create demo admin user, roles and permissions
  */
 class CreateBackendUser implements JumpstormPlugin
 {
@@ -20,14 +25,14 @@ class CreateBackendUser implements JumpstormPlugin
 
     public function execute()
     {
-        $userCreator = new UserCreator($config->user);
+        $userCreator = new UserCreator($this->config, 'user');
         $user = $userCreator->createUser(Mage::getModel('admin/user'));
         
-        $roleCreator = new RoleCreator($config->role);
+        $roleCreator = new RoleCreator($this->config, 'role');
         $groupRole = $roleCreator->createGroupRole(Mage::getModel('admin/role'));
         $userRole = $roleCreator->createUserRole(Mage::getModel('admin/role'), $groupRole, $user);
         
-        $permissionsCreator = new PermissionsCreator($config->permissions);
+        $permissionsCreator = new PermissionsCreator($this->config, 'permissions');
         $rules = $permissionsCreator->createPermissions(Mage::getModel('admin/rules'), $groupRole);
     }
 }

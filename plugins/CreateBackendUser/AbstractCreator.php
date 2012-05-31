@@ -23,9 +23,12 @@ abstract class AbstractCreator
     {
         $this->config = $config;
 
-        foreach ($config->plugins->CreateBackendUser->{$key}->toArray() as $key => $value) {
-            $this->validateProperty($key, $value);
-            $this->{$key} = $value;
+        $configProperties = $config->plugins->CreateBackendUser->{$key};
+        if (null !== $configProperties) {
+            foreach ($configProperties->toArray() as $key => $value) {
+                $this->validateProperty($key, $value);
+                $this->{$key} = $value;
+            }
         }
     }
 

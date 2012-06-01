@@ -35,9 +35,10 @@ class Git extends Source implements SourceInterface
      */
     protected function _cloneRepository($repoUrl, $targetPath)
     {
-        Logger::log('Cloning Git repository');
+        Logger::comment('Cloning Git repository');
 
         $command = sprintf('git clone %s %s 2>&1', $repoUrl, $targetPath);
+        Logger::log($command);
         exec($command, $result, $return);
 
         if (0 !== $return) {

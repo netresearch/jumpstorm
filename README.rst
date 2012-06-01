@@ -154,25 +154,42 @@ How to write your own plugins?
 
 Plugins follow a simple structure. They are placed in ``plugins`` directory.
 Each plugin is a directory with at least one php file inside, which contains a
-php class. This directory, the php file and php class must have the same name
-(with uppercase first letter), which is used as key in configuration file.
-Plugins can be disabled by either not mentioning them in configuration or by
-setting its configuration value to ``enabled = 0``.
-
-Plugin configuration can be achieved by dot syntax:
+php class, and optionally an ini file with additional settings for the plugin:
 
 ::
 
-  PluginA.enabled = 0         => plugin will be skipped
+  jumpstorm
+  ├── ini
+  │   └── custom
+  │       ├── main.ini
+  │       └── plugin_d.ini
+  …
+  └── plugins
+      ├── PluginA
+      │   ├── PluginA.ini
+      │   └── PluginA.php
+      └── PluginD
+          └── PluginD.php
 
-  PluginB = someValue         => plugin will be active and will have that single configuration value "someValue"
+The directory, the ini file, the php file and php class must have the same name
+(with uppercase first letter) as is used in the main configuration file. Plugins
+can be easily disabled by either not mentioning them in the main configuration
+or by setting its configuration value ``enabled`` to ``0``:
 
-  PluginC.foo = 0             => plugin will be active and will have configuration ['foo' => 0, 'bar' => 'foobar']
+::
+
+  ; Plugin will be skipped
+  PluginA.enabled = 0
+   
+  ; Plugin will be active and will have that single configuration value "someValue"
+  PluginB = someValue 
+  
+  ; Plugin will be active and will have configuration ['foo' => 0, 'bar' => 'foobar']
+  PluginC.foo = 0
   PluginC.bar = foobar
 
-Plugin configuration might get quite extensive. Therefore a separate ini file
-can be provided within the plugin directory. Again, it follows the same naming
-conventions as mentioned above.
+  ; Plugin will be active and will load additional settings from given path
+  PluginD.ini = ini/custom/plugin_d.ini
 
 The plugin's main php class must implement Netresearch\\PluginInterface.
 

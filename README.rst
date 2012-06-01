@@ -138,9 +138,10 @@ Please note, that option ``-c /path/to/my/ini`` is optional.
 Plugins
 -------
 
-In some cases you may want to have a little different setup, e.g. some special users, products, or settings. To achieve
-that, *Jumpstorm* is extendible. The sample configuration file already provides a ``[plugins]`` section. Every plugin
-mentioned here will be executed by running
+In some cases you may want to have a little different setup, e.g. some special
+users, products, or settings. To achieve that, *Jumpstorm* is extendible.
+The sample configuration file already provides a ``[plugins]`` section. Every
+plugin mentioned there will be executed by running
 
 ::
 
@@ -151,23 +152,46 @@ Please note, that option ``-c /path/to/my/ini`` is optional.
 How to write your own plugins?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Plugins follow a simple structure. They are placed in ``plugins`` directory. Each plugin is a directory with at least
-one php file inside, which contains a php class. This directory, the php file and php class must have the same name
-(with uppercase first letter), which is used as key in configuration file. Plugins can be disabled by either not
-mentioning them in configuration or by setting its configuration value to ``0``.
-
-Plugin configuration can be achieved by dot syntax:
+Plugins follow a simple structure. They are placed in ``plugins`` directory.
+Each plugin is a directory with at least one php file inside, which contains a
+php class, and optionally an ini file with additional settings for the plugin:
 
 ::
 
-  PluginA = 0         => plugin will be skipped
+  jumpstorm
+  ├── ini
+  │   └── custom
+  │       ├── main.ini
+  │       └── plugin_d.ini
+  …
+  └── plugins
+      ├── PluginA
+      │   ├── PluginA.ini
+      │   └── PluginA.php
+      └── PluginD
+          └── PluginD.php
 
-  PluginB = someValue => plugin will be active and will have that single configuration value "someValue"
+The directory, the ini file, the php file and php class must have the same name
+(with uppercase first letter) as is used in the main configuration file. Plugins
+can be easily disabled by either not mentioning them in the main configuration
+or by setting its configuration value ``enabled`` to ``0``:
 
-  PluginC.foo = 0     => plugin will be active and will have configuration ['foo' => 0, 'bar' => 'foobar']
+::
+
+  ; Plugin will be skipped
+  PluginA.enabled = 0
+   
+  ; Plugin will be active and will have that single configuration value "someValue"
+  PluginB = someValue 
+  
+  ; Plugin will be active and will have configuration ['foo' => 0, 'bar' => 'foobar']
+  PluginC.foo = 0
   PluginC.bar = foobar
 
-The plugin's main php class must implement Netresearch\PluginInterface.
+  ; Plugin will be active and will load additional settings from given path
+  PluginD.ini = ini/custom/plugin_d.ini
+
+The plugin's main php class must implement Netresearch\\PluginInterface.
 
 Upcoming features
 =================

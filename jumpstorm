@@ -13,12 +13,21 @@ use Symfony\Component\ClassLoader\UniversalClassLoader;
 
 $loader = new UniversalClassLoader();
 
-$loader->registerNamespaces(array(
+// load default namespaces
+$namespaces = array(
     'Jumpstorm'        => __DIR__.'/src',
     'Netresearch'      => __DIR__.'/lib',
     'Symfony'          => __DIR__.'/lib',
-    'Zend'             => __DIR__.'/lib',
-));
+    'Zend'             => __DIR__.'/lib'
+);
+
+// add plugin namespaces dynamically
+$pluginDirs = glob(__DIR__.'/plugins/*', GLOB_ONLYDIR);
+foreach ($pluginDirs as $path) {
+    $namespaces[basename($path)] = dirname($path);
+}
+
+$loader->registerNamespaces($namespaces);
 $loader->registerNamespaceFallbacks(array(__DIR__.'/src'));
 $loader->register();
 

@@ -44,7 +44,7 @@ class Plugins extends Base
         $plugins = $this->config->getPlugins();
         foreach ($plugins as $name => $settings) {
             // check if plugin was defined in ini, but disabled
-            if ($settings === '0') {
+            if ('0' === $settings->enabled) {
                 Logger::log('Skipping plugin "%s"', array($name));
                 continue;
             }
@@ -59,17 +59,25 @@ class Plugins extends Base
                 Logger::log('Expected it at path "%s"', array($file));
                 continue;
             }
-            require_once($file);
-            
-            // load additional configuration, if given
-            $ini = $path . $name . '.ini';
-            if (file_exists($ini)) {
-                $configPlugin = new Config($ini, null, array('allowModifications' => true));
-                $configPlugin->merge($this->config);
+
+            // load default jumpstorm config for plugin execution
+            $pluginConfig = $this->config;
+
+            $customIni = $settings->ini;
+            $pluginIni = $path . $name . '.ini';
+            if ((null !== $customIni) && file_exists($customIni)) {
+                // add custom config settings, if given
+                $pluginConfig = new Config($customIni, null, array('allowModifications' => true));
+                $pluginConfig->merge($this->config);
+            } elseif (file_exists($pluginIni)) {
+                // add plugin config settings, if given
+                $pluginConfig = new Config($pluginIni, null, array('allowModifications' => true));
+                $pluginConfig->merge($this->config);
             }
-            
+
             Logger::comment(sprintf('Running plugin "%s"', $name));
-            $plugin = new $name($configPlugin);
+            $class = "$name\\$name";
+            $plugin = new $class($pluginConfig);
             $plugin->execute();
             Logger::notice(sprintf('Finished running plugin "%s"', $name));
         }

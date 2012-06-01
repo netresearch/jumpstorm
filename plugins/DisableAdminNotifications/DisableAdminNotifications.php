@@ -1,4 +1,8 @@
 <?php
+
+namespace DisableAdminNotifications;
+
+use \Mage as Mage;
 use Netresearch\Config;
 use Netresearch\PluginInterface as JumpstormPlugin;
 

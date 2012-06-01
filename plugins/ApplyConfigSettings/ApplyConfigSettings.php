@@ -1,5 +1,5 @@
 <?php
-namespace ApplySettings;
+namespace ApplyConfigSettings;
 
 use \Mage as Mage;
 use Netresearch\Config;
@@ -9,7 +9,7 @@ use Netresearch\PluginInterface as JumpstormPlugin;
 /**
  * apply some settings
  */
-class ApplySettings implements JumpstormPlugin
+class ApplyConfigSettings implements JumpstormPlugin
 {
     protected $config;
 
@@ -20,9 +20,9 @@ class ApplySettings implements JumpstormPlugin
 
     public function execute()
     {
-        $settings = $this->config->plugins->ApplySettings;
+        $settings = $this->config->plugins->ApplyConfigSettings;
         if ($settings instanceof \Zend_Config) {
-            foreach ($this->config->plugins->ApplySettings as $name=>$setting) {
+            foreach ($this->config->plugins->ApplyConfigSettings as $name=>$setting) {
                 if ($setting instanceof \Zend_Config && $setting->path && isset($setting->value)) {
                     Mage::getModel('eav/entity_setup', 'core_setup')->setConfigData(
                         $setting->path,
@@ -34,7 +34,7 @@ class ApplySettings implements JumpstormPlugin
                 }
             }
         } else {
-            Logger::error('Invalid configuration for plugin ApplySettings', array(), false);
+            Logger::error('Invalid configuration for plugin ApplyConfigSettings', array(), false);
         }
     }
 }

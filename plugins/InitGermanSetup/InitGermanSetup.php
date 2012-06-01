@@ -1,5 +1,5 @@
 <?php
-namespace GermanSetup;
+namespace InitGermanSetup;
 
 use \Mage as Mage;
 use Netresearch\Config;
@@ -9,7 +9,7 @@ use Netresearch\PluginInterface as JumpstormPlugin;
 /**
  * initialize German Setup
  */
-class GermanSetup implements JumpstormPlugin
+class InitGermanSetup implements JumpstormPlugin
 {
     protected $config;
 
@@ -28,7 +28,7 @@ class GermanSetup implements JumpstormPlugin
             $this->setup();
         } catch (Exception $e) {
             $msg.= $e->getMessage() . ' (' . $e->getFile() . ' l. ' . $e->getLine() . ")\n";
-            Logger::error('An error occured while initializing GermanSetup:', array(), false);
+            Logger::error('An error occured while initializing InitGermanSetup:', array(), false);
             Logger::log('%s (%s, line %s)', array($e->getMessage(), $e->getFile(), $e->getLine()));
         }
 

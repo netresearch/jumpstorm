@@ -64,14 +64,9 @@ class Plugins extends Base
             $pluginConfig = $this->config;
 
             $customIni = $settings->ini;
-            $pluginIni = $path . $name . '.ini';
             if ((null !== $customIni) && file_exists($customIni)) {
                 // add custom config settings, if given
                 $pluginConfig = new Config($customIni, null, array('allowModifications' => true));
-                $pluginConfig->merge($this->config);
-            } elseif (file_exists($pluginIni)) {
-                // add plugin config settings, if given
-                $pluginConfig = new Config($pluginIni, null, array('allowModifications' => true));
                 $pluginConfig->merge($this->config);
             }
 

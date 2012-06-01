@@ -152,9 +152,9 @@ Please note, that option ``-c /path/to/my/ini`` is optional.
 How to write your own plugins?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Plugins follow a simple structure. They are placed in ``plugins`` directory.
-Each plugin is a directory with at least one php file inside, which contains a
-php class, and optionally an ini file with additional settings for the plugin:
+Plugins follow a simple structure. They are placed in the ``plugins`` directory.
+Each plugin is itself a directory with at least one php file inside, containing
+a php class:
 
 ::
 
@@ -166,15 +166,14 @@ php class, and optionally an ini file with additional settings for the plugin:
   …
   └── plugins
       ├── PluginA
-      │   ├── PluginA.ini
       │   └── PluginA.php
       └── PluginD
           └── PluginD.php
 
-The directory, the ini file, the php file and php class must have the same name
+The directory, the php file and the php class must have the same name
 (with uppercase first letter) as is used in the main configuration file. Plugins
 can be easily disabled by either not mentioning them in the main configuration
-or by setting its configuration value ``enabled`` to ``0``:
+or by setting their configuration value ``enabled`` to ``0``:
 
 ::
 

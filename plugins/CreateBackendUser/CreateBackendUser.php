@@ -1,12 +1,11 @@
 <?php
 
+namespace CreateBackendUser;
+
+use CreateBackendUser\UserCreator;
+use \Mage as Mage;
 use Netresearch\Config;
 use Netresearch\PluginInterface as JumpstormPlugin;
-
-require_once 'AbstractCreator.php';
-require_once 'UserCreator.php';
-require_once 'RoleCreator.php';
-require_once 'PermissionsCreator.php';
 
 /**
  * Create demo admin user, roles and permissions

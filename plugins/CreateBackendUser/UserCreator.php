@@ -1,5 +1,7 @@
 <?php
-use Netresearch\Config;
+
+namespace CreateBackendUser;
+
 use \Exception as Exception;
 
 /**

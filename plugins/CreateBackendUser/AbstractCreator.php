@@ -1,8 +1,9 @@
 <?php
 
-use Netresearch\Logger;
+namespace CreateBackendUser;
 
 use Netresearch\Config;
+use Netresearch\Logger;
 use \Exception as Exception;
 
 abstract class AbstractCreator

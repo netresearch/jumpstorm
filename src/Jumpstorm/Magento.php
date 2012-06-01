@@ -88,12 +88,18 @@ class Magento extends Base
      * @param string $target Absolute directory name (Magento root)
      * @throws Exception
      */
-    protected function installSampledata($source, $target)
+    protected function installSampledata($source, $target, $branch)
     {
+        $sampleDataDir = $target . DIRECTORY_SEPARATOR . 'sampleData';
+
+        $sourceModel = Source::getSourceModel($source);
+        // copy from source to install directory
+        $sourceModel->copy($sampleDataDir, $branch);
+
         // glob for sql file in $source
-        $files = glob($source . DIRECTORY_SEPARATOR . '*.sql');
+        $files = glob($sampleDataDir . DIRECTORY_SEPARATOR . '*.sql');
         if (false === $files || count($files) !== 1) {
-            throw new Exception("Could not detect sample data sql file in source directory $source");
+            throw new Exception("Could not detect sample data sql file in source directory $sampleDataDir");
         }
         $sampledataSql = $files[0];
         Logger::log("Importing sample data from $sampledataSql");
@@ -115,10 +121,13 @@ class Magento extends Base
 
         // copy sample data images
         Logger::log("Copying sample data media files");
-        $sourceMediaDir = $source . DIRECTORY_SEPARATOR . 'media';
+        $sourceMediaDir = $sampleDataDir . DIRECTORY_SEPARATOR . 'media';
         $targetMediaDir = $target . DIRECTORY_SEPARATOR . 'media';
         $sourceModel = Source::getSourceModel($sourceMediaDir);
         $sourceModel->copy($targetMediaDir);
+
+        // remove temporary sample data folder
+        exec(sprintf('rm -rf %s', $sampleDataDir));
     }
 
     /**
@@ -228,7 +237,8 @@ class Magento extends Base
         if (null !== $this->config->getMagentoSampledataSource()) {
             $this->installSampledata(
                 $this->config->getMagentoSampledataSource(),
-                $target
+                $target,
+                $this->config->getMagentoSampledataBranch()
             );
         }
 

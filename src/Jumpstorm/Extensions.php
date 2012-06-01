@@ -78,6 +78,18 @@ class Extensions extends Base
     protected function deployExtension($name)
     {
         $source = $this->getExtensionFolder() . DIRECTORY_SEPARATOR . $name;
+        if (false == file_exists($source . DIRECTORY_SEPARATOR . 'modman')) {
+            $deployed = false;
+            foreach (glob($source . DIRECTORY_SEPARATOR . '*' . DIRECTORY_SEPARATOR . 'modman') as $modmanFile) {
+                $subSource = substr($modmanFile, strlen($source . DIRECTORY_SEPARATOR), - strlen(DIRECTORY_SEPARATOR . 'modman'));
+                $this->deployExtension($name . DIRECTORY_SEPARATOR . $subSource);
+                $deployed = true;
+            }
+            if ($deployed) {
+                return;
+            }
+        }
+        Logger::log('Copy extension from %s', array($source));
         $command = sprintf(
             'rsync -a -h --exclude="doc/*" --exclude="*.git" %s %s 2>&1',
             $source . DIRECTORY_SEPARATOR,

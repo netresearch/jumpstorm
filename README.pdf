@@ -150,7 +150,7 @@ endobj
  /Dest [ 22 0 R
  /XYZ
  68.69291
- 738.6772
+ 767.0236
  0 ]
  /Rect [ 500.5951
  693.7736
@@ -168,7 +168,7 @@ endobj
  /Dest [ 22 0 R
  /XYZ
  68.69291
- 738.6772
+ 767.0236
  0 ]
  /Rect [ 447.0578
  633.7736
@@ -186,7 +186,7 @@ endobj
  /Dest [ 22 0 R
  /XYZ
  68.69291
- 738.6772
+ 767.0236
  0 ]
  /Rect [ 239.4529
  460.5736
@@ -244,9 +244,9 @@ endobj
  0
  0 ]
  /Rect [ 117.6346
- 246.077
+ 270.077
  161.3252
- 258.077 ]
+ 282.077 ]
  /Subtype /Link
  /Type /Annot >>
 endobj
@@ -282,9 +282,9 @@ endobj
  707.0236
  0 ]
  /Rect [ 77.58291
- 725.4272
+ 753.7736
  83.14291
- 737.4272 ]
+ 765.7736 ]
  /Subtype /Link
  /Type /Annot >>
 endobj
@@ -300,9 +300,9 @@ endobj
  647.0236
  0 ]
  /Rect [ 88.70291
- 725.4272
+ 753.7736
  94.26291
- 737.4272 ]
+ 765.7736 ]
  /Subtype /Link
  /Type /Annot >>
 endobj
@@ -318,9 +318,9 @@ endobj
  473.8236
  0 ]
  /Rect [ 99.82291
- 725.4272
+ 753.7736
  105.3829
- 737.4272 ]
+ 765.7736 ]
  /Subtype /Link
  /Type /Annot >>
 endobj
@@ -358,7 +358,7 @@ endobj
 % 'R24': class PDFInfo 
 24 0 obj
 << /Author ()
- /CreationDate (D:20120601120730-01'00')
+ /CreationDate (D:20120601152007-01'00')
  /Creator (\(unspecified\))
  /Keywords ()
  /Producer (ReportLab PDF Library - www.reportlab.com)
@@ -463,7 +463,7 @@ endobj
  /Dest [ 18 0 R
  /XYZ
  62.69291
- 314.327
+ 338.327
  0 ]
  /First 34 0 R
  /Last 35 0 R
@@ -476,7 +476,7 @@ endobj
 << /Dest [ 18 0 R
  /XYZ
  62.69291
- 281.327
+ 305.327
  0 ]
  /Next 35 0 R
  /Parent 33 0 R
@@ -487,7 +487,7 @@ endobj
 << /Dest [ 18 0 R
  /XYZ
  62.69291
- 209.327
+ 233.327
  0 ]
  /Parent 33 0 R
  /Prev 34 0 R
@@ -1035,7 +1035,7 @@ endobj
 % 'R39': class PDFStream 
 39 0 obj
 % page stream
-<< /Length 4613 >>
+<< /Length 4477 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
 q
@@ -1045,13 +1045,13 @@ BT 1 0 0 1 0 2.5 Tm 15 TL /F5 12.5 Tf 0 0 0 rg (How to write your own plugins?) 
 Q
 Q
 q
-1 0 0 1 62.69291 708.0236 cm
+1 0 0 1 62.69291 720.0236 cm
 q
-BT 1 0 0 1 0 26 Tm .069398 Tw 12 TL /F1 10 Tf 0 0 0 rg (Plugins follow a simple structure. They are placed in ) Tj /F4 10 Tf (plugins ) Tj /F1 10 Tf (directory. Each plugin is a directory with at) Tj T* 0 Tw .75332 Tw (least one php file inside, which contains a php class, and optionally an ini file with additional settings for) Tj T* 0 Tw (the plugin:) Tj T* ET
+BT 1 0 0 1 0 14 Tm 2.122485 Tw 12 TL /F1 10 Tf 0 0 0 rg (Plugins follow a simple structure. They are placed in the ) Tj /F4 10 Tf (plugins ) Tj /F1 10 Tf (directory. Each plugin is itself a) Tj T* 0 Tw (directory with at least one php file inside, containing a php class:) Tj T* ET
 Q
 Q
 q
-1 0 0 1 62.69291 542.8236 cm
+1 0 0 1 62.69291 566.8236 cm
 q
 q
 1 0 0 1 0 0 cm
@@ -1061,24 +1061,24 @@ q
 .662745 .662745 .662745 RG
 .5 w
 .960784 .960784 .862745 rg
-n -6 -6 468.6898 156 re B*
+n -6 -6 468.6898 144 re B*
 Q
 q
 0 0 0 rg
-BT 1 0 0 1 0 134 Tm /F4 10 Tf 12 TL (jumpstorm) Tj T* /F6 10 Tf 12 TL (nnn) Tj /F4 10 Tf 12 TL ( ini) Tj T* /F6 10 Tf 12 TL (n) Tj /F4 10 Tf 12 TL (   ) Tj /F6 10 Tf 12 TL (nnn) Tj /F4 10 Tf 12 TL ( custom) Tj T* /F6 10 Tf 12 TL (n) Tj /F4 10 Tf 12 TL (       ) Tj /F6 10 Tf 12 TL (nnn) Tj /F4 10 Tf 12 TL ( main.ini) Tj T* /F6 10 Tf 12 TL (n) Tj /F4 10 Tf 12 TL (       ) Tj /F6 10 Tf 12 TL (nnn) Tj /F4 10 Tf 12 TL ( plugin_d.ini) Tj T* (\205) Tj T* /F6 10 Tf 12 TL (nnn) Tj /F4 10 Tf 12 TL ( plugins) Tj T* (    ) Tj /F6 10 Tf 12 TL (nnn) Tj /F4 10 Tf 12 TL ( PluginA) Tj T* (    ) Tj /F6 10 Tf 12 TL (n) Tj /F4 10 Tf 12 TL (   ) Tj /F6 10 Tf 12 TL (nnn) Tj /F4 10 Tf 12 TL ( PluginA.ini) Tj T* (    ) Tj /F6 10 Tf 12 TL (n) Tj /F4 10 Tf 12 TL (   ) Tj /F6 10 Tf 12 TL (nnn) Tj /F4 10 Tf 12 TL ( PluginA.php) Tj T* (    ) Tj /F6 10 Tf 12 TL (nnn) Tj /F4 10 Tf 12 TL ( PluginD) Tj T* (        ) Tj /F6 10 Tf 12 TL (nnn) Tj /F4 10 Tf 12 TL ( PluginD.php) Tj T* ET
+BT 1 0 0 1 0 122 Tm /F4 10 Tf 12 TL (jumpstorm) Tj T* /F6 10 Tf 12 TL (nnn) Tj /F4 10 Tf 12 TL ( ini) Tj T* /F6 10 Tf 12 TL (n) Tj /F4 10 Tf 12 TL (   ) Tj /F6 10 Tf 12 TL (nnn) Tj /F4 10 Tf 12 TL ( custom) Tj T* /F6 10 Tf 12 TL (n) Tj /F4 10 Tf 12 TL (       ) Tj /F6 10 Tf 12 TL (nnn) Tj /F4 10 Tf 12 TL ( main.ini) Tj T* /F6 10 Tf 12 TL (n) Tj /F4 10 Tf 12 TL (       ) Tj /F6 10 Tf 12 TL (nnn) Tj /F4 10 Tf 12 TL ( plugin_d.ini) Tj T* (\205) Tj T* /F6 10 Tf 12 TL (nnn) Tj /F4 10 Tf 12 TL ( plugins) Tj T* (    ) Tj /F6 10 Tf 12 TL (nnn) Tj /F4 10 Tf 12 TL ( PluginA) Tj T* (    ) Tj /F6 10 Tf 12 TL (n) Tj /F4 10 Tf 12 TL (   ) Tj /F6 10 Tf 12 TL (nnn) Tj /F4 10 Tf 12 TL ( PluginA.php) Tj T* (    ) Tj /F6 10 Tf 12 TL (nnn) Tj /F4 10 Tf 12 TL ( PluginD) Tj T* (        ) Tj /F6 10 Tf 12 TL (nnn) Tj /F4 10 Tf 12 TL ( PluginD.php) Tj T* ET
 Q
 Q
 Q
 Q
 Q
 q
-1 0 0 1 62.69291 498.8236 cm
+1 0 0 1 62.69291 522.8236 cm
 q
-BT 1 0 0 1 0 26 Tm .188409 Tw 12 TL /F1 10 Tf 0 0 0 rg (The directory, the ini file, the php file and php class must have the same name \(with uppercase first letter\)) Tj T* 0 Tw .722765 Tw (as is used in the main configuration file. Plugins can be easily disabled by either not mentioning them in) Tj T* 0 Tw (the main configuration or by setting its configuration value ) Tj /F4 10 Tf (enabled ) Tj /F1 10 Tf (to ) Tj /F4 10 Tf (0) Tj /F1 10 Tf (:) Tj T* ET
+BT 1 0 0 1 0 26 Tm .597882 Tw 12 TL /F1 10 Tf 0 0 0 rg (The directory, the php file and the php class must have the same name \(with uppercase first letter\) as is) Tj T* 0 Tw 1.157045 Tw (used in the main configuration file. Plugins can be easily disabled by either not mentioning them in the) Tj T* 0 Tw (main configuration or by setting their configuration value ) Tj /F4 10 Tf (enabled ) Tj /F1 10 Tf (to ) Tj /F4 10 Tf (0) Tj /F1 10 Tf (:) Tj T* ET
 Q
 Q
 q
-1 0 0 1 62.69291 346.327 cm
+1 0 0 1 62.69291 370.327 cm
 q
 q
 .91919 0 0 .91919 0 0 cm
@@ -1098,44 +1098,48 @@ Q
 Q
 Q
 q
-1 0 0 1 62.69291 326.327 cm
+1 0 0 1 62.69291 350.327 cm
 q
 0 0 0 rg
 BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (The plugin's main php class must implement Netresearch\\PluginInterface.) Tj T* ET
 Q
 Q
 q
-1 0 0 1 62.69291 293.327 cm
+1 0 0 1 62.69291 317.327 cm
 q
 BT 1 0 0 1 0 3.5 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Upcoming features) Tj T* ET
 Q
 Q
 q
-1 0 0 1 62.69291 263.327 cm
+1 0 0 1 62.69291 287.327 cm
 q
 BT 1 0 0 1 0 3 Tm 18 TL /F2 15 Tf 0 0 0 rg (Modman support) Tj T* ET
 Q
 Q
 q
-1 0 0 1 62.69291 221.327 cm
+1 0 0 1 62.69291 245.327 cm
 q
 BT 1 0 0 1 0 26 Tm 2.010574 Tw 12 TL /F1 10 Tf 0 0 0 rg (As we use ) Tj 0 0 .501961 rg (modman ) Tj 0 0 0 rg (for all our extensions, we will implement ) Tj /F3 10 Tf (Jumpstorm ) Tj /F1 10 Tf (to support this as soon as) Tj T* 0 Tw .892651 Tw (possible. Currently we only copy \(or clone\) the extensions to the ) Tj /F4 10 Tf (.modman ) Tj /F1 10 Tf (directory, but deployment is) Tj T* 0 Tw (not yet done via ) Tj /F3 10 Tf (modman) Tj /F1 10 Tf (.) Tj T* ET
 Q
 Q
 q
-1 0 0 1 62.69291 191.327 cm
+1 0 0 1 62.69291 215.327 cm
 q
 BT 1 0 0 1 0 3 Tm 18 TL /F2 15 Tf 0 0 0 rg (Interactive mode) Tj T* ET
 Q
 Q
 q
-1 0 0 1 62.69291 149.327 cm
+1 0 0 1 62.69291 173.327 cm
 q
 BT 1 0 0 1 0 26 Tm .185777 Tw 12 TL /F1 10 Tf 0 0 0 rg (If you use ) Tj /F3 10 Tf (Jumpstorm ) Tj /F1 10 Tf (for a bunch of different projects on and on, you become tired of changing the config) Tj T* 0 Tw 1.681163 Tw (file. So it would be nice to specify some settings to be confirmed \(and corrected\) during execution of) Tj T* 0 Tw /F3 10 Tf (Jumpstorm) Tj /F1 10 Tf (. This mode will be suppressed by the built-in option ) Tj /F4 10 Tf (-n ) Tj /F1 10 Tf (\() Tj /F4 10 Tf (--no-interaction) Tj /F1 10 Tf (\).) Tj T* ET
 Q
 Q
 q
-1 0 0 1 62.69291 92.63409 cm
+1 0 0 1 62.69291 116.6341 cm
+Q
+q
+1 0 0 1 62.69291 88.28763 cm
+n 0 14.17323 m 469.8898 14.17323 l S
 Q
  
 endstream
@@ -1143,15 +1147,11 @@ endobj
 % 'R40': class PDFStream 
 40 0 obj
 % page stream
-<< /Length 633 >>
+<< /Length 559 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
 q
-1 0 0 1 62.69291 736.6772 cm
-n 0 14.17323 m 469.8898 14.17323 l S
-Q
-q
-1 0 0 1 62.69291 712.6772 cm
+1 0 0 1 62.69291 741.0236 cm
 0 0 0 rg
 BT /F1 10 Tf 12 TL ET
 q
@@ -1250,20 +1250,20 @@ xref
 0000007831 00000 n
 0000014528 00000 n
 0000020615 00000 n
-0000025327 00000 n
-0000026062 00000 n
-0000026194 00000 n
-0000026271 00000 n
-0000026348 00000 n
-0000026425 00000 n
+0000025191 00000 n
+0000025852 00000 n
+0000025984 00000 n
+0000026061 00000 n
+0000026138 00000 n
+0000026215 00000 n
 trailer
 << /ID 
  % ReportLab generated PDF document -- digest (http://www.reportlab.com) 
- [(>\012##\352\260@$\304]\346\236\304\257\017W) (>\012##\352\260@$\304]\346\236\304\257\017W)] 
+ [(2\244\325E\012\013\254\037\250\320\213\213n\211q\225) (2\244\325E\012\013\254\037\250\320\213\213n\211q\225)] 
 
  /Info 24 0 R
  /Root 23 0 R
  /Size 46 >>
 startxref
-26472
+26262
 %%EOF

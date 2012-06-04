@@ -58,7 +58,11 @@ class RoleCreator extends AbstractCreator
     public function createGroupRole(Mage_Admin_Model_Role $role)
     {
         $roles = Mage::getModel('admin/role')->getCollection();
-        /* just return existing role if name matches */
+        /**
+         * just return existing role if name matches
+         *
+         * we need to iterate, because load($this->name, 'role_name') fails in Magento 1.5
+         */
         foreach ($roles as $role) {
             if ($role->getRoleName() == $this->name) {
                 return $role;

@@ -2,6 +2,7 @@
 
 namespace CreateBackendUser;
 
+use \Mage as Mage;
 use \Exception as Exception;
 
 /**

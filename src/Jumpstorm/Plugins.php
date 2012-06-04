@@ -56,7 +56,7 @@ class Plugins extends Base
             $file =  $path . $name . '.php';
             if (!file_exists($file)) {
                 Logger::error('Could not find plugin "%s"', array($name), $stop=false);
-                Logger::log('Expected it at path "%s"', array($file));
+                Logger::log('Expected it at path "%s"', array($path));
                 continue;
             }
 

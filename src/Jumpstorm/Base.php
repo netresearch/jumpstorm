@@ -121,6 +121,6 @@ class Base extends Command
 
     protected function getBasePath()
     {
-        return realpath(realpath(__FILE__) . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR);
+        return realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
     }
 }

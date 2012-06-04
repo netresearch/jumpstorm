@@ -56,9 +56,12 @@ class RoleCreator extends AbstractCreator
      */
     public function createGroupRole(Mage_Admin_Model_Role $role)
     {
-        $role->load($this->name, 'role_name');
-        if ($role->getId()) {
-            return $role;
+        $roles = Mage::getModel('admin/role')->getCollection();
+        /* just return existing role if name matches */
+        foreach ($roles as $role) {
+            if ($role->getRoleName() == $this->name) {
+                return $role;
+            }
         }
         
         return $role

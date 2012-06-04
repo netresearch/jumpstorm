@@ -119,4 +119,8 @@ class Base extends Command
         return (0 === $return);
     }
 
+    protected function getBasePath()
+    {
+        return realpath(realpath(__FILE__) . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR);
+    }
 }

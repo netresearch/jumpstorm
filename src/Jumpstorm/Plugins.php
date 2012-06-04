@@ -48,9 +48,9 @@ class Plugins extends Base
                 Logger::log('Skipping plugin "%s"', array($name));
                 continue;
             }
-            
+
             // set path to plugin by convention
-            $path = 'plugins' . DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR;
+            $path = $this->getBasePath() . 'plugins' . DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR;
             
             // load script file
             $file =  $path . $name . '.php';

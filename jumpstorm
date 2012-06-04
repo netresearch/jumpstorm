@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-set_include_path(get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
+set_include_path(get_include_path() . PATH_SEPARATOR . realpath(dirname(__FILE__)));
 
 require 'lib/Zend/Exception.php';
 require 'lib/Zend/Config.php';

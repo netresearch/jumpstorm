@@ -1,6 +1,8 @@
 <?php
 namespace Jumpstorm;
 
+use Netresearch\Logger;
+
 use Netresearch\Config;
 use Netresearch\Source\Base as Source;
 
@@ -43,6 +45,8 @@ class Extensions extends Base
         foreach ($this->config->getExtensions() as $name=>$extension) {
             $this->installExtension($name, $extension);
         }
+
+        Logger::notice('Done');
     }
 
     /**
@@ -54,25 +58,38 @@ class Extensions extends Base
      */
     protected function installExtension($name, $extension)
     {
-        $this->output->writeln(sprintf(
-            '<comment>Installing extension %s from %s</comment>',
+        Logger::log('Installing extension %s from %s', array(
             $name,
             $extension->source
         ));
         // copy from source to install directory
         $sourceModel = Source::getSourceModel($extension->source);
-        $sourceModel->copy($this->getExtensionFolder() . DIRECTORY_SEPARATOR . $name);
+        $sourceModel->copy($this->getExtensionFolder() . DIRECTORY_SEPARATOR . $name, $extension->branch);
 
         $this->deployExtension($name);
-        $this->output->writeln(sprintf(
-            '<info>Installed extension %s</info>',
-            $name
-        ));
+        Logger::notice('Installed extension %s', array($name));
     }
 
+    /**
+     * Sync extension files from .modman to target directories
+     * @param string $name The name of the extension
+     * @throws Exception
+     */
     protected function deployExtension($name)
     {
         $source = $this->getExtensionFolder() . DIRECTORY_SEPARATOR . $name;
+        if (false == file_exists($source . DIRECTORY_SEPARATOR . 'modman')) {
+            $deployed = false;
+            foreach (glob($source . DIRECTORY_SEPARATOR . '*' . DIRECTORY_SEPARATOR . 'modman') as $modmanFile) {
+                $subSource = substr($modmanFile, strlen($source . DIRECTORY_SEPARATOR), - strlen(DIRECTORY_SEPARATOR . 'modman'));
+                $this->deployExtension($name . DIRECTORY_SEPARATOR . $subSource);
+                $deployed = true;
+            }
+            if ($deployed) {
+                return;
+            }
+        }
+        Logger::log('Copy extension from %s', array($source));
         $command = sprintf(
             'rsync -a -h --exclude="doc/*" --exclude="*.git" %s %s 2>&1',
             $source . DIRECTORY_SEPARATOR,
@@ -85,6 +102,12 @@ class Extensions extends Base
         }
     }
 
+    /**
+     * Extension files are installed to .modman directory before deployment,
+     * so create that directory if necessary
+     * 
+     * @return string Absolute path to extension directory
+     */
     private function createExtensionFolder()
     {
         $this->validateTarget($this->config->getTarget());
@@ -92,16 +115,19 @@ class Extensions extends Base
         $folder = $this->getExtensionFolder();
 
         if (!is_dir($folder)) {
-            $this->output->writeln(sprintf(
-                '<comment>Creating extension folder %s</comment>',
-                $folder
-            ));
+            Logger::log('Creating extension folder %s', array($folder));
             mkdir($folder);
         }
 
         return $folder;
     }
 
+    /**
+     * Obtain the name of the directory where all extensions get initially
+     * installed to before deployment. Currently '.modman'
+     * 
+     * @return string Absolute path to extension directory
+     */
     protected function getExtensionFolder()
     {
         return $this->config->getTarget() . DIRECTORY_SEPARATOR . '.modman';

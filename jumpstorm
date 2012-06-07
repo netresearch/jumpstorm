@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-set_include_path(get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
+set_include_path(get_include_path() . PATH_SEPARATOR . realpath(dirname(__FILE__)));
 
 require 'lib/Zend/Exception.php';
 require 'lib/Zend/Config.php';
@@ -13,18 +13,27 @@ use Symfony\Component\ClassLoader\UniversalClassLoader;
 
 $loader = new UniversalClassLoader();
 
-$loader->registerNamespaces(array(
+// load default namespaces
+$namespaces = array(
     'Jumpstorm'        => __DIR__.'/src',
     'Netresearch'      => __DIR__.'/lib',
     'Symfony'          => __DIR__.'/lib',
-    'Zend'             => __DIR__.'/lib',
-));
+    'Zend'             => __DIR__.'/lib'
+);
+
+// add plugin namespaces dynamically
+$pluginDirs = glob(__DIR__.'/plugins/*', GLOB_ONLYDIR);
+foreach ($pluginDirs as $path) {
+    $namespaces[basename($path)] = dirname($path);
+}
+
+$loader->registerNamespaces($namespaces);
 $loader->registerNamespaceFallbacks(array(__DIR__.'/src'));
 $loader->register();
 
 use Symfony\Component\Console\Application;
 
-$console = new Application();
+$console = new Application('Jumpstorm', '0.1');
 $console->add(new Jumpstorm\Magento());
 $console->add(new Jumpstorm\Unittesting());
 $console->add(new Jumpstorm\Extensions());

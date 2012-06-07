@@ -112,6 +112,13 @@ class Config extends \Zend_Config_Ini
             : null;
     }
 
+    public function getMagentoSampledataBranch()
+    {
+        return ($this->magento->sampledata && $this->magento->sampledata->branch)
+            ? $this->magento->sampledata->branch
+            : null;
+    }
+
     /**
      * get extensions as array (name => [branch, source])
      * 

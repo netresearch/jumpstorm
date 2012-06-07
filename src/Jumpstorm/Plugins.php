@@ -42,23 +42,42 @@ class Plugins extends Base
         $this->initMagento();
 
         $plugins = $this->config->getPlugins();
-        foreach ($plugins as $name=>$settings) {
-            if ($settings === 0) {
-                Logger::log(sprintf('Skipping plugin "%s"', $name));
+        foreach ($plugins as $name => $settings) {
+            // check if plugin was defined in ini, but disabled
+            if ('0' === $settings->enabled) {
+                Logger::log('Skipping plugin "%s"', array($name));
                 continue;
             }
-            $file = 'plugins' . DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR . $name . '.php';
-            if (false == file_exists($file)) {
+
+            // set path to plugin by convention
+            $path = $this->getBasePath() . 'plugins' . DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR;
+            
+            // load script file
+            $file =  $path . $name . '.php';
+            if (!file_exists($file)) {
                 Logger::error('Could not find plugin "%s"', array($name), $stop=false);
-                Logger::log(sprintf('Expected it at path "%s"', $file));
+                Logger::log('Expected it at path "%s"', array($path));
                 continue;
             }
-            require_once($file);
+
+            // load default jumpstorm config for plugin execution
+            $pluginConfig = $this->config;
+
+            $customIni = $settings->ini;
+            if ((null !== $customIni) && file_exists($customIni)) {
+                // add custom config settings, if given
+                $pluginConfig = new Config($customIni, null, array('allowModifications' => true));
+                $pluginConfig->merge($this->config);
+            }
+
             Logger::comment(sprintf('Running plugin "%s"', $name));
-            $plugin = new $name($this->config);
+            $class = "$name\\$name";
+            $plugin = new $class($pluginConfig);
             $plugin->execute();
             Logger::notice(sprintf('Finished running plugin "%s"', $name));
         }
+
+        Logger::notice('Done');
     }
 
     protected function initMagento()

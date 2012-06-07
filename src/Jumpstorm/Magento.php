@@ -36,53 +36,12 @@ class Magento extends Base
         $this->setDescription('Install Magento');
     }
     
-    protected function prepareMysqlCommand()
-    {
-        $mysql = sprintf(
-                'mysql -u%s -h%s',
-                $this->config->getDbUser(),
-                $this->config->getDbHost()
-        );
-
-        // prepare mysql command: password
-        if (!is_null($this->config->getDbPass())) {
-            $mysql .= sprintf(' -p%s', $this->config->getDbPass());
-        }
-
-        return $mysql;
-    }
-    
-    protected function createDatabase()
-    {
-        // prepare mysql command: user, host and password
-        $mysql = $this->prepareMysqlCommand();
-        
-        // recreate database if it already exists
-        Logger::log('Creating database %s', array($this->config->getDbName()));
-
-        exec(sprintf(
-            '%s -e \'DROP DATABASE IF EXISTS `%s`\'',
-            $mysql,
-            $this->config->getDbName()
-        ), $result, $return);
-        
-        exec(sprintf(
-            '%s -e \'CREATE DATABASE IF NOT EXISTS `%s`\'',
-            $mysql,
-            $this->config->getDbName()
-        ), $result, $return);
-
-        if (0 !== $return) {
-            throw new \Exception('Could not create live database');
-        }
-    }
-
     /**
-     * Assuming that we copied another folder into the target directory,
+     * Assuming that we cloned another folder into the target directory,
      * we move all files one level up.
      * 
      * @param string $target The install path (docroot)
-     * @param string $root The top level source directory
+     * @param string $root The name of the directory where Magento's index.php resides in
      */
     protected function moveToDocroot($target, $root = 'magento')
     {
@@ -90,10 +49,15 @@ class Magento extends Base
         $fileTest = $fileRoot . DIRECTORY_SEPARATOR . '.htaccess';
         
         if (file_exists($fileRoot) && is_dir($fileRoot) && file_exists($fileTest)) {
-            // move hidden file to docroot
-            exec(sprintf('mv %s %s', $fileTest, $target));
-            // move all the rest to docroot
-            exec(sprintf('mv %s %s', $fileRoot . DIRECTORY_SEPARATOR . '*', $target));
+            // move files to docroot
+            exec(sprintf(
+                'mv %s %s %s %s',
+                $fileRoot . DIRECTORY_SEPARATOR . '*', // regular files
+                $fileRoot . DIRECTORY_SEPARATOR . '.htaccess', // hidden files
+                $fileRoot . DIRECTORY_SEPARATOR . '.htaccess.sample', // hidden files
+                $target
+            ));
+
             // delete the now empty source directory
             if (is_link($fileRoot)) {
                 // symlink
@@ -105,20 +69,37 @@ class Magento extends Base
         }
     }
     
+    /**
+     * Copy Magento files from source to target directory
+     * @param string $source Absolute directory name or repository 
+     * @param string $target Absolute directory name (Magento root)
+     * @param string $branch Branch identifier in case of repository checkout
+     */
     protected function installMagento($source, $target, $branch)
     {
         $sourceModel = Source::getSourceModel($source);
-
         // copy from source to install directory
         $sourceModel->copy($target, $branch);
     }
     
-    protected function installSampledata($source, $target)
+    /**
+     * Install Magento Sample Data, including db tables and media files
+     * @param string $source Absolute directory name or repository
+     * @param string $target Absolute directory name (Magento root)
+     * @throws Exception
+     */
+    protected function installSampledata($source, $target, $branch)
     {
+        $sampleDataDir = $target . DIRECTORY_SEPARATOR . 'sampleData';
+
+        $sourceModel = Source::getSourceModel($source);
+        // copy from source to install directory
+        $sourceModel->copy($sampleDataDir, $branch);
+
         // glob for sql file in $source
-        $files = glob($source . DIRECTORY_SEPARATOR . '*.sql');
+        $files = glob($sampleDataDir . DIRECTORY_SEPARATOR . '*.sql');
         if (false === $files || count($files) !== 1) {
-            throw new Exception("Could not detect sample data sql file in source directory $source");
+            throw new Exception("Could not detect sample data sql file in source directory $sampleDataDir");
         }
         $sampledataSql = $files[0];
         Logger::log("Importing sample data from $sampledataSql");
@@ -140,12 +121,20 @@ class Magento extends Base
 
         // copy sample data images
         Logger::log("Copying sample data media files");
-        $sourceMediaDir = $source . DIRECTORY_SEPARATOR . 'media';
+        $sourceMediaDir = $sampleDataDir . DIRECTORY_SEPARATOR . 'media';
         $targetMediaDir = $target . DIRECTORY_SEPARATOR . 'media';
         $sourceModel = Source::getSourceModel($sourceMediaDir);
         $sourceModel->copy($targetMediaDir);
+
+        // remove temporary sample data folder
+        exec(sprintf('rm -rf %s', $sampleDataDir));
     }
 
+    /**
+     * Set permissions for web server access
+     * @param string $target Absolute directory name (Magento root)
+     * @throws Exception
+     */
     protected function setPermissions($target)
     {
         $exec = sprintf('chmod -R 0777 %s/app/etc %s/var/ %s/media/', $target, $target, $target);
@@ -156,6 +145,12 @@ class Magento extends Base
         }
     }
     
+    /**
+     * Execute Magento's install.php
+     * 
+     * @param string $target Absolute directory name (Magento root)
+     * @throws Exception
+     */
     protected function runMageScript($target)
     {
         Logger::log("Executing installation via install.php");
@@ -220,7 +215,7 @@ class Magento extends Base
 
         // empty target directory if it already exists 
         if (file_exists($target)) {
-            Logger::log('Delete existing Magento at %s', array($target));
+            Logger::comment('Delete existing Magento at %s', array($target));
             exec(sprintf('rm -rf %s/*', $target));
             exec(sprintf('rm -rf %s/.[a-zA-Z0-9]*', $target));
         }
@@ -234,13 +229,16 @@ class Magento extends Base
         $this->moveToDocroot($target, 'magento');
         
         // create empty database with credentials from ini file
-        $this->createDatabase();
+        if (false === $this->createDatabase($this->config->getDbName())) {
+            throw new Exception('Could not create live database');
+        }
 
         // install sample data
         if (null !== $this->config->getMagentoSampledataSource()) {
             $this->installSampledata(
                 $this->config->getMagentoSampledataSource(),
-                $target
+                $target,
+                $this->config->getMagentoSampledataBranch()
             );
         }
 

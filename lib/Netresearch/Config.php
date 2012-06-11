@@ -37,6 +37,12 @@ class Config extends \Zend_Config_Ini
         return $this->determine($path);
     }
 
+    public function disableInteractivity()
+    {
+        $this->ask = false;
+        $this->confirm = false;
+    }
+
     public function determine($path)
     {
         if (array_key_exists($path, $this->confirmedData)) {

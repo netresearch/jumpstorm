@@ -37,7 +37,16 @@ class Base extends Command
         $this->config = new Config($input->getOption('config'), null, array('allowModifications' => true));
         $this->config->setOutput($output);
         $this->config->setCommand($this);
+        if ($input->getOption('no-interaction')) {
+            $this->config->disableInteractivity();
+        }
         Logger::setOutputInterface($output);
+        if ($input->getOption('quiet')) {
+            Logger::setVerbosity(Logger::VERBOSITY_NONE);
+        }
+        if ($input->getOption('verbose')) {
+            Logger::setVerbosity(Logger::VERBOSITY_MAX);
+        }
     }
 
     /**

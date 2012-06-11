@@ -13,6 +13,16 @@ class Logger
     const TYPE_NOTICE = 'info';
     
     const TYPE_ERROR = 'error';
+
+    const VERBOSITY_NONE   = 0;
+
+    const VERBOSITY_MIN    = 1;
+
+    const VERBOSITY_MEDIUM = 5;
+
+    const VERBOSITY_MAX    = 10;
+
+    protected static $verbosity = self::VERBOSITY_MEDIUM;
     
     protected static $output;
     
@@ -20,12 +30,33 @@ class Logger
     {
         self::$output = $output;
     }
+
+    public static function setVerbosity($verbosity)
+    {
+        self::$verbosity = $verbosity;
+    }
     
     protected static function writeln($message, array $args = array(), $type = null)
     {
+        if (self::VERBOSITY_NONE === self::$verbosity) {
+            return;
+        }
+        if (self::VERBOSITY_MIN == self::$verbosity
+            && self::TYPE_ERROR !== $type
+        ) {
+            return;
+        }
+        if (self::VERBOSITY_MEDIUM == self::$verbosity
+            && self::TYPE_ERROR !== $type
+            && self::TYPE_NOTICE !== $type
+        ) {
+            return;
+        }
+
         if (!self::$output) {
             throw new Exception('No output interface given');
         }
+
         self::$output->writeln(
             is_null($type)
             ? vsprintf("$message", $args)
@@ -33,9 +64,9 @@ class Logger
         );
     }
     
-    public static function log($message, array $args = array())
+    public static function log($message, array $args = array(), $type=null)
     {
-        self::writeln($message, $args);
+        self::writeln($message, $args, $type);
     }
     
     public static function comment($message, array $args = array())
@@ -54,5 +85,15 @@ class Logger
         if ($stopExecution) {
             exit;
         }
+    }
+
+    public static function success($message, array $args = array())
+    {
+        self::notice($message, $args);
+    }
+
+    public static function warning($message, array $args = array())
+    {
+        self::comment($message, $args);
     }
 }

@@ -45,6 +45,9 @@ class Extensions extends Base
         foreach ($this->config->getExtensions() as $name=>$extension) {
             $this->installExtension($name, $extension);
         }
+        $this->initMagento();
+        \Mage_Core_Model_Resource_Setup::applyAllUpdates();
+        \Mage_Core_Model_Resource_Setup::applyAllDataUpdates();
 
         Logger::notice('Done');
     }

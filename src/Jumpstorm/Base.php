@@ -134,4 +134,10 @@ class Base extends Command
     {
         return realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
     }
+
+    protected function initMagento()
+    {
+        require_once($this->config->getTarget() . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Mage.php');
+        \Mage::app();
+    }
 }

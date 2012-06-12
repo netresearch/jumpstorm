@@ -80,10 +80,4 @@ class Plugins extends Base
 
         Logger::notice('Done');
     }
-
-    protected function initMagento()
-    {
-        require_once($this->config->getTarget() . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Mage.php');
-        \Mage::app();
-    }
 }

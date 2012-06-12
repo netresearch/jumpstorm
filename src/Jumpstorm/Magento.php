@@ -227,6 +227,7 @@ class Magento extends Base
         // move installed files to docroot
         $this->moveToDocroot($target, 'htdocs');
         $this->moveToDocroot($target, 'magento');
+        Logger::success('Fetched Magento sources');
         
         // create empty database with credentials from ini file
         if (false === $this->createDatabase($this->config->getDbName())) {
@@ -240,6 +241,7 @@ class Magento extends Base
                 $target,
                 $this->config->getMagentoSampledataBranch()
             );
+            Logger::success('Installed sample data');
         }
 
         // run install.php
@@ -248,7 +250,7 @@ class Magento extends Base
         // clean cache
         exec(sprintf('rm -rf %s/var/cache/*', $target));
 
-        Logger::notice('Done');
+        Logger::success('Finished Magento installation');
     }
 
 }

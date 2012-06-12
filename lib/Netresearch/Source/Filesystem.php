@@ -19,7 +19,7 @@ class Filesystem extends Source implements SourceInterface
         // as we want to copy its contents, not the directory itself
         $this->source = rtrim($this->source, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
-        Logger::notice('Copy files from %s', array($this->source));
+        Logger::log('Copy files from %s', array($this->source));
         
         $command = sprintf('rsync -a -h %s %s 2>&1', $this->source, $target);
         Logger::log($command);

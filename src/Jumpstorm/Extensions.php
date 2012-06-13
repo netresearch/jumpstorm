@@ -48,6 +48,7 @@ class Extensions extends Base
         $this->initMagento();
         \Mage_Core_Model_Resource_Setup::applyAllUpdates();
         \Mage_Core_Model_Resource_Setup::applyAllDataUpdates();
+        \Mage::getModel('core/cache')->flush();
 
         Logger::notice('Done');
     }

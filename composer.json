@@ -1,0 +1,12 @@
+{
+    "name": "netresearch/jumpstorm",
+    "authors": [
+        {
+            "name": "Michael Luehr",
+            "email": "michael.luehr@netresearch.de"
+        }
+    ],
+    "require": {
+
+    }
+}

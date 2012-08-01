@@ -7,7 +7,12 @@ require 'lib/Zend/Config.php';
 require 'lib/Zend/Config/Exception.php';
 require 'lib/Zend/Config/Ini.php';
 
-require_once __DIR__.'/lib/Symfony/Component/ClassLoader/UniversalClassLoader.php';
+if (file_exists(__DIR__ . '/../../autoload.php')) {
+    // jumpstorm is part of a composer installation
+    include __DIR__ . '/../../autoload.php';
+} else {
+    include_once __DIR__.'/lib/Symfony/Component/ClassLoader/UniversalClassLoader.php';
+}
 
 use Symfony\Component\ClassLoader\UniversalClassLoader;
 

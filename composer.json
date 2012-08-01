@@ -9,5 +9,6 @@
     "require": {
         "symfony/console": "2.0.x-dev",
         "symfony/class-loader": "2.0.x-dev"
-    }
+    },
+    "bin": ["bin/jumpstorm"]
 }

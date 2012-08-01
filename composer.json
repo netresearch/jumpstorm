@@ -7,8 +7,7 @@
         }
     ],
     "require": {
-	"symfony/console": "dev-master",
-	"symfony/class-loader": "dev-master"
+        "symfony/console": "2.0.x-dev",
+        "symfony/class-loader": "2.0.x-dev"
     }
-	
 }

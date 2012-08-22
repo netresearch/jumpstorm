@@ -193,11 +193,15 @@ class Magento extends Base
         }
 
         // reindexing data
-        $cmd = sprintf('php %s%sshell/indexer.php reindexall', $target, DIRECTORY_SEPARATOR);
-        exec($cmd, $result, $return);
+        if (file_exists(sprintf('%s%sshell/indexer.php', $target, DIRECTORY_SEPARATOR))) {
+            $cmd = sprintf('php %s%sshell/indexer.php reindexall', $target, DIRECTORY_SEPARATOR);
+            exec($cmd, $result, $return);
 
-        if (0 !== $return) {
-            throw new Exception('Failed to rebuild index');
+            if (0 !== $return) {
+                throw new Exception('Failed to rebuild index');
+            }
+        } else {
+            Logger::comment('Could not find indexer at %s/shell/indexer.php, but its existance depends on Magento version', array($target));
         }
 
         $this->setPermissions($target);

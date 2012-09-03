@@ -2,6 +2,7 @@
 namespace Netresearch;
 
 use Symfony\Component\Console\Output\OutputInterface;
+use \Exception as Exception;
 
 /**
  * Simple logger

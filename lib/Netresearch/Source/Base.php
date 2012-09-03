@@ -26,7 +26,31 @@ abstract class Base
             || (0 === strpos($repoUrl, 'git://')) // path starts with "git://"
             || (0 === strpos($repoUrl, 'http://')) // path starts with "http://"
             || (0 === strpos($repoUrl, 'ssh://')) // path starts with "ssh://"
+            || self::isLocalGitDirectory($repoUrl)
         );
+    }
+
+    protected static function isLocalGitDirectory($path)
+    {
+        if (false == self::isFilesystemPath($path)) {
+            return false;
+        }
+        $gitBareFolders = array(
+            'HEAD',
+            'branches',
+            'config',
+            'description',
+            'hooks',
+            'info',
+            'objects',
+            'refs'
+        );
+        foreach ($gitBareFolders as $gitBareFolder) {
+            if (false == file_exists($path . DIRECTORY_SEPARATOR . $gitBareFolder)) {
+                return false;
+            }
+        }
+        return true;
     }
     
     public static function isFilesystemPath($sourcePath)

@@ -62,7 +62,7 @@ class Base extends Command
         }
         
         if (!is_dir($target)) {
-            mkdir($target);
+            mkdir($target, $mode=0777, $recursive=true);
         }
         
         if (!is_dir($target)) {

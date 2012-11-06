@@ -206,6 +206,12 @@ class Magento extends Base
 
         $this->setPermissions($target);
     }
+
+    protected function fixInstallConfig($target)
+    {
+        $path = $target . '/app/code/core/Mage/Install/etc/config.xml';
+        exec(sprintf('sed "s/<pdo_mysql\/>/<pdo_mysql>1<\/pdo_mysql>/" %s > %s.fixed && mv %s.fixed %s', $path, $path, $path, $path));
+    }
     
     /**
      * @see vendor/symfony/src/Symfony/Component/Console/Command/Symfony\Component\Console\Command.Command::execute()
@@ -247,6 +253,9 @@ class Magento extends Base
             );
             Logger::success('Installed sample data');
         }
+
+        // avoid exception 'PHP Extensions "0" must be loaded.'
+        $this->fixInstallConfig($target);
 
         // run install.php
         $this->runMageScript($target);

@@ -365,7 +365,8 @@ class Magento extends Base
         // move installed files to docroot
         $this->moveToDocroot($target, 'htdocs');
         $this->moveToDocroot($target, 'magento');
-        Logger::success('Fetched Magento sources');
+
+        Logger::success('Fetched '. $this->config->getMagentoVersion().' Magento sources');
 
         // create empty database with credentials from ini file
         if (false === $this->createDatabase($this->config->getDbName())) {

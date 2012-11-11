@@ -159,6 +159,11 @@ class Config extends \Zend_Config_Ini
         return $this->placeHolderAdjustedValue($this->magento->backup->target ? $this->magento->backup->target : null);
     }
 
+    public function getBackupTarget()
+    {
+        return $this->magento->backup->target ? $this->magento->backup->target : null;
+    }
+
     /**
      * get extensions as array (name => [branch, source])
      *

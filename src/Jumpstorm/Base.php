@@ -30,6 +30,7 @@ class Base extends Command
     protected function configure()
     {
         $this->addOption('config',  'c', InputOption::VALUE_OPTIONAL, 'provide a configuration file', 'ini/jumpstorm.ini');
+        $this->addOption('magento-version',  'm', InputOption::VALUE_OPTIONAL, 'override magento.version', '');
     }
 
     protected function preExecute(InputInterface $input, OutputInterface $output)
@@ -46,6 +47,9 @@ class Base extends Command
         }
         if ($input->getOption('verbose')) {
             Logger::setVerbosity(Logger::VERBOSITY_MAX);
+        }
+        if ($input->getOption('magento-version')) {
+            $this->config->common->magento->version= $input->getOption('magento-version');
         }
     }
 

@@ -15,7 +15,7 @@ Clone from Github:
 
 ::
 
-  git clone --recursive git@github.com:netresearch/jumpstorm.git
+  git clone --recursive https://github.com/netresearch/jumpstorm.git
 
   cd jumpstorm
 

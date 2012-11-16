@@ -38,6 +38,7 @@ class InitGermanSetup implements JumpstormPlugin
     {
         Mage::getSingleton('germansetup/setup_cms')->setup();
         Mage::getSingleton('germansetup/setup_agreements')->setup();
+        $locale = Mage::app()->getRequest()->setPost('email_locale', 'de_DE');
         Mage::getSingleton('germansetup/setup_email')->setup();
         Mage::getSingleton('germansetup/setup_tax')->setup();
 

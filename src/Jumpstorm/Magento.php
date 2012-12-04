@@ -77,7 +77,7 @@ class Magento extends Base
      */
     protected function installMagento($source, $target, $branch)
     {
-        $sourceModel = Source::getSourceModel($source);
+        $sourceModel = Source::getSourceModel($source, $target);
         // copy from source to install directory
         $sourceModel->copy($target, $branch);
     }
@@ -92,7 +92,7 @@ class Magento extends Base
     {
         $sampleDataDir = $target . DIRECTORY_SEPARATOR . 'sampleData';
 
-        $sourceModel = Source::getSourceModel($source);
+        $sourceModel = Source::getSourceModel($source, $target);
         // copy from source to install directory
         $sourceModel->copy($sampleDataDir, $branch);
 

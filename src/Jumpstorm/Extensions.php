@@ -67,7 +67,7 @@ class Extensions extends Base
             $extension->source
         ));
         // copy from source to install directory
-        $sourceModel = Source::getSourceModel($extension->source);
+        $sourceModel = Source::getSourceModel($extension->source, $this->config->getTarget());
         $sourceModel->copy($this->getExtensionFolder() . DIRECTORY_SEPARATOR . $name, $extension->branch);
 
         $this->deployExtension($name);

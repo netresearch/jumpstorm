@@ -7,6 +7,10 @@ even could setup your Magento automatically, so it can even be used for demo or 
 
 Its flexible architecture allows you to extend its functionality as you need.
 
+For extension with modman support, deployment is done with modman_, so you'll get a ready-to-use installation at the end.
+All the other extensions, e.g. from Magento Connect will be hard-copied to your Magento.
+
+.. _modman: https://github.com/colinmollenhour/modman
 
 Installation
 ============
@@ -63,6 +67,9 @@ Currently supported commands are
    * - ``plugins``
      - Run plugins_
 
+   * - ``run``
+     - Combines the other commands: install Magento, prepare unittesting, install extensions and run plugins
+
 .. _unittests: Unittesting_
 
 The first thing you should do, is creating the configuration file, your installation should be based on.
@@ -110,6 +117,13 @@ installation configuration.
 
 In section ``[extensions]`` you can provide a list of extensions to be installed automatically. For every extension you
 have to provide a source [#source]_ and you could provide a branch, if you use Git as source.
+
+You could also decide to use Magento Connect as extension source. In that case, please use the following syntax in your
+configuration file, e.g. Fooman Speedster:
+
+::
+
+  fooman_speedster  = magentoconnect://community/Fooman_Speedster
 
 All configured extension will be installed by executing:
 
@@ -194,14 +208,6 @@ The plugin's main php class must implement Netresearch\\PluginInterface.
 
 Upcoming features
 =================
-
-Modman support
---------------
-
-As we use modman_ for all our extensions, we will implement *Jumpstorm* to support this as soon as possible. Currently
-we only copy (or clone) the extensions to the ``.modman`` directory, but deployment is not yet done via *modman*.
-
-.. _modman: https://github.com/colinmollenhour/modman
 
 Interactive mode
 ----------------

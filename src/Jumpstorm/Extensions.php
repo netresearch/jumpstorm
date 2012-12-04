@@ -66,12 +66,27 @@ class Extensions extends Base
             $name,
             $extension->source
         ));
+        $this->removeLegacyFiles($name);
+
         // copy from source to install directory
         $sourceModel = Source::getSourceModel($extension->source, $this->config->getTarget());
         $sourceModel->copy($this->getExtensionFolder() . DIRECTORY_SEPARATOR . $name, $extension->branch);
 
         $this->deployExtension($name);
         Logger::notice('Installed extension %s', array($name));
+    }
+
+    /**
+     * remove extension from Magento modman dir, if it is already installed
+     *
+     * @param mixed $name Extension identifier
+     * @return void
+     */
+    protected function removeLegacyFiles($name)
+    {
+        $path = $this->getExtensionFolder() . DIRECTORY_SEPARATOR . $name;
+        passthru("rm -rf $path");
+        exec(dirname(__FILE__) . '/../../shell/modman/modman clean');
     }
 
     /**
@@ -93,16 +108,20 @@ class Extensions extends Base
                 return;
             }
         }
-        Logger::log('Copy extension from %s', array($source));
-        $command = sprintf(
-            'rsync -a -h --exclude="doc/*" --exclude="*.git" %s %s 2>&1',
-            $source . DIRECTORY_SEPARATOR,
-            $this->config->getTarget()
-        );
-        exec($command, $result, $return);
+        if (file_exists($source . '/modman')) {
+            passthru(dirname(__FILE__) . "/../../shell/modman/modman deploy $name --force", $return);
+        } else {
+            Logger::log('Copy extension from %s', array($source));
+            $command = sprintf(
+                'rsync -a -h --exclude="doc/*" --exclude="*.git" %s %s 2>&1',
+                $source . DIRECTORY_SEPARATOR,
+                $this->config->getTarget()
+            );
+            exec($command, $result, $return);
+        }
 
         if (0 !== $return) {
-            throw new Exception("Could not copy extension $name");
+            throw new Exception("Could not deploy extension $name");
         }
     }
 

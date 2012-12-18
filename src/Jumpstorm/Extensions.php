@@ -108,14 +108,16 @@ class Extensions extends Base
                 return;
             }
         }
+        $baseTarget = $this->config->getTarget();
         if (file_exists($source . '/modman')) {
-            passthru(dirname(__FILE__) . "/../../shell/modman/modman deploy $name --force", $return);
+            $modman = dirname(__FILE__) . '/../../shell/modman/modman';
+            passthru("cd $baseTarget;$modman deploy $name --force", $return);
         } else {
             Logger::log('Copy extension from %s', array($source));
             $command = sprintf(
                 'rsync -a -h --exclude="doc/*" --exclude="*.git" %s %s 2>&1',
                 $source . DIRECTORY_SEPARATOR,
-                $this->config->getTarget()
+                $baseTarget
             );
             exec($command, $result, $return);
         }

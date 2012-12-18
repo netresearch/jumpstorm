@@ -71,8 +71,11 @@ abstract class Base
     }
     
     /**
-     * 
-     * @param string $source
+     * get source model instance
+     *
+     * @param string $source     Source identifier
+     * @param string $baseTarget Base target directory
+     * @return Base
      */
     public static function getSourceModel($source, $baseTarget)
     {

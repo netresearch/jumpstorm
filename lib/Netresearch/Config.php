@@ -111,18 +111,35 @@ class Config extends \Zend_Config_Ini
         return $this->magento->baseUrl;
     }
 
+    /**
+     * get source identifier for Magento sample data
+     *
+     * @return string|null
+     */
     public function getMagentoSampledataSource()
     {
-        return ($this->magento->sampledata && $this->magento->sampledata->source)
-            ? $this->magento->sampledata->source
-            : null;
+        if ($this->magento && $this->magento->sampledata) {
+            $value = $this->magento->sampledata;
+            if ($value instanceof \Zend_Config) {
+                return ($value->source) ? $value->source : null;
+            }
+            return $value;
+        }
     }
 
+    /**
+     * get branch identifier for Magento sample data
+     *
+     * @return string|null
+     */
     public function getMagentoSampledataBranch()
     {
-        return ($this->magento->sampledata && $this->magento->sampledata->branch)
-            ? $this->magento->sampledata->branch
-            : null;
+        if ($this->magento && $this->magento->sampledata) {
+            $value = $this->magento->sampledata;
+            if ($value instanceof \Zend_Config && $value->branch) {
+                return $value->branch;
+            }
+        }
     }
 
     /**

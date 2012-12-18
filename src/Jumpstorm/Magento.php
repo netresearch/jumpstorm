@@ -123,7 +123,7 @@ class Magento extends Base
         Logger::log("Copying sample data media files");
         $sourceMediaDir = $sampleDataDir . DIRECTORY_SEPARATOR . 'media';
         $targetMediaDir = $target . DIRECTORY_SEPARATOR . 'media';
-        $sourceModel = Source::getSourceModel($sourceMediaDir);
+        $sourceModel = Source::getSourceModel($sourceMediaDir, $this->config->getTarget());
         $sourceModel->copy($targetMediaDir);
 
         // remove temporary sample data folder

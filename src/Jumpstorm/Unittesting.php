@@ -2,7 +2,6 @@
 namespace Jumpstorm;
 
 use Netresearch\Logger;
-
 use Netresearch\Config;
 use Netresearch\Source\SourceBase as Source;
 
@@ -77,7 +76,7 @@ class Unittesting extends Command
         $baseUrl = ltrim($this->config->getMagentoBaseUrl(), 'http://');
         $baseUrl = rtrim($baseUrl, '/');
         $baseUrl = "http://$baseUrl/";
-        
+
         $baseUrl = '<base_url>' . str_replace('/', '\\/', $baseUrl) . '<\/base_url>';
         $cmd = sprintf('sed -i "s/<base_url>.*<\/base_url>/%s/g" %s', $baseUrl, $file);
         exec($cmd, $result, $return);

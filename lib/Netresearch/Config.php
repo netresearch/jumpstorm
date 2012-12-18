@@ -15,20 +15,20 @@ class Config extends \Zend_Config_Ini
 
     protected $addedPermissions;
     protected $removedPermissions;
-    
+
     public function setOutput(OutputInterface $output)
     {
         $this->output = $output;
     }
-    
+
     public function setCommand(Command $command)
     {
         $this->command = $command;
     }
 
     /**
-     * get target path
-     * 
+     * get base target path
+     *
      * @return string
      */
     public function getTarget()
@@ -43,6 +43,12 @@ class Config extends \Zend_Config_Ini
         $this->confirm = false;
     }
 
+    /**
+     * determine a configuration value (take from config, let the user confirm it, or ask user)
+     *
+     * @param mixed $path Configuration path
+     * @return mixed
+     */
     public function determine($path)
     {
         if (array_key_exists($path, $this->confirmedData)) {
@@ -86,7 +92,7 @@ class Config extends \Zend_Config_Ini
         $this->confirmedData[$path] = $value;
         return $value;
     }
-    
+
     /**
      * get Magento source path
      *
@@ -144,7 +150,7 @@ class Config extends \Zend_Config_Ini
 
     /**
      * get extensions as array (name => [branch, source])
-     * 
+     *
      * @return array
      */
     public function getExtensions()
@@ -167,7 +173,7 @@ class Config extends \Zend_Config_Ini
         if (is_null($this->_dbName)) {
             $path = 'common.db.name';
             $this->_dbName = $this->determine($path);
-           
+
             if ($this->common->db->timestamp) {
                 $this->_dbName .= '_' . time();
             }
@@ -221,6 +227,11 @@ class Config extends \Zend_Config_Ini
         return $this->magento->adminPass;
     }
 
+    /**
+     * collect admin user permissions from configuration
+     *
+     * @return void
+     */
     protected function assignPermissions()
     {
         $this->addedPermissions   = array();

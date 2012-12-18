@@ -40,9 +40,7 @@ class Run extends Base
         foreach ($commands as $commandName)
         {
             $command = $this->getApplication()->find($commandName);
-
             $input->setArgument('command', $commandName);
-
             $returnCode = $command->run($input, $output);
         }
     }

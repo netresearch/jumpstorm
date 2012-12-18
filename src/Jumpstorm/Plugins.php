@@ -51,7 +51,7 @@ class Plugins extends Base
 
             // set path to plugin by convention
             $path = $this->getBasePath() . 'plugins' . DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR;
-            
+
             // load script file
             $file =  $path . $name . '.php';
             if (!file_exists($file)) {

@@ -32,6 +32,13 @@ class Base extends Command
         $this->addOption('config',  'c', InputOption::VALUE_OPTIONAL, 'provide a configuration file', 'ini/jumpstorm.ini');
     }
 
+    /**
+     * prepare config and logger, remember input and output interfaces
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return void
+     */
     protected function preExecute(InputInterface $input, OutputInterface $output)
     {
         $this->config = new Config($input->getOption('config'), null, array('allowModifications' => true));
@@ -60,11 +67,11 @@ class Base extends Command
         if (!$target) {
             throw new \Exception('Please set common.magento.target in ini-file.');
         }
-        
+
         if (!is_dir($target)) {
             mkdir($target, $mode=0777, $recursive=true);
         }
-        
+
         if (!is_dir($target)) {
             throw new \Exception("Target is not a directory: $target");
         }
@@ -72,17 +79,15 @@ class Base extends Command
         if (!is_writable($target)) {
             throw new \Exception("Target directory is not writeable: $target");
         }
-        
+
         return $target;
     }
-    
+
     /**
      * Prepare command for database access, including:
-     * <ul>
-     * <li>username</li>
-     * <li>host</li>
-     * <li>password</li>
-     * </ul>
+     * - username
+     * - host
+     * - password
      * 
      * @return string MySQL command line string including credentials
      */
@@ -101,17 +106,18 @@ class Base extends Command
 
         return $mysql;
     }
-    
+
     /**
      * Create empty database. Any old database with the same name gets dropped.
-     * 
+     * @todo use built-in mysql commands instead of calling exec()
+     *
      * @return boolean true on success, false otherwise
      */
     protected function createDatabase($dbName)
     {
         // prepare mysql command: user, host and password
         $mysql = $this->prepareMysqlCommand();
-        
+
         // recreate database if it already exists
         Logger::log('Creating database %s', array($dbName));
 
@@ -120,7 +126,7 @@ class Base extends Command
             $mysql,
             $dbName
         ), $result, $return);
-        
+
         exec(sprintf(
             '%s -e \'CREATE DATABASE `%s`\'',
             $mysql,
@@ -130,11 +136,21 @@ class Base extends Command
         return (0 === $return);
     }
 
+    /**
+     * get Jumpstorm base path
+     *
+     * @return string
+     */
     protected function getBasePath()
     {
         return realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
     }
 
+    /**
+     * initialize Magento
+     *
+     * @return void
+     */
     protected function initMagento()
     {
         require_once($this->config->getTarget() . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Mage.php');

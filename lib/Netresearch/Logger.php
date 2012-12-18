@@ -10,23 +10,18 @@ use \Exception as Exception;
 class Logger
 {
     const TYPE_COMMENT = 'comment';
-    
     const TYPE_NOTICE = 'info';
-    
     const TYPE_ERROR = 'error';
 
     const VERBOSITY_NONE   = 0;
-
     const VERBOSITY_MIN    = 1;
-
     const VERBOSITY_MEDIUM = 5;
-
     const VERBOSITY_MAX    = 10;
 
     protected static $verbosity = self::VERBOSITY_MEDIUM;
-    
+
     protected static $output;
-    
+
     public static function setOutputInterface(OutputInterface $output)
     {
         self::$output = $output;
@@ -36,7 +31,7 @@ class Logger
     {
         self::$verbosity = $verbosity;
     }
-    
+
     protected static function writeln($message, array $args = array(), $type = null)
     {
         if (self::VERBOSITY_NONE === self::$verbosity) {
@@ -64,12 +59,12 @@ class Logger
             : vsprintf("<$type>$message</$type>", $args)
         );
     }
-    
+
     public static function log($message, array $args = array(), $type=null)
     {
         self::writeln($message, $args, $type);
     }
-    
+
     public static function comment($message, array $args = array())
     {
         self::writeln($message, $args, self::TYPE_COMMENT);

@@ -17,6 +17,8 @@ Installation
 
 Clone from Github and install it via Composer_:
 
+.. _Composer: http://getcomposer.org/
+
 ::
 
   git clone https://github.com/netresearch/jumpstorm.git && cd jumpstorm

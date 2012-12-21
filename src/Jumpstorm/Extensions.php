@@ -4,6 +4,7 @@ namespace Jumpstorm;
 use Netresearch\Logger;
 
 use Netresearch\Config;
+use Netresearch\Modman;
 use Netresearch\Source\Base as Source;
 
 use Symfony\Component\Console\Command\Command;
@@ -23,6 +24,8 @@ use \Exception as Exception;
  */
 class Extensions extends Base
 {
+    protected $modman;
+
     /**
      * @see vendor/symfony/src/Symfony/Component/Console/Command/Symfony\Component\Console\Command.Command::configure()
      */
@@ -76,6 +79,15 @@ class Extensions extends Base
         Logger::notice('Installed extension %s', array($name));
     }
 
+    protected function getModman()
+    {
+        if (is_null($this->modman)) {
+            $this->modman = new Modman();
+            $this->modman->setRoot($this->config->getTarget());
+        }
+        return $this->modman;
+    }
+
     /**
      * remove extension from Magento modman dir, if it is already installed
      *
@@ -86,7 +98,7 @@ class Extensions extends Base
     {
         $path = $this->getExtensionFolder() . DIRECTORY_SEPARATOR . $name;
         passthru("rm -rf $path");
-        exec(dirname(__FILE__) . '/../../shell/modman/modman clean');
+        $this->getModman()->call('clean');
     }
 
     /**
@@ -110,8 +122,7 @@ class Extensions extends Base
         }
         $baseTarget = $this->config->getTarget();
         if (file_exists($source . '/modman')) {
-            $modman = dirname(__FILE__) . '/../../shell/modman/modman';
-            passthru("cd $baseTarget;$modman deploy $name --force", $return);
+            $return = $this->getModman()->call("deploy $name --force");
         } else {
             Logger::log('Copy extension from %s', array($source));
             $command = sprintf(
@@ -140,8 +151,7 @@ class Extensions extends Base
         $folder = $this->getExtensionFolder();
 
         if (!is_dir($folder)) {
-            Logger::log('Creating extension folder %s', array($folder));
-            mkdir($folder);
+            $return = $this->getModman()->call('init');
         }
 
         return $folder;

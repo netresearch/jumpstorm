@@ -1,8 +1,17 @@
 {
     "name": "netresearch/jumpstorm",
+    "description": "command line installer for Magento",
     "authors": [
         {
-            "name": "Michael Luehr",
+            "name": "Thomas Birke",
+            "email": "tbirke@netextreme.de"
+        },
+        {
+            "name": "Christoph Aßmann",
+            "email": "christoph.assmann@netresearch.de"
+        },
+        {
+            "name": "Michael Lühr",
             "email": "michael.luehr@netresearch.de"
         }
     ],

@@ -15,13 +15,12 @@ All the other extensions, e.g. from Magento Connect will be hard-copied to your 
 Installation
 ============
 
-Clone from Github:
+Clone from Github and install it via Composer_:
 
 ::
 
-  git clone --recursive https://github.com/netresearch/jumpstorm.git
-
-  cd jumpstorm
+  git clone https://github.com/netresearch/jumpstorm.git && cd jumpstorm
+  curl -s https://getcomposer.org/installer | php; php composer.phar install --prefer-source
 
 **Hint:**
 

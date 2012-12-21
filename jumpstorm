@@ -7,34 +7,16 @@ require 'lib/Zend/Config.php';
 require 'lib/Zend/Config/Exception.php';
 require 'lib/Zend/Config/Ini.php';
 
-if (file_exists(__DIR__ . '/../../autoload.php')) {
-    // jumpstorm is part of a composer installation
-    include __DIR__ . '/../../autoload.php';
-} else {
-    include_once __DIR__.'/lib/Symfony/Component/ClassLoader/UniversalClassLoader.php';
-}
+$loader = require 'vendor/autoload.php';
 
-use Symfony\Component\ClassLoader\UniversalClassLoader;
-
-$loader = new UniversalClassLoader();
-
-// load default namespaces
-$namespaces = array(
-    'Jumpstorm'        => __DIR__.'/src',
-    'Netresearch'      => __DIR__.'/lib',
-    'Symfony'          => __DIR__.'/lib',
-    'Zend'             => __DIR__.'/lib'
-);
+$loader->add('Jumpstorm', __DIR__.'/src');
+$loader->add('Netresearch', __DIR__.'/lib');
 
 // add plugin namespaces dynamically
 $pluginDirs = glob(__DIR__.'/plugins/*', GLOB_ONLYDIR);
 foreach ($pluginDirs as $path) {
-    $namespaces[basename($path)] = dirname($path);
+    $loader->add(basename($path), dirname($path));
 }
-
-$loader->registerNamespaces($namespaces);
-$loader->registerNamespaceFallbacks(array(__DIR__.'/src'));
-$loader->register();
 
 use Symfony\Component\Console\Application;
 

@@ -29,7 +29,7 @@ class Base extends Command
      */
     protected function configure()
     {
-        $this->addOption('config',  'c', InputOption::VALUE_OPTIONAL, 'provide a configuration file', 'ini/jumpstorm.ini');
+        $this->addOption('config',  'c', InputOption::VALUE_OPTIONAL, 'provide a configuration file', 'config/jumpstorm.ini');
     }
 
     /**

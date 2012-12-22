@@ -29,6 +29,9 @@ class Base
         } else {
             $filepath = $config;
             $filetype = strtolower(strrchr($filepath, '.'));
+            if (!file_exists($filepath)) {
+                throw new \Exception("Configuration file $filepath not found");
+            }
             switch($filetype) {
                 case '.php':
                     $this->data = include $filepath;

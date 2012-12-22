@@ -2,7 +2,7 @@
 namespace ApplyConfigSettings;
 
 use \Mage as Mage;
-use Netresearch\Config;
+use Netresearch\Config\Base as BaseConfig;
 use Netresearch\Logger;
 use Netresearch\PluginInterface as JumpstormPlugin;
 
@@ -13,7 +13,7 @@ class ApplyConfigSettings implements JumpstormPlugin
 {
     protected $config;
 
-    public function __construct(Config $config)
+    public function __construct(BaseConfig $config)
     {
         $this->config = $config;
     }
@@ -21,9 +21,9 @@ class ApplyConfigSettings implements JumpstormPlugin
     public function execute()
     {
         $settings = $this->config->plugins->ApplyConfigSettings;
-        if ($settings instanceof \Zend_Config) {
+        if ($settings instanceof BaseConfig) {
             foreach ($this->config->plugins->ApplyConfigSettings as $name=>$setting) {
-                if ($setting instanceof \Zend_Config && $setting->path && isset($setting->value)) {
+                if ($setting instanceof BaseConfig && $setting->path && isset($setting->value)) {
                     Mage::getModel('eav/entity_setup', 'core_setup')->setConfigData(
                         $setting->path,
                         $setting->value

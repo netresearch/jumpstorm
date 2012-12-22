@@ -4,7 +4,7 @@ namespace CreateBackendUser;
 
 use CreateBackendUser\UserCreator;
 use \Mage as Mage;
-use Netresearch\Config;
+use Netresearch\Config\Base as BaseConfig;
 use Netresearch\PluginInterface as JumpstormPlugin;
 
 /**
@@ -17,7 +17,7 @@ class CreateBackendUser implements JumpstormPlugin
      */
     protected $config;
 
-    public function __construct(Config $config)
+    public function __construct(BaseConfig $config)
     {
         $this->config = $config;
     }

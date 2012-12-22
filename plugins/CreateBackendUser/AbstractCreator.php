@@ -2,7 +2,7 @@
 
 namespace CreateBackendUser;
 
-use Netresearch\Config;
+use Netresearch\Config\Base as BaseConfig;
 use Netresearch\Logger;
 use \Exception as Exception;
 
@@ -17,10 +17,10 @@ abstract class AbstractCreator
 
     /**
      * Set config and perform validation of the given config values
-     * @param Config $config
+     * @param BaseConfig $config
      * @param string $key The config key for the current object's properties
      */
-    public function __construct(Config $config, $key)
+    public function __construct(BaseConfig $config, $key)
     {
         $this->config = $config;
 

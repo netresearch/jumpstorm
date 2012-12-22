@@ -1,30 +1,15 @@
 <?php
 namespace Netresearch;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Yaml;
+use Netresearch\Config\Base;
 
-class Config extends \Zend_Config_Ini
+class Config extends Base
 {
     protected $_dbName;
 
-    protected $confirmedData = array();
-
-    protected $output;
-    protected $command;
-
     protected $addedPermissions;
     protected $removedPermissions;
-
-    public function setOutput(OutputInterface $output)
-    {
-        $this->output = $output;
-    }
-
-    public function setCommand(Command $command)
-    {
-        $this->command = $command;
-    }
 
     /**
      * get base target path
@@ -33,64 +18,13 @@ class Config extends \Zend_Config_Ini
      */
     public function getTarget()
     {
-        $path = 'common.magento.target';
-        return $this->determine($path);
+        return $this->common->magento->target;
     }
 
     public function disableInteractivity()
     {
         $this->ask = false;
         $this->confirm = false;
-    }
-
-    /**
-     * determine a configuration value (take from config, let the user confirm it, or ask user)
-     *
-     * @param mixed $path Configuration path
-     * @return mixed
-     */
-    public function determine($path)
-    {
-        if (array_key_exists($path, $this->confirmedData)) {
-            return $this->confirmedData[$path];
-        }
-        $readablePath = ucwords(str_replace('.', ' ', $path));
-        $steps = explode('.', $path);
-        $value = $this;
-        $step = current($steps);
-        while ($value instanceof \Zend_Config) {
-            $value = $value->$step;
-            $step = next($steps);
-        }
-        if (is_null($value) && $this->ask && in_array($path, $this->ask)) {
-            $dialog = $this->command->getHelperSet()->get('dialog');
-            $value = $dialog->ask(
-                $this->output,
-                sprintf('<question>%s?</question> ', $readablePath),
-                false
-            );
-            $subConfig = $this;
-            foreach ($steps as $step) {
-                $subConfig = $subConfig->$step;
-            }
-            $subConfig = $value;
-        }
-        if ($this->confirm && in_array($path, $this->confirm->toArray())) {
-            $dialog = $this->command->getHelperSet()->get('dialog');
-            $confirmation = $dialog->askConfirmation(
-                $this->output,
-                sprintf('<question>%s %s (y)?</question> ', $readablePath, $value),
-                true
-            );
-            if (!$confirmation) {
-                throw new \Exception(sprintf(
-                    'Stopped execution due to unconfirmed %s!',
-                    $readablePath
-                ));
-            }
-        }
-        $this->confirmedData[$path] = $value;
-        return $value;
     }
 
     /**
@@ -126,7 +60,7 @@ class Config extends \Zend_Config_Ini
     {
         if ($this->magento && $this->magento->sampledata) {
             $value = $this->magento->sampledata;
-            if ($value instanceof \Zend_Config) {
+            if (is_array($value)) {
                 return ($value->source) ? $value->source : null;
             }
             return $value;
@@ -142,7 +76,7 @@ class Config extends \Zend_Config_Ini
     {
         if ($this->magento && $this->magento->sampledata) {
             $value = $this->magento->sampledata;
-            if ($value instanceof \Zend_Config && $value->branch) {
+            if (is_array($value) && $value->branch) {
                 return $value->branch;
             }
         }
@@ -156,13 +90,18 @@ class Config extends \Zend_Config_Ini
     public function getExtensions()
     {
         $extensions = array();
-        foreach ($this->extensions as $name=>$extension) {
-            if (!is_string($extension)) {
-                $extensions[$name] = $extension;
+        foreach ($this->extensions->data as $name=>$extension) {
+            if (is_array($extension)) {
+                $extensions[$name] = new \StdClass();
+                $extensions[$name]->source = $extension['source'];
+                $extensions[$name]->branch = 'master';
+                if (array_key_exists('branch', $extension)) {
+                    $extensions[$name]->branch = $extension['branch'];
+                }
             } else {
                 $extensions[$name] = new \StdClass();
-                $extensions[$name]->branch = 'master';
                 $extensions[$name]->source = $extension;
+                $extensions[$name]->branch = 'master';
             }
         }
         return $extensions;
@@ -171,8 +110,7 @@ class Config extends \Zend_Config_Ini
     public function getDbName()
     {
         if (is_null($this->_dbName)) {
-            $path = 'common.db.name';
-            $this->_dbName = $this->determine($path);
+            $this->_dbName = $this->common->db->name;
 
             if ($this->common->db->timestamp) {
                 $this->_dbName .= '_' . time();
@@ -268,6 +206,6 @@ class Config extends \Zend_Config_Ini
 
     public function getPlugins()
     {
-        return $this->plugins;
+        return $this->plugins->data;
     }
 }

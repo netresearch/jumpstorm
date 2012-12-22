@@ -2,7 +2,7 @@
 namespace SetRewriteBase;
 
 use \Mage as Mage;
-use Netresearch\Config;
+use Netresearch\Config\Base as BaseConfig;
 use Netresearch\Logger;
 use Netresearch\PluginInterface as JumpstormPlugin;
 
@@ -15,7 +15,7 @@ class SetRewriteBase implements JumpstormPlugin
 {
     protected $config;
 
-    public function __construct(Config $config)
+    public function __construct(BaseConfig $config)
     {
         $this->config = $config;
     }

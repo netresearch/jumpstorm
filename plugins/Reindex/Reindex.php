@@ -2,7 +2,7 @@
 namespace Reindex;
 
 use \Mage as Mage;
-use Netresearch\Config;
+use Netresearch\Config\Base as BaseConfig;
 use Netresearch\Logger;
 use Netresearch\PluginInterface as JumpstormPlugin;
 
@@ -13,7 +13,7 @@ class Reindex implements JumpstormPlugin
 {
     protected $config;
 
-    public function __construct(Config $config)
+    public function __construct(BaseConfig $config)
     {
         $this->config = $config;
     }
@@ -21,7 +21,7 @@ class Reindex implements JumpstormPlugin
     public function execute()
     {
         $settings = $this->config->plugins->Reindex;
-        if ($settings instanceof \Zend_Config) {
+        if ($settings instanceof BaseConfig) {
             $processes = $this->_getProcesses($settings);
             foreach ($processes as $process) {
                 $code = $process->getIndexer()->getName();

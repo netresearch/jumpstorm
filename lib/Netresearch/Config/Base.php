@@ -235,7 +235,7 @@ class Base implements \Iterator
 
     public function key()
     {
-        return array_keys($this->data)[$currentOffset];
+        return array_keys($this->data)[$this->currentOffset];
     }
 
     public function next()

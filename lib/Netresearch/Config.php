@@ -60,8 +60,8 @@ class Config extends Base
     {
         if ($this->magento && $this->magento->sampledata) {
             $value = $this->magento->sampledata;
-            if (is_array($value)) {
-                return ($value->source) ? $value->source : null;
+            if (is_object($value)) {
+                return is_string($value->source) ? $value->source : null;
             }
             return $value;
         }
@@ -76,10 +76,11 @@ class Config extends Base
     {
         if ($this->magento && $this->magento->sampledata) {
             $value = $this->magento->sampledata;
-            if (is_array($value) && $value->branch) {
+            if (is_object($value) && is_string($value->branch)) {
                 return $value->branch;
             }
         }
+        return 'master';
     }
 
     /**

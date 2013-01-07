@@ -109,6 +109,11 @@ abstract class Base
      */
     public static function getSourceModel($source, $baseTarget)
     {
+        if (false == is_string($source)) {
+            $e = new \Exception('expected source to be a valid string, but got ' . gettype($source));
+            echo $e->getTraceAsString();
+            throw $e;
+        }
         if (self::isGitRepo($source)) {
             return new Git($source);
         } elseif (self::isFilesystemPath($source)) {

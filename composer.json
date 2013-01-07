@@ -19,7 +19,7 @@
         "symfony/console": "2.0.x-dev",
         "symfony/yaml": "dev-master",
         "symfony/class-loader": "2.0.x-dev",
-        "colinmollenhour/modman": "dev-master"
+        "colinmollenhour/modman": "dev-v1.6.1"
     },
     "repositories": [
         {

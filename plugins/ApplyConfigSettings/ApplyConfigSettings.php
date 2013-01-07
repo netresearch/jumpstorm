@@ -23,7 +23,15 @@ class ApplyConfigSettings implements JumpstormPlugin
         $settings = $this->config->plugins->ApplyConfigSettings;
         if ($settings instanceof BaseConfig) {
             foreach ($settings as $name=>$setting) {
-                if ($setting instanceof BaseConfig
+                if (2 == substr_count($name, '/')
+                    && is_scalar($setting)
+                ) {
+                    Mage::getModel('eav/entity_setup', 'core_setup')->setConfigData(
+                        $name,
+                        $setting
+                    );
+                    Logger::log('* Applied setting %s', array($name));
+                } elseif ($setting instanceof BaseConfig
                     && $setting->path
                     && $setting->value
                 ) {

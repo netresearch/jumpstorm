@@ -71,10 +71,7 @@ return array(
         ),
 
         'ApplyConfigSettings' => array(
-            'demoStoreNotice' => array(
-                'path'  => 'design/head/demonotice',
-                'value' => 1
-            )
+            'design/head/demonotice' => 1
         ),
 
         'FlushCache' => 1,

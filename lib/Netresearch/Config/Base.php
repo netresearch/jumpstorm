@@ -5,7 +5,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 
-class Base
+class Base implements \Iterator
 {
     protected $data;
     protected $ask;
@@ -15,6 +15,8 @@ class Base
 
     protected $output;
     protected $command;
+
+    protected $currentOffset = 0;
 
     /**
      * create config instance
@@ -224,5 +226,30 @@ class Base
     public function setCommand(Command $command)
     {
         $this->command = $command;
+    }
+
+    public function current()
+    {
+        return $this->__get(array_keys($this->data)[$this->currentOffset]);
+    }
+
+    public function key()
+    {
+        return array_keys($this->data)[$currentOffset];
+    }
+
+    public function next()
+    {
+        return ++$this->currentOffset;
+    }
+
+    public function rewind()
+    {
+        $this->currentOffset = 0;
+    }
+
+    public function valid()
+    {
+        return isset($this->data[array_keys($this->data)[$this->currentOffset]]);
     }
 }

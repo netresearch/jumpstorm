@@ -22,15 +22,22 @@ class ApplyConfigSettings implements JumpstormPlugin
     {
         $settings = $this->config->plugins->ApplyConfigSettings;
         if ($settings instanceof BaseConfig) {
-            foreach ($this->config->plugins->ApplyConfigSettings as $name=>$setting) {
-                if ($setting instanceof BaseConfig && $setting->path && isset($setting->value)) {
+            foreach ($settings as $name=>$setting) {
+                if ($setting instanceof BaseConfig
+                    && $setting->path
+                    && $setting->value
+                ) {
                     Mage::getModel('eav/entity_setup', 'core_setup')->setConfigData(
                         $setting->path,
                         $setting->value
                     );
                     Logger::log('* Applied setting %s', array($name));
                 } else {
-                    Logger::error('Did not apply setting %s', array($name), false);
+                    Logger::error(
+                        'Could not apply setting %s due to invalid configuration',
+                        array($name),
+                        false
+                    );
                 }
             }
         } else {

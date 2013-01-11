@@ -35,11 +35,11 @@ class Magento extends Base
         $this->setName('magento');
         $this->setDescription('Install Magento');
     }
-    
+
     /**
      * Assuming that we cloned another folder into the target directory,
      * we move all files one level up.
-     * 
+     *
      * @param string $target The install path (docroot)
      * @param string $root The name of the directory where Magento's index.php resides in
      */
@@ -47,7 +47,7 @@ class Magento extends Base
     {
         $fileRoot = $target . DIRECTORY_SEPARATOR . $root;
         $fileTest = $fileRoot . DIRECTORY_SEPARATOR . '.htaccess';
-        
+
         if (file_exists($fileRoot) && is_dir($fileRoot) && file_exists($fileTest)) {
             // move files to docroot
             exec(sprintf(
@@ -68,10 +68,10 @@ class Magento extends Base
             }
         }
     }
-    
+
     /**
      * Copy Magento files from source to target directory
-     * @param string $source Absolute directory name or repository 
+     * @param string $source Absolute directory name or repository
      * @param string $target Absolute directory name (Magento root)
      * @param string $branch Branch identifier in case of repository checkout
      */
@@ -81,7 +81,7 @@ class Magento extends Base
         // copy from source to install directory
         $sourceModel->copy($target, $branch);
     }
-    
+
     /**
      * Install Magento Sample Data, including db tables and media files
      * @param string $source Absolute directory name or repository
@@ -106,13 +106,13 @@ class Magento extends Base
 
         // prepare mysql command: user, host and password
         $mysql = $this->prepareMysqlCommand();
-        
+
         // insert sample data to database
         exec(sprintf(
             '%s %s < %s',
             $mysql,
             $this->config->getDbName(),
-            $sampledataSql 
+            $sampledataSql
         ), $result, $return);
 
         if (0 !== $return) {
@@ -144,21 +144,24 @@ class Magento extends Base
             throw new Exception('Could not set permissions for folders app/etc, var and media');
         }
     }
-    
+
     /**
      * Execute Magento's install.php
-     * 
+     *
      * @param string $target Absolute directory name (Magento root)
      * @throws Exception
      */
     protected function runMageScript($target)
     {
         Logger::log("Executing installation via install.php");
-        
+
         $this->setPermissions($target);
         if (file_exists($target . '/app/etc/local.xml')) {
             unlink($target . '/app/etc/local.xml');
         }
+
+        // avoid access during installation
+        touch($target . '/maintenance.flag');
 
         $cmd = sprintf('php %s%sinstall.php -- ', $target, DIRECTORY_SEPARATOR);
         $cmd .= implode(' ', array(
@@ -205,6 +208,8 @@ class Magento extends Base
         }
 
         $this->setPermissions($target);
+
+        unlink($target . '/maintenance.flag');
     }
 
     protected function fixInstallConfig($target)
@@ -212,7 +217,7 @@ class Magento extends Base
         $path = $target . '/app/code/core/Mage/Install/etc/config.xml';
         exec(sprintf('sed "s/<pdo_mysql\/>/<pdo_mysql>1<\/pdo_mysql>/" %s > %s.fixed && mv %s.fixed %s', $path, $path, $path, $path));
     }
-    
+
     /**
      * @see vendor/symfony/src/Symfony/Component/Console/Command/Symfony\Component\Console\Command.Command::execute()
      */
@@ -223,13 +228,13 @@ class Magento extends Base
         // set the path where magento should get installed
         $target = $this->validateTarget($this->config->getTarget());
 
-        // empty target directory if it already exists 
+        // empty target directory if it already exists
         if (file_exists($target)) {
             Logger::comment('Delete existing Magento at %s', array($target));
             exec(sprintf('rm -rf %s/*', $target));
             exec(sprintf('rm -rf %s/.[a-zA-Z0-9]*', $target));
         }
-        
+
         // set the source where magento should get retrieved from
         $source = $this->config->getMagentoSource();
         // copy files from source to target
@@ -238,7 +243,7 @@ class Magento extends Base
         $this->moveToDocroot($target, 'htdocs');
         $this->moveToDocroot($target, 'magento');
         Logger::success('Fetched Magento sources');
-        
+
         // create empty database with credentials from ini file
         if (false === $this->createDatabase($this->config->getDbName())) {
             throw new Exception('Could not create live database');

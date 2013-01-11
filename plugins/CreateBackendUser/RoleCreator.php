@@ -11,7 +11,7 @@ use \Exception as Exception;
  * @category    Plugins
  * @package     Plugins_CreateBackendUser
  * @author      Christoph Aßmann <christoph.assmann@netresearch.de>
- * 
+ *
  * @property string $name
  */
 class RoleCreator extends AbstractCreator
@@ -20,8 +20,8 @@ class RoleCreator extends AbstractCreator
     const TYPE_USER = 'U';
     const TREE_LEVEL_GROUP = 1;
     const TREE_LEVEL_USER = 2;
-    
-    
+
+
     /**
      * (non-PHPdoc)
      * @see AbstractCreator::validateProperty()
@@ -35,10 +35,10 @@ class RoleCreator extends AbstractCreator
         if ($key === 'name' && empty($value)) {
             throw new Exception('Please set \'name\' in ini file.');
         }
-        
+
         return true;
     }
-        
+
     /**
      * (non-PHPdoc)
      * @see AbstractCreator::getAllowedProperties()
@@ -49,10 +49,10 @@ class RoleCreator extends AbstractCreator
             'name',
         );
     }
-    
+
     /**
      * Create a new group.
-     * 
+     *
      * @param Mage_Admin_Model_Role $role
      */
     public function createGroupRole(Mage_Admin_Model_Role $role)
@@ -63,22 +63,22 @@ class RoleCreator extends AbstractCreator
          *
          * we need to iterate, because load($this->name, 'role_name') fails in Magento 1.5
          */
-        foreach ($roles as $role) {
-            if ($role->getRoleName() == $this->name) {
-                return $role;
+        foreach ($roles as $loopRole) {
+            if ($loopRole->getRoleName() == $this->name) {
+                return $loopRole;
             }
         }
-        
+
         return $role
             ->setRoleName($this->name)
             ->setRoleType(self::TYPE_GROUP)
             ->setTreeLevel(self::TREE_LEVEL_GROUP)
             ->save();
     }
-    
+
     /**
      * Add a user to a group.
-     * 
+     *
      * @param Mage_Admin_Model_Role $role
      * @param Mage_Admin_Model_Role $parentRole
      * @param Mage_Admin_Model_User $user

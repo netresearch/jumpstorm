@@ -21,22 +21,40 @@ abstract class Base
         $this->baseTarget = $baseTarget;
     }
 
+    /**
+     * if source identifier seems to refer to a Git repository
+     *
+     * @param string $repoUrl Source identifier
+     * @return boolean
+     */
     public static function isGitRepo($repoUrl)
     {
         return (
-            (0 === strpos($repoUrl, 'git@')) // path starts with "git@"
-            || (0 === strpos($repoUrl, 'git://')) // path starts with "git://"
+            (0 === strpos($repoUrl, 'git@'))       // path starts with "git@"
+            || (0 === strpos($repoUrl, 'git://'))  // path starts with "git://"
             || (0 === strpos($repoUrl, 'http://')) // path starts with "http://"
-            || (0 === strpos($repoUrl, 'ssh://')) // path starts with "ssh://"
+            || (0 === strpos($repoUrl, 'ssh://'))  // path starts with "ssh://"
             || self::isLocalGitDirectory($repoUrl)
         );
     }
 
+    /**
+     * if source identifier refers to Magento Connect
+     *
+     * @param string $path Source identifier
+     * @return boolean
+     */
     public static function isMagentoConnectIdentifier($path)
     {
         return 0 === strpos($path, 'magentoconnect://');
     }
 
+    /**
+     * if directory contains a Git folder (not a working copy, but its .git directory or a bare repository)
+     *
+     * @param string $path Path of a folder
+     * @return boolean
+     */
     protected static function isLocalGitDirectory($path)
     {
         if (false == self::isFilesystemPath($path)) {
@@ -59,20 +77,35 @@ abstract class Base
         }
         return true;
     }
-    
+
+    /**
+     * if source identifier points to a local file system directory
+     *
+     * @param string $sourcePath Source identifier
+     * @return boolean
+     */
     public static function isFilesystemPath($sourcePath)
     {
         return (0 === strpos($sourcePath, '/')); // path is absolute filesystem path
     }
-    
+
+    /**
+     * if source identifier is a HTTP URI
+     *
+     * @param string $sourceUrl Source identifier
+     * @return boolean
+     */
     public static function isHttpUrl($sourceUrl)
     {
         return (0 === strpos($sourceUrl, 'http://')); // path is web path
     }
-    
+
     /**
-     * 
-     * @param string $source
+     * get source model instance
+     *
+     * @param string $source     Source identifier
+     * @param string $baseTarget Base target directory
+     * @return Base
      */
     public static function getSourceModel($source, $baseTarget)
     {
@@ -85,7 +118,7 @@ abstract class Base
         } elseif (self::isMagentoConnectIdentifier($source)) {
             return new MagentoConnect($source, $baseTarget);
         }
-        
+
         throw new Exception("No applicable source model found for source '$source'");
     }
 }

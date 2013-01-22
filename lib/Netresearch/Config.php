@@ -239,6 +239,11 @@ class Config extends \Zend_Config_Ini
         return $this->magento->adminPass;
     }
 
+    public function getEncryptionKey()
+    {
+        return $this->magento->encryptionKey;
+    }
+    
     /**
      * collect admin user permissions from configuration
      *

@@ -312,6 +312,9 @@ class Magento extends Base
             '--admin_username "' . $this->config->getAdminUser() . '"',
             '--admin_password "' . $this->config->getAdminPass() . '"',
         ));
+        if($this->config->getEncryptionKey()){
+            $cmd .= ' --encryption_key "' . $this->config->getEncryptionKey() . '"';
+        }
 
         exec($cmd, $result, $return);
 

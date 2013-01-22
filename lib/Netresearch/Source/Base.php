@@ -27,6 +27,7 @@ abstract class Base
             || (0 === strpos($repoUrl, 'http://')) // path starts with "http://"
             || (0 === strpos($repoUrl, 'ssh://')) // path starts with "ssh://"
             || self::isLocalGitDirectory($repoUrl)
+            || self::isLocalGitDirectory($repoUrl. DIRECTORY_SEPARATOR . '.git')
         );
     }
 

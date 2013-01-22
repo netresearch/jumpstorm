@@ -22,12 +22,17 @@ class Git extends Source implements SourceInterface
         if (!Source::isGitRepo($this->source)) {
             throw new Exception('Provided source is not a Git repository: ' . $this->source);
         }
-        
-        $this->_cloneRepository($this->source, $target);
-        
-        if ((null !== $branch) && (self::GIT_DEFAULT_BRANCH !== $branch)) {
+
+        if (Source::isGitRepo($target)) {
+            $this->_pull($target);
+        } else {
+            $this->_cloneRepository($this->source, $target);
+        }
+
+        if ((null !== $branch)) {
             $this->_checkout($target, $branch);
         }
+        $this->_submodules($target);
     }
 
     /**
@@ -37,7 +42,7 @@ class Git extends Source implements SourceInterface
     {
         Logger::comment('Cloning Git repository');
 
-        $command = sprintf('git clone %s %s 2>&1', $repoUrl, $targetPath);
+        $command = sprintf('git clone %s --recursive %s 2>&1', $repoUrl, $targetPath);
         Logger::log($command);
         exec($command, $result, $return);
 
@@ -51,6 +56,30 @@ class Git extends Source implements SourceInterface
         Logger::log('Git checkout %s', array($branch));
         
         $command = sprintf('cd %s; git checkout %s 2>&1; cd -', $targetPath, $branch);
+        exec($command, $result, $return);
+
+        if (0 !== $return) {
+            throw new Exception(implode(PHP_EOL, $result));
+        }
+    }
+
+    protected function _pull($targetPath)
+    {
+        Logger::log('Git pull %s', array($targetPath));
+
+        $command = sprintf('cd %s; git pull 2>&1; cd -', $targetPath);
+        exec($command, $result, $return);
+
+        if (0 !== $return) {
+            throw new Exception(implode(PHP_EOL, $result));
+        }
+    }
+
+    protected function _submodules($targetPath)
+    {
+        Logger::log('Git submodule update --init --recursive %s', array($targetPath));
+
+        $command = sprintf('cd %s; git submodule update --init --recursive 2>&1; cd -', $targetPath);
         exec($command, $result, $return);
 
         if (0 !== $return) {

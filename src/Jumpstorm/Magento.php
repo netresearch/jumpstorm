@@ -232,9 +232,11 @@ class Magento extends Base
      */
     protected function getBaseUrlFileReference()
     {
+        $search = array('http://','https://',DIRECTORY_SEPARATOR);
+        $replace = array('','','_');
         return str_replace(
-            DIRECTORY_SEPARATOR,
-            '_',
+            $search,
+            $replace,
             $this->config->getMagentoBaseUrl()
         );
     }

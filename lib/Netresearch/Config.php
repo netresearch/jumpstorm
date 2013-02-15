@@ -43,7 +43,6 @@ class Config extends \Zend_Config_Ini
         $this->confirm = false;
     }
 
-<<<<<<< HEAD
     /**
      * determine a configuration value (take from config, let the user confirm it, or ask user)
      *
@@ -51,8 +50,6 @@ class Config extends \Zend_Config_Ini
      * @param bool $dbValue is $path a database configuration value
      * @return mixed
      */
-=======
->>>>>>> output-config-option
     public function determine($path, $dbValue=false)
     {
         if (array_key_exists($path, $this->confirmedData)) {
@@ -119,14 +116,6 @@ class Config extends \Zend_Config_Ini
     public function getMagentoBaseUrl()
     {
         return $this->placeHolderAdjustedValue($this->magento->baseUrl);
-<<<<<<< HEAD
-=======
-    }
-
-    public function getMagentoVersion()
-    {
-        return $this->common->magento->version ? $this->common->magento->version : null;
->>>>>>> output-config-option
     }
 
     public function getMagentoVersion()
@@ -141,7 +130,6 @@ class Config extends \Zend_Config_Ini
      */
     public function getMagentoSampledataSource()
     {
-<<<<<<< HEAD
         if ($this->magento && $this->magento->sampledata) {
             $value = $this->magento->sampledata;
             if ($value instanceof \Zend_Config) {
@@ -149,13 +137,6 @@ class Config extends \Zend_Config_Ini
             }
             return $this->placeHolderAdjustedValue($value);
         }
-=======
-        return $this->placeHolderAdjustedValue(
-            ($this->magento->sampledata && $this->magento->sampledata->source)
-                ? $this->magento->sampledata->source
-                : null
-        );
->>>>>>> output-config-option
     }
 
     /**
@@ -165,20 +146,12 @@ class Config extends \Zend_Config_Ini
      */
     public function getMagentoSampledataBranch()
     {
-<<<<<<< HEAD
         if ($this->magento && $this->magento->sampledata) {
             $value = $this->magento->sampledata;
             if ($value instanceof \Zend_Config && $value->branch) {
                 return $this->placeHolderAdjustedValue($value->branch);
             }
         }
-=======
-        return $this->placeHolderAdjustedValue(
-            ($this->magento->sampledata && $this->magento->sampledata->branch)
-                ? $this->magento->sampledata->branch
-                : null
-        );
->>>>>>> output-config-option
     }
 
     public function getBackupTarget()
@@ -210,14 +183,9 @@ class Config extends \Zend_Config_Ini
     {
         if (is_null($this->_dbName)) {
             $path = 'common.db.name';
-<<<<<<< HEAD
 
             $this->_dbName = $this->determine($path, true);
 
-=======
-            $this->_dbName = $this->determine($path, true);
-           
->>>>>>> output-config-option
             if ($this->common->db->timestamp) {
                 $this->_dbName .= '_' . time();
             }
@@ -271,19 +239,16 @@ class Config extends \Zend_Config_Ini
         return $this->magento->adminPass;
     }
 
-<<<<<<< HEAD
-    /**
-     * collect admin user permissions from configuration
-     *
-     * @return void
-     */
-=======
     public function getEncryptionKey()
     {
         return $this->magento->encryptionKey;
     }
 
->>>>>>> output-config-option
+    /**
+     * collect admin user permissions from configuration
+     *
+     * @return void
+     */
     protected function assignPermissions()
     {
         $this->addedPermissions   = array();

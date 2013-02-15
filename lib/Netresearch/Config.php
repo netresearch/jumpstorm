@@ -47,9 +47,10 @@ class Config extends \Zend_Config_Ini
      * determine a configuration value (take from config, let the user confirm it, or ask user)
      *
      * @param mixed $path Configuration path
+     * @param bool $dbValue is $path a database configuration value
      * @return mixed
      */
-    public function determine($path)
+    public function determine($path, $dbValue=false)
     {
         if (array_key_exists($path, $this->confirmedData)) {
             return $this->confirmedData[$path];
@@ -89,8 +90,8 @@ class Config extends \Zend_Config_Ini
                 ));
             }
         }
-        $this->confirmedData[$path] = $value;
-        return $value;
+        $this->confirmedData[$path] = $this->placeHolderAdjustedValue($value, $dbValue);
+        return $this->confirmedData[$path];
     }
 
     /**
@@ -104,17 +105,22 @@ class Config extends \Zend_Config_Ini
         if (!$source) {
             throw new \Exception('Magento source path is not set');
         }
-        return $source;
+        return $this->placeHolderAdjustedValue($source);
     }
 
     public function getMagentoBranch()
     {
-        return $this->magento->branch ? $this->magento->branch : null;
+        return $this->placeHolderAdjustedValue($this->magento->branch ? $this->magento->branch : null);
     }
 
     public function getMagentoBaseUrl()
     {
-        return $this->magento->baseUrl;
+        return $this->placeHolderAdjustedValue($this->magento->baseUrl);
+    }
+
+    public function getMagentoVersion()
+    {
+        return $this->common->magento->version ? $this->common->magento->version : null;
     }
 
     /**
@@ -129,7 +135,7 @@ class Config extends \Zend_Config_Ini
             if ($value instanceof \Zend_Config) {
                 return ($value->source) ? $value->source : null;
             }
-            return $value;
+            return $this->placeHolderAdjustedValue($value);
         }
     }
 
@@ -143,14 +149,14 @@ class Config extends \Zend_Config_Ini
         if ($this->magento && $this->magento->sampledata) {
             $value = $this->magento->sampledata;
             if ($value instanceof \Zend_Config && $value->branch) {
-                return $value->branch;
+                return $this->placeHolderAdjustedValue($value->branch);
             }
         }
     }
 
     public function getBackupTarget()
     {
-        return $this->magento->backup->target ? $this->magento->backup->target : null;
+        return $this->placeHolderAdjustedValue($this->magento->backup->target ? $this->magento->backup->target : null);
     }
 
     /**
@@ -177,7 +183,8 @@ class Config extends \Zend_Config_Ini
     {
         if (is_null($this->_dbName)) {
             $path = 'common.db.name';
-            $this->_dbName = $this->determine($path);
+
+            $this->_dbName = $this->determine($path, true);
 
             if ($this->common->db->timestamp) {
                 $this->_dbName .= '_' . time();
@@ -189,7 +196,7 @@ class Config extends \Zend_Config_Ini
 
     public function getDbUser()
     {
-        return $this->common->db->user;
+        return $this->placeHolderAdjustedValue($this->common->db->user, true);
     }
 
     public function getDbHost()
@@ -204,7 +211,7 @@ class Config extends \Zend_Config_Ini
 
     public function getDbPrefix()
     {
-        return $this->common->db->prefix;
+        return $this->placeHolderAdjustedValue($this->common->db->prefix, true);
     }
 
     public function getAdminFirstname()
@@ -274,5 +281,22 @@ class Config extends \Zend_Config_Ini
     public function getPlugins()
     {
         return $this->plugins;
+    }
+
+    protected function placeHolderAdjustedValue($value, $dbValue = false)
+    {
+        if ($this->getMagentoVersion()) {
+            $version = $this->getMagentoVersion();
+            if ($dbValue) {
+                $version = str_replace('.', '_', $version);
+            }
+            $value = str_replace('%MAGENTO_VERSION%', $version, $value);
+        }
+        if (strpos($value, '%MAGENTO_VERSION%') !== false) {
+            throw new \Exception(
+                'Please define a value for magento.version in your jumpstorm.ini if you are using the placeholder %MAGENTO_VERSION%'
+            );
+        }
+        return $value;
     }
 }

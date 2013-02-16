@@ -133,9 +133,8 @@ class Config extends \Zend_Config_Ini
         if ($this->magento && $this->magento->sampledata) {
             $value = $this->magento->sampledata;
             if ($value instanceof \Zend_Config) {
-                return ($value->source) ? $value->source : null;
+                return ($value->source) ? $this->placeHolderAdjustedValue($value->source) : null;
             }
-            return $this->placeHolderAdjustedValue($value);
         }
     }
 
@@ -301,6 +300,18 @@ class Config extends \Zend_Config_Ini
             throw new \Exception(
                 'Please define a value for magento.version in your jumpstorm.ini if you are using the placeholder %MAGENTO_VERSION%'
             );
+        }
+        return $this->homedirAdjustdedValue($value);
+    }
+
+    protected function homedirAdjustdedValue($value)
+    {
+        if (0 === strpos($value, '~') && strncasecmp(PHP_OS, 'WIN', 3) != 0) {
+            $userId = getmyuid();
+            $userData = posix_getpwuid($userId);
+            if (isset($userData['dir'])) {
+                $value = str_replace('~', $userData['dir'], $value);
+            }
         }
         return $value;
     }

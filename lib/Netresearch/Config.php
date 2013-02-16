@@ -306,11 +306,9 @@ class Config extends \Zend_Config_Ini
 
     protected function homedirAdjustdedValue($value)
     {
-        if (0 === strpos($value, '~') && strncasecmp(PHP_OS, 'WIN', 3) != 0) {
-            $userId = getmyuid();
-            $userData = posix_getpwuid($userId);
-            if (isset($userData['dir'])) {
-                $value = str_replace('~', $userData['dir'], $value);
+        if (0 === strpos($value, '~')) {
+            if (isset($_SERVER['HOME'])) {
+                $value = str_replace('~', $_SERVER['HOME'], $value);
             }
         }
         return $value;

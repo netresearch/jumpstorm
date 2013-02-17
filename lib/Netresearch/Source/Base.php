@@ -32,10 +32,26 @@ abstract class Base
         return (
             (0 === strpos($repoUrl, 'git@'))       // path starts with "git@"
             || (0 === strpos($repoUrl, 'git://'))  // path starts with "git://"
-            || (0 === strpos($repoUrl, 'http://')) // path starts with "http://"
-            || (0 === strpos($repoUrl, 'ssh://'))  // path starts with "ssh://"
+            || (0 === strpos($repoUrl, 'http://') && false !== strpos($repoUrl, 'git')) // path starts with "http://" and path contains git
+            || (0 === strpos($repoUrl, 'ssh://') && false !== strpos($repoUrl, 'git'))  // path starts with "ssh://" and path contains git
             || self::isLocalGitDirectory($repoUrl)
             || self::isLocalGitDirectory($repoUrl. DIRECTORY_SEPARATOR . '.git')
+        );
+    }
+
+    /**
+     * if source identifier refers to a Mercurial repository
+     *
+     * @param string $repoUrl Source identifier
+     * @return boolean
+     */
+    public static function isHgRepo($repoUrl)
+    {
+        return (
+        ((0 === strpos($repoUrl, 'http://')) // path starts with "http://"
+            || (0 === strpos($repoUrl, 'https://'))  // path starts with "https://"
+            || (0 === strpos($repoUrl, 'ssh://'))  // path starts with "ssh://"
+            || self::isLocalHgDirectory($repoUrl. DIRECTORY_SEPARATOR . '.hg'))
         );
     }
 
@@ -58,9 +74,6 @@ abstract class Base
      */
     protected static function isLocalGitDirectory($path)
     {
-        if (false == self::isFilesystemPath($path)) {
-            return false;
-        }
         $gitBareFolders = array(
             'HEAD',
             'branches',
@@ -71,8 +84,41 @@ abstract class Base
             'objects',
             'refs'
         );
-        foreach ($gitBareFolders as $gitBareFolder) {
-            if (false == file_exists($path . DIRECTORY_SEPARATOR . $gitBareFolder)) {
+        return self::isLocalVCSDirectory($path, $gitBareFolders);
+    }
+
+    /**
+     * if directory is a Mercurial repository
+     *
+     * @param string $path Path of a folder
+     * @return boolean
+     */
+    protected static function isLocalHgDirectory($path)
+    {
+        $hgFolders = array(
+            'store',
+            'dirstate',
+            'cache',
+            'requires'
+        );
+        return self::isLocalVCSDirectory($path, $hgFolders);
+    }
+
+    /**
+     * if directory contains files/folder indicating use of a particular VCS
+     *
+     * @param string $path Path of a folder
+     * @param array $fileArray files and folders to check for
+     *
+     * @return boolean
+     */
+    protected static function isLocalVCSDirectory($path, $fileArray)
+    {
+        if (false == self::isFilesystemPath($path)) {
+            return false;
+        }
+        foreach ($fileArray as $file) {
+            if (false == file_exists($path . DIRECTORY_SEPARATOR . $file)) {
                 return false;
             }
         }
@@ -112,6 +158,8 @@ abstract class Base
     {
         if (self::isGitRepo($source)) {
             return new Git($source);
+        } elseif (self::isHgRepo($source)) {
+            return new Hg($source);
         } elseif (self::isFilesystemPath($source)) {
             return new Filesystem($source);
         } elseif (self::isHttpUrl($source)) {

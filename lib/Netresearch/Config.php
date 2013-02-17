@@ -310,6 +310,8 @@ class Config extends \Zend_Config_Ini
             if (isset($_SERVER['HOME'])) {
                 $value = str_replace('~', $_SERVER['HOME'], $value);
             }
+            //the home dir might be saved in other variables
+            //see http://stackoverflow.com/questions/4679233/equivalent-of-envapache-run-user-in-php-cli
         }
         return $value;
     }

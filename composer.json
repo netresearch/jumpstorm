@@ -8,13 +8,6 @@
     ],
     "require": {
         "symfony/console": "2.0.x-dev",
-        "symfony/class-loader": "2.0.x-dev",
-        "colinmollenhour/modman": "dev-master"
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git://github.com/colinmollenhour/modman.git"
-        }
-    ]
+        "symfony/class-loader": "2.0.x-dev"
+    }
 }

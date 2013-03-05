@@ -86,7 +86,8 @@ abstract class Base
      */
     public static function isFilesystemPath($sourcePath)
     {
-        return (0 === strpos($sourcePath, '/')); // path is absolute filesystem path
+        $sourcePath = realpath($sourcePath);
+        return file_exists($sourcePath); // path is absolute filesystem path
     }
 
     /**

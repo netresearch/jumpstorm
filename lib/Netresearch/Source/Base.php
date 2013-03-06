@@ -7,18 +7,16 @@ use \Exception as Exception;
 abstract class Base
 {
     protected $source;
-    protected $baseTarget;
 
     /**
      * set source to new instance
      *
-     * @param string $source
+     * @param string $source Location of the source files
      * @return Base
      */
-    public function __construct($source, $baseTarget=null)
+    public function __construct($source)
     {
         $this->source     = $source;
-        $this->baseTarget = $baseTarget;
     }
 
     /**
@@ -105,10 +103,9 @@ abstract class Base
      * get source model instance
      *
      * @param string $source     Source identifier
-     * @param string $baseTarget Base target directory
      * @return Base
      */
-    public static function getSourceModel($source, $baseTarget)
+    public static function getSourceModel($source)
     {
         if (self::isGitRepo($source)) {
             return new Git($source);
@@ -117,7 +114,7 @@ abstract class Base
         } elseif (self::isHttpUrl($source)) {
             return new Http($source);
         } elseif (self::isMagentoConnectIdentifier($source)) {
-            return new MagentoConnect($source, $baseTarget);
+            return new MagentoConnect($source);
         }
 
         throw new Exception("No applicable source model found for source '$source'");

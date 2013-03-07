@@ -59,12 +59,14 @@ class Extensions extends Base
         $this->setDescription('Install extensions');
     }
 
+
     /**
-     * @see vendor/symfony/src/Symfony/Component/Console/Command/Symfony\Component\Console\Command.Command::execute()
+     * @param InputInterface $input
+     * @param OutputInterface $output
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function preExecute(InputInterface $input, OutputInterface $output)
     {
-        $this->preExecute($input, $output);
+        parent::preExecute($input, $output);
 
         // check if modman is installed
         exec('modman --version', $output, $return);
@@ -80,6 +82,15 @@ class Extensions extends Base
             mkdir($extensionRootDir);
         }
         $this->extensionRootDir = $extensionRootDir;
+    }
+
+
+    /**
+     * @see vendor/symfony/src/Symfony/Component/Console/Command/Symfony\Component\Console\Command.Command::execute()
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $this->preExecute($input, $output);
 
         // iterate extensions and perform installation
         foreach ($this->config->getExtensions() as $alias => $extension) {

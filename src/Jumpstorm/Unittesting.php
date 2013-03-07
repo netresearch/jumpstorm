@@ -5,7 +5,6 @@ use Netresearch\Logger;
 use Netresearch\Config;
 use Netresearch\Source\SourceBase as Source;
 
-use Jumpstorm\Extensions as Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,7 +20,7 @@ use \Exception as Exception;
  * @subpackage Jumpstorm
  * @author     Thomas Birke <thomas.birke@netresearch.de>
  */
-class Unittesting extends Command
+class Unittesting extends Extensions
 {
     /**
      * @see vendor/symfony/src/Symfony/Component/Console/Command/Symfony\Component\Console\Command.Command::configure()

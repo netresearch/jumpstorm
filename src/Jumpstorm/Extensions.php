@@ -163,7 +163,7 @@ class Extensions extends Base
             // if modman file was found, deploy via modman
 
             // alias may have to be changed to subdirectory
-            $pattern = sprintf("|%s/(.+)/%s|", $this->extensionRootDir, 'modman');
+            $pattern = sprintf("|^%s/(.+)/%s$|", $this->extensionRootDir, 'modman');
             preg_match($pattern, $modmanFile, $matches);
             $alias = $matches[1];
 

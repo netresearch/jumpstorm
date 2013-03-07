@@ -77,7 +77,7 @@ class Magento extends Base
      */
     protected function installMagento($source, $target, $branch)
     {
-        $sourceModel = Source::getSourceModel($source, $target);
+        $sourceModel = Source::getSourceModel($source);
         // copy from source to install directory
         $sourceModel->copy($target, $branch);
     }
@@ -92,7 +92,7 @@ class Magento extends Base
     {
         $sampleDataDir = $target . DIRECTORY_SEPARATOR . 'sampleData';
 
-        $sourceModel = Source::getSourceModel($source, $target);
+        $sourceModel = Source::getSourceModel($source);
         // copy from source to install directory
         $sourceModel->copy($sampleDataDir, $branch);
 
@@ -123,7 +123,7 @@ class Magento extends Base
         Logger::log("Copying sample data media files");
         $sourceMediaDir = $sampleDataDir . DIRECTORY_SEPARATOR . 'media';
         $targetMediaDir = $target . DIRECTORY_SEPARATOR . 'media';
-        $sourceModel = Source::getSourceModel($sourceMediaDir, $this->config->getTarget());
+        $sourceModel = Source::getSourceModel($sourceMediaDir);
         $sourceModel->copy($targetMediaDir);
 
         // remove temporary sample data folder

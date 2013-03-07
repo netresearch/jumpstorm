@@ -4,6 +4,3 @@
 [submodule "lib/Symfony/Component/ClassLoader"]
 	path = lib/Symfony/Component/ClassLoader
 	url = https://github.com/symfony/ClassLoader
-[submodule "shell/modman"]
-	path = shell/modman
-	url = git://github.com/colinmollenhour/modman.git

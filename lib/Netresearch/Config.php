@@ -168,6 +168,7 @@ class Config extends \Zend_Config_Ini
         $extensions = array();
         foreach ($this->extensions as $name=>$extension) {
             if (!is_string($extension)) {
+                $extension->source = $this->homedirAdjustdedValue($extension->source);
                 $extensions[$name] = $extension;
             } else {
                 $extensions[$name] = new \StdClass();

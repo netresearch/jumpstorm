@@ -172,7 +172,7 @@ class Config extends \Zend_Config_Ini
             } else {
                 $extensions[$name] = new \StdClass();
                 $extensions[$name]->branch = 'master';
-                $extensions[$name]->source = $extension;
+                $extensions[$name]->source = $this->homedirAdjustdedValue($extension);
             }
         }
         return $extensions;

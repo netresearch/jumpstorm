@@ -22,6 +22,9 @@ use \Exception as Exception;
  */
 class Unittesting extends Extensions
 {
+
+    protected $useModman = false;
+
     /**
      * @see vendor/symfony/src/Symfony/Component/Console/Command/Symfony\Component\Console\Command.Command::configure()
      */

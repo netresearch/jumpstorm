@@ -8,6 +8,8 @@ abstract class Base
 {
     protected $source;
 
+    protected $useRecursive = false;
+
     /**
      * set source to new instance
      *

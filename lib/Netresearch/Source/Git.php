@@ -13,7 +13,8 @@ use \Exception as Exception;
 class Git extends Source implements SourceInterface
 {
     const GIT_DEFAULT_BRANCH = 'master';
-    
+
+
     /**
      * @see SourceInterface::copy()
      */
@@ -30,14 +31,28 @@ class Git extends Source implements SourceInterface
         }
     }
 
+    private function useRecursive()
+    {
+        $recursive = '';
+        if ($this->useRecursive) {
+            $recursive = '--recursive';
+        }
+        return $recursive;
+    }
+
+    public function setUseRecursive($useRecursive)
+    {
+        $this->useRecursive = $useRecursive;
+    }
+
     /**
      * Clone git repo to desired location
      */
     protected function _cloneRepository($repoUrl, $targetPath)
     {
         Logger::comment('Cloning Git repository');
-
-        $command = sprintf('git clone %s %s 2>&1', $repoUrl, $targetPath);
+        $recursive = $this->useRecursive();
+        $command = sprintf('git clone %s %s %s 2>&1', $recursive,  $repoUrl, $targetPath);
         Logger::log($command);
         exec($command, $result, $return);
 

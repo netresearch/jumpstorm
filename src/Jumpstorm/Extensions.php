@@ -1,6 +1,7 @@
 <?php
 namespace Jumpstorm;
 
+use Netresearch\Source\Git;
 use Netresearch\Source\MagentoConnect;
 
 use Netresearch\Logger;
@@ -47,6 +48,8 @@ class Extensions extends Base
      * @var boolean
      */
     protected $useModman = true;
+
+    protected $recursive = false;
 
 
     /**
@@ -115,7 +118,10 @@ class Extensions extends Base
     protected function installExtension($alias, \Zend_Config $extension)
     {
         Logger::log('Installing extension %s from %s', array($alias, $extension->source));
-
+        $this->recursive = false;
+        if ($extension->recursive == true) {
+            $this->recursive = true;
+        }
         $this->extensionDir = $this->extensionRootDir . DIRECTORY_SEPARATOR . $alias;
 
         // cleanup modman directory
@@ -128,6 +134,9 @@ class Extensions extends Base
         $sourceModel = Source::getSourceModel($extension->source);
         if ($sourceModel instanceof MagentoConnect) {
             $sourceModel->setMagentoRoot($this->magentoRoot);
+        }
+        if ($sourceModel instanceof Git) {
+            $sourceModel->setUseRecursive($this->recursive);
         }
         $sourceModel->copy($this->extensionDir, $extension->branch);
 

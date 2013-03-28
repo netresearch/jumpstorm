@@ -91,10 +91,13 @@ class Base extends Command
      * 
      * @return string MySQL command line string including credentials
      */
-    protected function prepareMysqlCommand()
+    protected function prepareMysqlCommand($dump = false)
     {
+        $mysqlcommand = $dump ? 'mysqldump' : 'mysql';
+
         $mysql = sprintf(
-            'mysql -u%s -h%s',
+            '%s -u%s -h%s',
+            $mysqlcommand,
             $this->config->getDbUser(),
             $this->config->getDbHost()
         );

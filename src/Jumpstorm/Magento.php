@@ -131,6 +131,135 @@ class Magento extends Base
     }
 
     /**
+     * Take a snapshot of the current database and local.xml config
+     * @param string $backupLocation Absolute directory name for backup location
+     * @param string $magentoLocation Absolute directory of Magento installation
+     * @throws Exception
+     */
+    protected function createDatabaseSnapshot($backupLocation, $magentoLocation)
+    {
+
+        //remove existing backups with the same config
+        $localXmlBackupFile = $this->getBackupFilename($backupLocation, true);
+        if (file_exists($localXmlBackupFile)) {
+            unlink($localXmlBackupFile);
+        }
+
+        $dbBackupFile = $this->getBackupFilename($backupLocation);
+        if (file_exists($dbBackupFile)) {
+            unlink($dbBackupFile);
+        }
+
+        // prepare mysqldump command: user, host and password
+        $mysql = $this->prepareMysqlCommand(true);
+        
+        // run database backup
+        exec(
+            sprintf(
+                '%s %s > %s',
+                $mysql,
+                $this->config->getDbName(),
+                $dbBackupFile
+            ), $result, $return
+        );
+
+        if (0 !== $return) {
+            throw new Exception('Could not create database snapshot');
+        }
+
+        // copy local.xml file
+        $localXmlFile = $magentoLocation . '/app/etc/local.xml';
+        copy($localXmlFile, $localXmlBackupFile);
+    }
+
+    /**
+     * Install Magento from previous database snapshot
+     * @param $target Absolute directory of Magento installation
+     *
+     * @return bool
+     */
+    protected function installedFromDbSnapshot($target)
+    {
+
+        $backupLocation = $this->config->getBackupTarget();
+        if (!$backupLocation) {
+            return false;
+        }
+
+        // check for local xml backup
+        $localXmlBackupFile = $this->getBackupFilename($backupLocation, true);
+        if (!file_exists($localXmlBackupFile)) {
+            Logger::comment('No existing backup xml file at %s', array($localXmlBackupFile));
+            return false;
+        }
+
+        // check for database backup
+        $dbBackupFile = $this->getBackupFilename($backupLocation);
+        if (!file_exists($dbBackupFile)) {
+            Logger::comment('No existing backup db file at %s', array($dbBackupFile));
+            return false;
+        }
+
+        // prepare mysql command: user, host and password
+        $mysql = $this->prepareMysqlCommand();
+
+        // insert sample data to database
+        exec(
+            sprintf(
+                '%s %s < %s',
+                $mysql,
+                $this->config->getDbName(),
+                $dbBackupFile
+            ), $result, $return
+        );
+
+        if (0 !== $return) {
+            Logger::comment('Failed to restored from database backup file %s', array($localXmlBackupFile));
+            return false;
+        }
+
+        // copy local.xml file
+        $localXmlFile = $target . '/app/etc/local.xml';
+        copy($localXmlBackupFile, $localXmlFile);
+
+        Logger::success('Installed from previous snapshot');
+        return true;
+    }
+
+    /**
+     * Convert baseUrl into a usable filename
+     * @return string
+     */
+    protected function getBaseUrlFileReference()
+    {
+        $search = array('http://','https://',DIRECTORY_SEPARATOR);
+        $replace = array('','','_');
+        return str_replace(
+            $search,
+            $replace,
+            $this->config->getMagentoBaseUrl()
+        );
+    }
+
+    /**
+     * retrieve backup file names
+     * @param      $backupLocation
+     * @param bool $xml if true return name of the local.xml file else sql
+     *
+     * @return string
+     */
+    protected function getBackupFilename($backupLocation, $xml = false)
+    {
+        $format = $xml ? '%s%s%s.local.xml' : '%s%s%s.sql';
+        return sprintf(
+            $format,
+            $backupLocation,
+            DIRECTORY_SEPARATOR,
+            $this->getBaseUrlFileReference()
+        );
+    }
+
+    /**
      * Set permissions for web server access
      *
      * @param string $target Absolute directory name (Magento root)
@@ -250,22 +379,29 @@ class Magento extends Base
             throw new Exception('Could not create live database');
         }
 
-        // install sample data
-        if (null !== $this->config->getMagentoSampledataSource()) {
-            $this->installSampledata(
-                $this->config->getMagentoSampledataSource(),
-                $target,
-                $this->config->getMagentoSampledataBranch()
-            );
-            Logger::success('Installed sample data');
+        if (!$this->installedFromDbSnapshot($target)) {
+            // install sample data
+            if (null !== $this->config->getMagentoSampledataSource()) {
+                $this->installSampledata(
+                    $this->config->getMagentoSampledataSource(),
+                    $target,
+                    $this->config->getMagentoSampledataBranch()
+                );
+                Logger::success('Installed sample data');
+            }
+
+            // avoid exception 'PHP Extensions "0" must be loaded.'
+            $this->fixInstallConfig($target);
+
+            // run install.php
+            $this->runMageScript($target);
+
+            // create database backup directory
+            if (null !== $this->config->getBackupTarget()) {
+                $this->createDatabaseSnapshot($this->config->getBackupTarget(), $target);
+                Logger::success('Created Database Backup');
+            }
         }
-
-        // avoid exception 'PHP Extensions "0" must be loaded.'
-        $this->fixInstallConfig($target);
-
-        // run install.php
-        $this->runMageScript($target);
-
         // clean cache
         exec(sprintf('rm -rf %s/var/cache/*', $target));
 

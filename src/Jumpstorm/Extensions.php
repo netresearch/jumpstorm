@@ -49,9 +49,6 @@ class Extensions extends Base
      */
     protected $useModman = true;
 
-    protected $recursive = false;
-
-
     /**
      * @see vendor/symfony/src/Symfony/Component/Console/Command/Symfony\Component\Console\Command.Command::configure()
      */
@@ -118,10 +115,6 @@ class Extensions extends Base
     protected function installExtension($alias, \Zend_Config $extension)
     {
         Logger::log('Installing extension %s from %s', array($alias, $extension->source));
-        $this->recursive = false;
-        if ($extension->recursive == true) {
-            $this->recursive = true;
-        }
         $this->extensionDir = $this->extensionRootDir . DIRECTORY_SEPARATOR . $alias;
 
         // cleanup modman directory
@@ -134,9 +127,8 @@ class Extensions extends Base
         $sourceModel = Source::getSourceModel($extension->source);
         if ($sourceModel instanceof MagentoConnect) {
             $sourceModel->setMagentoRoot($this->magentoRoot);
-        }
-        if ($sourceModel instanceof Git) {
-            $sourceModel->setUseRecursive($this->recursive);
+        } elseif ($sourceModel instanceof Git) {
+            $sourceModel->setCloneRecursive((bool)$extension->recursive);
         }
         $sourceModel->copy($this->extensionDir, $extension->branch);
 

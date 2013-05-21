@@ -115,7 +115,11 @@ class Config extends \Zend_Config_Ini
 
     public function getMagentoBaseUrl()
     {
-        return $this->placeHolderAdjustedValue($this->magento->baseUrl);
+        $url = $this->placeHolderAdjustedValue($this->magento->baseUrl);
+        if (substr($url, 0, 4) !== 'http') {
+            $url = 'http://' . $url;
+        }
+        return $url;
     }
 
     public function getMagentoVersion()

@@ -7,18 +7,16 @@ use \Exception as Exception;
 abstract class Base
 {
     protected $source;
-    protected $baseTarget;
 
     /**
      * set source to new instance
      *
-     * @param string $source
+     * @param string $source Location of the source files
      * @return Base
      */
-    public function __construct($source, $baseTarget=null)
+    public function __construct($source)
     {
         $this->source     = $source;
-        $this->baseTarget = $baseTarget;
     }
 
     /**
@@ -86,7 +84,8 @@ abstract class Base
      */
     public static function isFilesystemPath($sourcePath)
     {
-        return (0 === strpos($sourcePath, '/')); // path is absolute filesystem path
+        $sourcePath = realpath($sourcePath);
+        return file_exists($sourcePath); // path is absolute filesystem path
     }
 
     /**
@@ -104,10 +103,9 @@ abstract class Base
      * get source model instance
      *
      * @param string $source     Source identifier
-     * @param string $baseTarget Base target directory
      * @return Base
      */
-    public static function getSourceModel($source, $baseTarget)
+    public static function getSourceModel($source)
     {
         if (false == is_string($source)) {
             $e = new \Exception('expected source to be a valid string, but got ' . gettype($source));
@@ -121,7 +119,7 @@ abstract class Base
         } elseif (self::isHttpUrl($source)) {
             return new Http($source);
         } elseif (self::isMagentoConnectIdentifier($source)) {
-            return new MagentoConnect($source, $baseTarget);
+            return new MagentoConnect($source);
         }
 
         throw new Exception("No applicable source model found for source '$source'");

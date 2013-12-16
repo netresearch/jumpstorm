@@ -71,13 +71,13 @@ class Magento extends Base
 
     /**
      * Copy Magento files from source to target directory
-     * @param string $source Absolute directory name or repository 
+     * @param string $source Absolute directory name or repository
      * @param string $target Absolute directory name (Magento root)
      * @param string $branch Branch identifier in case of repository checkout
      */
     protected function installMagento($source, $target, $branch)
     {
-        $sourceModel = Source::getSourceModel($source, $target);
+        $sourceModel = Source::getSourceModel($source);
         // copy from source to install directory
         $sourceModel->copy($target, $branch);
     }
@@ -92,7 +92,7 @@ class Magento extends Base
     {
         $sampleDataDir = $target . DIRECTORY_SEPARATOR . 'sampleData';
 
-        $sourceModel = Source::getSourceModel($source, $target);
+        $sourceModel = Source::getSourceModel($source);
         // copy from source to install directory
         $sourceModel->copy($sampleDataDir, $branch);
 
@@ -123,7 +123,7 @@ class Magento extends Base
         Logger::log("Copying sample data media files");
         $sourceMediaDir = $sampleDataDir . DIRECTORY_SEPARATOR . 'media';
         $targetMediaDir = $target . DIRECTORY_SEPARATOR . 'media';
-        $sourceModel = Source::getSourceModel($sourceMediaDir, $this->config->getTarget());
+        $sourceModel = Source::getSourceModel($sourceMediaDir);
         $sourceModel->copy($targetMediaDir);
 
         // remove temporary sample data folder
@@ -160,6 +160,9 @@ class Magento extends Base
         if (file_exists($target . '/app/etc/local.xml')) {
             unlink($target . '/app/etc/local.xml');
         }
+
+        // avoid access during installation
+        touch($target . '/maintenance.flag');
 
         $cmd = sprintf('php %s%sinstall.php -- ', $target, DIRECTORY_SEPARATOR);
         $cmd .= implode(' ', array(
@@ -206,6 +209,8 @@ class Magento extends Base
         }
 
         $this->setPermissions($target);
+
+        unlink($target . '/maintenance.flag');
     }
 
     protected function fixInstallConfig($target)
@@ -224,7 +229,7 @@ class Magento extends Base
         // set the path where magento should get installed
         $target = $this->validateTarget($this->config->getTarget());
 
-        // empty target directory if it already exists 
+        // empty target directory if it already exists
         if (file_exists($target)) {
             Logger::comment('Delete existing Magento at %s', array($target));
             exec(sprintf('rm -rf %s/*', $target));

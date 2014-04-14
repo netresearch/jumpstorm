@@ -74,12 +74,12 @@ Currently supported commands are
 .. _unittests: Unittesting_
 
 The first thing you should do, is creating the configuration file, your installation should be based on.
-We provided a sample configuration file ``ini/sample.jumpstorm.ini``, *Jumpstorm* will use ``ini/jumpstorm.ini`` by
+We provided a sample configuration file ``config/sample.jumpstorm.ini``, *Jumpstorm* will use ``config/jumpstorm.ini`` by
 default, but you could specify a different configuration file by using option ``-c``  (``--config``):
 
 ::
 
-  ./jumpstorm magento -c /path/to/my/ini
+  ./jumpstorm magento -c /path/to/my/config
 
 Every command needs the ``[common]`` section of the configuration file, so you should fill in the correct values of the
 Magento target path and your database settings.
@@ -106,9 +106,9 @@ When you finished configuration, you will get a fresh Magento installation after
 
 ::
 
-  ./jumpstorm magento -c /path/to/my/ini
+  ./jumpstorm magento -c /path/to/my/config
 
-Please note, that option ``-c /path/to/my/ini`` is optional.
+Please note, that option ``-c /path/to/my/config`` is optional.
 
 Extensions
 ----------
@@ -130,9 +130,9 @@ All configured extension will be installed by executing:
 
 ::
 
-  ./jumpstorm extensions -c /path/to/my/ini
+  ./jumpstorm extensions -c /path/to/my/config
 
-Please note, that option ``-c /path/to/my/ini`` is optional.
+Please note, that option ``-c /path/to/my/config`` is optional.
 
 Unittesting
 -----------
@@ -146,9 +146,9 @@ Now just run the following command and start testing and developing:
 
 ::
 
-  ./jumpstorm unittesting -c /path/to/my/ini
+  ./jumpstorm unittesting -c /path/to/my/config
 
-Please note, that option ``-c /path/to/my/ini`` is optional.
+Please note, that option ``-c /path/to/my/config`` is optional.
 
 Plugins
 -------
@@ -160,9 +160,9 @@ plugin mentioned there will be executed by running
 
 ::
 
-  ./jumpstorm plugins -c /path/to/my/ini
+  ./jumpstorm plugins -c /path/to/my/config
 
-Please note, that option ``-c /path/to/my/ini`` is optional.
+Please note, that option ``-c /path/to/my/config`` is optional.
 
 How to write your own plugins?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -174,7 +174,7 @@ a php class:
 ::
 
   jumpstorm
-  ├── ini
+  ├── config
   │   └── custom
   │       ├── main.ini
   │       └── plugin_d.ini
@@ -203,7 +203,7 @@ or by setting their configuration value ``enabled`` to ``0``:
   PluginC.bar = foobar
 
   ; Plugin will be active and will load additional settings from given path
-  PluginD.ini = ini/custom/plugin_d.ini
+  PluginD.config = config/custom/plugin_d.ini
 
 The plugin's main php class must implement Netresearch\\PluginInterface.
 

@@ -43,7 +43,7 @@ class Plugins extends Base
 
         $plugins = $this->config->getPlugins();
         foreach ($plugins as $name => $settings) {
-            // check if plugin was defined in ini, but disabled
+            // check if plugin was defined in config, but disabled
             if ('0' === $settings->enabled) {
                 Logger::log('Skipping plugin "%s"', array($name));
                 continue;
@@ -63,11 +63,11 @@ class Plugins extends Base
             // load default jumpstorm config for plugin execution
             $pluginConfig = $this->config;
 
-            $customIni = $settings->ini;
-            if ((null !== $customIni) && file_exists($customIni)) {
-                unset($settings->ini);
+            $customConfig = $settings->config;
+            if ((null !== $customConfig) && file_exists($customConfig)) {
+                unset($settings->config);
                 // add custom config settings, if given
-                $pluginConfig = new Config($customIni, null, array('allowModifications' => true));
+                $pluginConfig = new Config($customConfig, null, array('allowModifications' => true));
                 $pluginConfig->merge($this->config);
             }
 

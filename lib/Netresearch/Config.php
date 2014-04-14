@@ -43,7 +43,7 @@ class Config extends Base
         $steps = explode('.', $path);
         $value = $this;
         $step = current($steps);
-        while ($value instanceof \Zend_Config) {
+        while (is_object($value)) {
             $value = $value->$step;
             $step = next($steps);
         }
@@ -60,7 +60,10 @@ class Config extends Base
             }
             $subConfig = $value;
         }
-        if ($this->confirm && in_array($path, $this->confirm->toArray())) {
+        if ($this->confirm && (
+            (is_array($this->confirm) && in_array($path, $this->confirm))
+            || (is_object($this->confirm) && in_array($path, $this->confirm->toArray()))
+        )) {
             $dialog = $this->command->getHelperSet()->get('dialog');
             $confirmation = $dialog->askConfirmation(
                 $this->output,
@@ -163,8 +166,8 @@ class Config extends Base
                     $extensions[$name]->branch = $extension['branch'];
                 }
             } else {
-                $extensions[$name] = new \StdClass();
-                $extensions[$name]->source = $this->homedirAdjustdedValue($extension['source']);
+                $extensions[$name] = new Config(array());
+                $extensions[$name]->source = $this->homedirAdjustdedValue($extension);
                 $extensions[$name]->branch = 'master';
             }
         }

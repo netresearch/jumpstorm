@@ -1,4 +1,4 @@
-; Sample configuration file for jumpstorm
+# Sample configuration file for jumpstorm
 
 # some settings to be asked if not set
 ask:

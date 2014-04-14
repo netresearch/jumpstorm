@@ -46,7 +46,7 @@ return array(
     'unittesting' => array(
         'framework' => 'ecomdev',
         'extension' => array(
-            'source' => 'git://github.com/IvanChepurnyi/EcomDev_PHPUnit.git',
+            'source' => 'git://github.com/EcomDev/EcomDev_PHPUnit.git',
             'branch' => 'master'
         )
     ),

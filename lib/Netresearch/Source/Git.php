@@ -35,8 +35,11 @@ class Git extends Source implements SourceInterface
             $this->_cloneRepository($this->source, $target);
         }
 
-        if ((null !== $branch)) {
-
+        if ((null !== $branch) && (self::GIT_DEFAULT_BRANCH !== $branch)) {
+            $this->_checkout($target, $branch);
+        }
+        $this->_submodules($target);
+    }
     /**
      * Obtain the Git recursive flag if needed, emtpy string otherwise.
      *

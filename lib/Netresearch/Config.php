@@ -147,7 +147,7 @@ class Config extends Base
 
     public function getBackupTarget()
     {
-        return $this->placeHolderAdjustedValue($this->magento->backup->target ? $this->magento->backup->target : null);
+        return $this->placeHolderAdjustedValue($this->magento->backup && $this->magento->backup->target ? $this->magento->backup->target : null);
     }
 
     /**

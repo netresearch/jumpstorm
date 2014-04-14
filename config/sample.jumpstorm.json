@@ -1,87 +1,76 @@
-# Sample yml configuration file for jumpstorm
+{
+    "ask": [
+        "common.magento.target",
+        "common.db.name"
+    ],
+    "confirm": [
+        "common.magento.target",
+        "common.db.name"
+    ],
+    "common": {
+        "magento": {
+            "target": "/tmp/jumpstorm_magento",
+            "version": ""
+        },
+        "db": {
+            "name":   "magento",
+            "host":   "localhost",
+            "user":   "root",
+            "pass":   "<your_database_password>",
+            "prefix": "~"
+        },
+        "backup": {
+            "target": ""
+        }
+    },
+    "magento": {
+        "source":         "git://github.com/LokeyCoding/magento-mirror.git",
+        "branch":         "magento-1.6.2.0",
+        "baseUrl":        "mymachine.local",
+        "adminFirstname": "Firstname",
+        "adminLastname":  "Lastname",
+        "adminEmail":     "firstname.lastname@example.org",
+        "adminUser":      "admin",
+        "adminPass":      "admin123",
 
-# some settings to be asked if not set
-ask:
-    - "common.magento.target"
-    - "common.db.name"
+        "sampledata": {
+            "source": "git://git.example.org/magento/sampledata.git",
+            "branch": "1.6.1.0",
+        }
+    },
+    "unittesting": {
+        "framework":  "ecomdev",
+        "extension": {
+            "source": "git://github.com/IvanChepurnyi/EcomDev_PHPUnit.git",
+            "branch": "master",
+        }
+    },
+    "extensions": {
+        "fooman_speedster":  "magentoconnect://community/Fooman_Speedster",
+        "germansetup":       "git://github.com/firegento/firegento-germansetup.git",
+    },
+    "plugins": {
+        "DisableAdminNotifications": {
+            "enabled": "0",
+        }
 
-# some settings to be explicitly confirmed by the user
-confirm:
-    - "common.magento.target"
-    - "common.db.name"
+        "CreateBackendUser": {
+            "ini": "plugins/CreateBackendUser/CreateBackendUser.sample.ini",
+        }
 
-common:
-    magento:
-        target: /tmp/jumpstorm_magento
+        "ApplyConfigSettings": {
+            "demoStoreNotice": {
+                "path":  "design/head/demonotice",
+                "value": "1",
+            }
+        }
 
-    db:
-        name:   magento
-        host:   localhost
-        user:   root
-        pass:   <your_database_password>
-        prefix: ~
+        "FlushCache": "1",
 
-magento:
-    source:         git://github.com/LokeyCoding/magento-mirror.git
-    branch:         magento-1.6.2.0
-    baseUrl:        mymachine.local
-    adminFirstname: Firstname
-    adminLastname:  Lastname
-    adminEmail:     firstname.lastname@example.org
-    adminUser:      admin
-    adminPass:      admin123
-
-    sampledata:
-        source: git://git.example.org/magento/sampledata.git
-        branch: 1.6.1.0
-
-unittesting:
-    framework:  ecomdev
-    extension:
-        source: git://github.com/IvanChepurnyi/EcomDev_PHPUnit.git
-        branch: master
-
-extensions:
-#    my_ext:
-#        source: git@git.example.org:extensions/my_ext.git
-#        branch: master #optional
-
-    fooman_speedster:  magentoconnect://community/Fooman_Speedster
-
-    germansetup:       git://github.com/firegento/firegento-germansetup.git
-
-    # simple product import, required by plugin DummyProducts
-    #FastSimpleImport: git://github.com/avstudnitz/AvS_FastSimpleImport.git
-
-plugins:
-# settings needed by the plugins to be executed
-    DisableAdminNotifications:
-        enabled: 0
-
-    CreateBackendUser:
-        ini: plugins/CreateBackendUser/CreateBackendUser.sample.ini
-
-    ApplyConfigSettings:
-        demoStoreNotice:
-            path:  design/head/demonotice
-            value: 1
-
-    FlushCache: 1
-
-    # add 15 sample products
-    # requires sample data
-    # requires AvS_FastSimpleImport
-    #DummyProducts:
-    #   simpleProducts: 15
-
-    Reindex:
-        #- catalog_product_attribute
-        - catalog_product_price
-        - catalog_url
-        #- catalog_product_flat
-        #- catalog_category_flat
-        #- catalog_category_product
-        #- catalogsearch_fulltext
-        - cataloginventory_stock
-        #- tag_summary
-
+        "Reindex": [
+            "catalog_product_price",
+            "catalog_url",
+            "cataloginventory_stock",
+        ]
+    }
+}

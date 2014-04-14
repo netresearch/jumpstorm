@@ -30,6 +30,7 @@ class Base extends Command
     protected function configure()
     {
         $this->addOption('config',  'c', InputOption::VALUE_OPTIONAL, 'provide a configuration file', 'config/jumpstorm.ini');
+        $this->addOption('magento-version',  'm', InputOption::VALUE_OPTIONAL, 'override magento.version', '');
     }
 
     /**
@@ -53,6 +54,9 @@ class Base extends Command
         }
         if ($input->getOption('verbose')) {
             Logger::setVerbosity(Logger::VERBOSITY_MAX);
+        }
+        if ($input->getOption('magento-version')) {
+            $this->config->common->magento->version= $input->getOption('magento-version');
         }
     }
 
@@ -91,10 +95,13 @@ class Base extends Command
      * 
      * @return string MySQL command line string including credentials
      */
-    protected function prepareMysqlCommand()
+    protected function prepareMysqlCommand($dump = false)
     {
+        $mysqlcommand = $dump ? 'mysqldump' : 'mysql';
+
         $mysql = sprintf(
-            'mysql -u%s -h%s',
+            '%s -u%s -h%s',
+            $mysqlcommand,
             $this->config->getDbUser(),
             $this->config->getDbHost()
         );

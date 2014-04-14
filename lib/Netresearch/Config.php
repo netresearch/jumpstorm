@@ -28,6 +28,57 @@ class Config extends Base
     }
 
     /**
+     * determine a configuration value (take from config, let the user confirm it, or ask user)
+     *
+     * @param mixed $path Configuration path
+     * @param bool $dbValue is $path a database configuration value
+     * @return mixed
+     */
+    public function determine($path, $dbValue=false)
+    {
+        if (array_key_exists($path, $this->confirmedData)) {
+            return $this->confirmedData[$path];
+        }
+        $readablePath = ucwords(str_replace('.', ' ', $path));
+        $steps = explode('.', $path);
+        $value = $this;
+        $step = current($steps);
+        while ($value instanceof \Zend_Config) {
+            $value = $value->$step;
+            $step = next($steps);
+        }
+        if (is_null($value) && $this->ask && in_array($path, $this->ask)) {
+            $dialog = $this->command->getHelperSet()->get('dialog');
+            $value = $dialog->ask(
+                $this->output,
+                sprintf('<question>%s?</question> ', $readablePath),
+                false
+            );
+            $subConfig = $this;
+            foreach ($steps as $step) {
+                $subConfig = $subConfig->$step;
+            }
+            $subConfig = $value;
+        }
+        if ($this->confirm && in_array($path, $this->confirm->toArray())) {
+            $dialog = $this->command->getHelperSet()->get('dialog');
+            $confirmation = $dialog->askConfirmation(
+                $this->output,
+                sprintf('<question>%s %s (y)?</question> ', $readablePath, $value),
+                true
+            );
+            if (!$confirmation) {
+                throw new \Exception(sprintf(
+                    'Stopped execution due to unconfirmed %s!',
+                    $readablePath
+                ));
+            }
+        }
+        $this->confirmedData[$path] = $this->placeHolderAdjustedValue($value, $dbValue);
+        return $this->confirmedData[$path];
+    }
+
+    /**
      * get Magento source path
      *
      * @return string
@@ -38,17 +89,26 @@ class Config extends Base
         if (!$source) {
             throw new \Exception('Magento source path is not set');
         }
-        return $source;
+        return $this->placeHolderAdjustedValue($source);
     }
 
     public function getMagentoBranch()
     {
-        return $this->magento->branch ? $this->magento->branch : null;
+        return $this->placeHolderAdjustedValue($this->magento->branch ? $this->magento->branch : null);
     }
 
     public function getMagentoBaseUrl()
     {
-        return $this->magento->baseUrl;
+        $url = $this->placeHolderAdjustedValue($this->magento->baseUrl);
+        if (substr($url, 0, 4) !== 'http') {
+            $url = 'http://' . $url;
+        }
+        return $url;
+    }
+
+    public function getMagentoVersion()
+    {
+        return $this->common->magento->version ? $this->common->magento->version : null;
     }
 
     /**
@@ -61,9 +121,8 @@ class Config extends Base
         if ($this->magento && $this->magento->sampledata) {
             $value = $this->magento->sampledata;
             if (is_object($value)) {
-                return is_string($value->source) ? $value->source : null;
+                return is_string($value->source) ? $this->placeHolderAdjustedValue($value->source) : null;
             }
-            return $value;
         }
     }
 
@@ -77,10 +136,15 @@ class Config extends Base
         if ($this->magento && $this->magento->sampledata) {
             $value = $this->magento->sampledata;
             if (is_object($value) && is_string($value->branch)) {
-                return $value->branch;
+                return $this->placeHolderAdjustedValue($value->branch);
             }
         }
         return 'master';
+    }
+
+    public function getBackupTarget()
+    {
+        return $this->placeHolderAdjustedValue($this->magento->backup->target ? $this->magento->backup->target : null);
     }
 
     /**
@@ -92,16 +156,15 @@ class Config extends Base
     {
         $extensions = array();
         foreach ($this->extensions->data as $name=>$extension) {
-            if (is_array($extension)) {
-                $extensions[$name] = new \StdClass();
-                $extensions[$name]->source = $extension['source'];
-                $extensions[$name]->branch = 'master';
+            if (!is_string($extension)) {
+                $extension->source = $this->homedirAdjustdedValue($extension->source);
+                $extensions[$name] = $extension;
                 if (array_key_exists('branch', $extension)) {
                     $extensions[$name]->branch = $extension['branch'];
                 }
             } else {
                 $extensions[$name] = new \StdClass();
-                $extensions[$name]->source = $extension;
+                $extensions[$name]->source = $this->homedirAdjustdedValue($extension['source']);
                 $extensions[$name]->branch = 'master';
             }
         }
@@ -111,7 +174,9 @@ class Config extends Base
     public function getDbName()
     {
         if (is_null($this->_dbName)) {
-            $this->_dbName = $this->common->db->name;
+            $path = 'common.db.name';
+
+            $this->_dbName = $this->determine($path, true);
 
             if ($this->common->db->timestamp) {
                 $this->_dbName .= '_' . time();
@@ -123,7 +188,7 @@ class Config extends Base
 
     public function getDbUser()
     {
-        return $this->common->db->user;
+        return $this->placeHolderAdjustedValue($this->common->db->user, true);
     }
 
     public function getDbHost()
@@ -138,7 +203,7 @@ class Config extends Base
 
     public function getDbPrefix()
     {
-        return $this->common->db->prefix;
+        return $this->placeHolderAdjustedValue($this->common->db->prefix, true);
     }
 
     public function getAdminFirstname()
@@ -164,6 +229,11 @@ class Config extends Base
     public function getAdminPass()
     {
         return $this->magento->adminPass;
+    }
+
+    public function getEncryptionKey()
+    {
+        return $this->magento->encryptionKey;
     }
 
     /**
@@ -208,5 +278,34 @@ class Config extends Base
     public function getPlugins()
     {
         return $this->plugins->data;
+    }
+
+    protected function placeHolderAdjustedValue($value, $dbValue = false)
+    {
+        if ($this->getMagentoVersion()) {
+            $version = $this->getMagentoVersion();
+            if ($dbValue) {
+                $version = str_replace('.', '_', $version);
+            }
+            $value = str_replace('%MAGENTO_VERSION%', $version, $value);
+        }
+        if (strpos($value, '%MAGENTO_VERSION%') !== false) {
+            throw new \Exception(
+                'Please define a value for magento.version in your jumpstorm.ini if you are using the placeholder %MAGENTO_VERSION%'
+            );
+        }
+        return $this->homedirAdjustdedValue($value);
+    }
+
+    protected function homedirAdjustdedValue($value)
+    {
+        if (0 === strpos($value, '~')) {
+            if (isset($_SERVER['HOME'])) {
+                $value = str_replace('~', $_SERVER['HOME'], $value);
+            }
+            //the home dir might be saved in other variables
+            //see http://stackoverflow.com/questions/4679233/equivalent-of-envapache-run-user-in-php-cli
+        }
+        return $value;
     }
 }

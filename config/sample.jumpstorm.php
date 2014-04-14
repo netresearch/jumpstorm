@@ -13,7 +13,8 @@ return array(
     ),
     'common' => array(
         'magento' => array(
-            'target' => '/home/user/public/htdocs'
+            'target' => '/home/user/public/htdocs',
+            'version'=> ''
         ),
         'db' => array(
             'name'   => 'magento',
@@ -21,6 +22,9 @@ return array(
             'user'   => 'root',
             'pass'   => '<your_database_password>',
             'prefix' => null
+        ),
+        'backup' => array(
+            'target' => null
         )
     ),
     'magento' => array(

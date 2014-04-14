@@ -13,6 +13,7 @@ confirm:
 common:
     magento:
         target: "/home/user/public/htdocs"
+        version: ''
 
     db:
         name:   magento
@@ -20,6 +21,9 @@ common:
         user:   root
         pass:   <your_database_password>
         prefix: ~
+
+    backup:
+        target: ~
 
 magento:
     source:         git://github.com/LokeyCoding/magento-mirror.git

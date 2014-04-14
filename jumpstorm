@@ -26,4 +26,5 @@ $console->add(new Jumpstorm\Unittesting());
 $console->add(new Jumpstorm\Extensions());
 $console->add(new Jumpstorm\Plugins());
 $console->add(new Jumpstorm\Run());
+$console->add(new Jumpstorm\Display());
 $console->run();

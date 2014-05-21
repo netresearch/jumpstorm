@@ -6,8 +6,7 @@ use Netresearch\Source\MagentoConnect;
 
 use Netresearch\Logger;
 
-use Netresearch\Config;
-use Netresearch\Config\Base as BaseConfig;
+use Netresearch\Config\Base as Config;
 use Netresearch\Modman;
 use Netresearch\Source\Base as Source;
 
@@ -113,10 +112,10 @@ class Extensions extends Base
      * install extension
      *
      * @param string $alias
-     * @param BaseConfig $extension
+     * @param Config $extension
      * @return void
      */
-    protected function installExtension($alias, BaseConfig $extension)
+    protected function installExtension($alias, Config $extension)
     {
         Logger::log('Installing extension %s from %s', array($alias, $extension->source));
         $this->extensionDir = $this->extensionRootDir . DIRECTORY_SEPARATOR . $alias;

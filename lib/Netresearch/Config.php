@@ -160,15 +160,18 @@ class Config extends Base
         $extensions = array();
         foreach ($this->extensions->data as $name=>$extension) {
             if (!is_string($extension)) {
-                $extension->source = $this->homedirAdjustdedValue($extension->source);
-                $extensions[$name] = $extension;
-                if (array_key_exists('branch', $extension)) {
-                    $extensions[$name]->branch = $extension['branch'];
-                }
+                $branch = array_key_exists('branch', $extension)
+                    ? $extension['branch']
+                    : 'master';
+                $extensions[$name] = new Config(array(
+                    'source' => $this->homedirAdjustdedValue($extension->source),
+                    'branch' => 'master'
+                ));
             } else {
-                $extensions[$name] = new Config(array());
-                $extensions[$name]->source = $this->homedirAdjustdedValue($extension);
-                $extensions[$name]->branch = 'master';
+                $extensions[$name] = new Config(array(
+                    'source' => $this->homedirAdjustdedValue($extension),
+                    'branch' => 'master'
+                ));
             }
         }
         return $extensions;

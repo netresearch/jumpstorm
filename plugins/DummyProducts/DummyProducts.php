@@ -2,7 +2,7 @@
 namespace DummyProducts;
 
 use \Mage as Mage;
-use Netresearch\Config;
+use Netresearch\Config\Base as BaseConfig;
 use Netresearch\Logger;
 use Netresearch\PluginInterface as JumpstormPlugin;
 
@@ -13,7 +13,7 @@ class DummyProducts implements JumpstormPlugin
 {
     protected $config;
 
-    public function __construct(Config $config)
+    public function __construct(BaseConfig $config)
     {
         $this->config = $config;
     }
@@ -43,7 +43,7 @@ class DummyProducts implements JumpstormPlugin
         $countOfVirtualProducts      = 0;
         $countOfDownloadProducts     = 0;
 
-        if ($settings instanceof \Zend_Config) {
+        if ($settings instanceof BaseConfig) {
             if ($settings->simpleProducts) {
                 $countOfSimpleProducts = $settings->simpleProducts;
             }

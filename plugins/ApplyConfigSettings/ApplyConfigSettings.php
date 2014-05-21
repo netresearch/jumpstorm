@@ -2,7 +2,7 @@
 namespace ApplyConfigSettings;
 
 use \Mage as Mage;
-use Netresearch\Config;
+use Netresearch\Config\Base as BaseConfig;
 use Netresearch\Logger;
 use Netresearch\PluginInterface as JumpstormPlugin;
 
@@ -13,7 +13,7 @@ class ApplyConfigSettings implements JumpstormPlugin
 {
     protected $config;
 
-    public function __construct(Config $config)
+    public function __construct(BaseConfig $config)
     {
         $this->config = $config;
     }
@@ -21,16 +21,31 @@ class ApplyConfigSettings implements JumpstormPlugin
     public function execute()
     {
         $settings = $this->config->plugins->ApplyConfigSettings;
-        if ($settings instanceof \Zend_Config) {
-            foreach ($this->config->plugins->ApplyConfigSettings as $name=>$setting) {
-                if ($setting instanceof \Zend_Config && $setting->path && isset($setting->value)) {
+        if ($settings instanceof BaseConfig) {
+            foreach ($settings as $name=>$setting) {
+                if (2 == substr_count($name, '/')
+                    && is_scalar($setting)
+                ) {
+                    Mage::getModel('eav/entity_setup', 'core_setup')->setConfigData(
+                        $name,
+                        $setting
+                    );
+                    Logger::log('* Applied setting %s', array($name));
+                } elseif ($setting instanceof BaseConfig
+                    && $setting->path
+                    && $setting->value
+                ) {
                     Mage::getModel('eav/entity_setup', 'core_setup')->setConfigData(
                         $setting->path,
                         $setting->value
                     );
                     Logger::log('* Applied setting %s', array($name));
                 } else {
-                    Logger::error('Did not apply setting %s', array($name), false);
+                    Logger::error(
+                        'Could not apply setting %s due to invalid configuration',
+                        array($name),
+                        false
+                    );
                 }
             }
         } else {

@@ -43,7 +43,7 @@ class Unittesting extends Extensions
         $this->preExecute($input, $output);
 
         // deploy unittesting framework using extensions command
-        $config = $this->config->unittesting;
+        $config = new Config($this->config->unittesting);
         $this->installExtension($config->framework, $config->extension);
 
         // apply some configuration

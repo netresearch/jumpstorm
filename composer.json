@@ -1,13 +1,30 @@
 {
     "name": "netresearch/jumpstorm",
+    "description": "command line installer for Magento",
     "authors": [
         {
-            "name": "Michael Luehr",
+            "name": "Thomas Birke",
+            "email": "tbirke@netextreme.de"
+        },
+        {
+            "name": "Christoph Aßmann",
+            "email": "christoph.assmann@netresearch.de"
+        },
+        {
+            "name": "Michael Lühr",
             "email": "michael.luehr@netresearch.de"
         }
     ],
     "require": {
         "symfony/console": "2.0.x-dev",
-        "symfony/class-loader": "2.0.x-dev"
-    }
+        "symfony/yaml": "dev-master",
+        "symfony/class-loader": "2.0.x-dev",
+        "colinmollenhour/modman": "dev-v1.6.1"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git://github.com/quafzi/modman.git"
+        }
+    ]
 }

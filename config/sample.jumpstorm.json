@@ -1,0 +1,76 @@
+{
+    "ask": [
+        "common.magento.target",
+        "common.db.name"
+    ],
+    "confirm": [
+        "common.magento.target",
+        "common.db.name"
+    ],
+    "common": {
+        "magento": {
+            "target": "/tmp/jumpstorm_magento",
+            "version": ""
+        },
+        "db": {
+            "name":   "magento",
+            "host":   "localhost",
+            "user":   "root",
+            "pass":   "<your_database_password>",
+            "prefix": "~"
+        },
+        "backup": {
+            "target": ""
+        }
+    },
+    "magento": {
+        "source":         "git://github.com/LokeyCoding/magento-mirror.git",
+        "branch":         "magento-1.6.2.0",
+        "baseUrl":        "mymachine.local",
+        "adminFirstname": "Firstname",
+        "adminLastname":  "Lastname",
+        "adminEmail":     "firstname.lastname@example.org",
+        "adminUser":      "admin",
+        "adminPass":      "admin123",
+
+        "sampledata": {
+            "source": "git://git.example.org/magento/sampledata.git",
+            "branch": "1.6.1.0",
+        }
+    },
+    "unittesting": {
+        "framework":  "ecomdev",
+        "extension": {
+            "source": "git://github.com/EcomDev/EcomDev_PHPUnit.git",
+            "branch": "master",
+        }
+    },
+    "extensions": {
+        "fooman_speedster":  "magentoconnect://community/Fooman_Speedster",
+        "germansetup":       "git://github.com/firegento/firegento-germansetup.git",
+    },
+    "plugins": {
+        "DisableAdminNotifications": {
+            "enabled": "0",
+        }
+
+        "CreateBackendUser": {
+            "ini": "plugins/CreateBackendUser/CreateBackendUser.sample.ini",
+        }
+
+        "ApplyConfigSettings": {
+            "demoStoreNotice": {
+                "path":  "design/head/demonotice",
+                "value": "1",
+            }
+        }
+
+        "FlushCache": "1",
+
+        "Reindex": [
+            "catalog_product_price",
+            "catalog_url",
+            "cataloginventory_stock",
+        ]
+    }
+}

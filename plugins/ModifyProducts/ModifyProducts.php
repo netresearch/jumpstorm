@@ -2,7 +2,7 @@
 namespace ModifyProducts;
 
 use \Mage as Mage;
-use Netresearch\Config;
+use Netresearch\Config\Base as BaseConfig;
 use Netresearch\Logger;
 use Netresearch\PluginInterface as JumpstormPlugin;
 
@@ -13,7 +13,7 @@ class ModifyProducts implements JumpstormPlugin
 {
     protected $config;
 
-    public function __construct(Config $config)
+    public function __construct(BaseConfig $config)
     {
         $this->config = $config;
     }
@@ -27,9 +27,9 @@ class ModifyProducts implements JumpstormPlugin
     {
         Mage::app('admin');
         $settings = $this->config->plugins->{$this->getPluginName()};
-        if ($settings instanceof \Zend_Config) {
+        if ($settings instanceof BaseConfig) {
             foreach ($settings as $sku=>$setting) {
-                if ($setting instanceof \Zend_Config) {
+                if ($setting instanceof BaseConfig) {
                     $product = Mage::getModel('catalog/product')->loadByAttribute('sku', $sku);
                     if (!$product->getId()) {
                         Logger::error('Product with SKU %s not found', array($sku), false);
@@ -45,7 +45,7 @@ class ModifyProducts implements JumpstormPlugin
         }
     }
 
-    protected function modifyProduct(\Mage_Catalog_Model_Product $product, \Zend_Config $settings)
+    protected function modifyProduct(\Mage_Catalog_Model_Product $product, BaseConfig $settings)
     {
         foreach ($settings as $attribute=>$value) {
             $product->setData($attribute, $value);

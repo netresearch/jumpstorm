@@ -6,7 +6,8 @@ use Netresearch\Source\MagentoConnect;
 
 use Netresearch\Logger;
 
-use Netresearch\Config;
+use Netresearch\Config\Base as Config;
+use Netresearch\Modman;
 use Netresearch\Source\Base as Source;
 
 use Symfony\Component\Console\Command\Command;
@@ -28,6 +29,8 @@ use \Exception as Exception;
  */
 class Extensions extends Base
 {
+    protected $modman;
+
     /**
      * Magento target directory
      * @var string
@@ -109,10 +112,10 @@ class Extensions extends Base
      * install extension
      *
      * @param string $alias
-     * @param Zend_Config $extension
+     * @param Config $extension
      * @return void
      */
-    protected function installExtension($alias, \Zend_Config $extension)
+    protected function installExtension($alias, Config $extension)
     {
         Logger::log('Installing extension %s from %s', array($alias, $extension->source));
         $this->extensionDir = $this->extensionRootDir . DIRECTORY_SEPARATOR . $alias;
@@ -136,6 +139,15 @@ class Extensions extends Base
         $this->deployExtension($alias);
 
         Logger::notice('Installed extension %s', array($alias));
+    }
+
+    protected function getModman()
+    {
+        if (is_null($this->modman)) {
+            $this->modman = new Modman();
+            $this->modman->setRoot($this->config->getTarget());
+        }
+        return $this->modman;
     }
 
     /**
@@ -200,5 +212,35 @@ class Extensions extends Base
         if (0 !== $return) {
             throw new Exception("Could not deploy extension $alias");
         }
+    }
+
+    /**
+     * Extension files are installed to .modman directory before deployment,
+     * so create that directory if necessary
+     *
+     * @return string Absolute path to extension directory
+     */
+    private function createExtensionFolder()
+    {
+        $this->validateTarget($this->config->getTarget());
+
+        $folder = $this->getExtensionFolder();
+
+        if (!is_dir($folder)) {
+            $return = $this->getModman()->call('init');
+        }
+
+        return $folder;
+    }
+
+    /**
+     * Obtain the name of the directory where all extensions get initially
+     * installed to before deployment. Currently '.modman'
+     * 
+     * @return string Absolute path to extension directory
+     */
+    protected function getExtensionFolder()
+    {
+        return $this->config->getTarget() . DIRECTORY_SEPARATOR . '.modman';
     }
 }

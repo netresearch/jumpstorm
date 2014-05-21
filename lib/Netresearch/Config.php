@@ -1,30 +1,15 @@
 <?php
 namespace Netresearch;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Yaml;
+use Netresearch\Config\Base;
 
-class Config extends \Zend_Config_Ini
+class Config extends Base
 {
     protected $_dbName;
 
-    protected $confirmedData = array();
-
-    protected $output;
-    protected $command;
-
     protected $addedPermissions;
     protected $removedPermissions;
-
-    public function setOutput(OutputInterface $output)
-    {
-        $this->output = $output;
-    }
-
-    public function setCommand(Command $command)
-    {
-        $this->command = $command;
-    }
 
     /**
      * get base target path
@@ -33,8 +18,7 @@ class Config extends \Zend_Config_Ini
      */
     public function getTarget()
     {
-        $path = 'common.magento.target';
-        return $this->determine($path);
+        return $this->common->magento->target;
     }
 
     public function disableInteractivity()
@@ -47,9 +31,10 @@ class Config extends \Zend_Config_Ini
      * determine a configuration value (take from config, let the user confirm it, or ask user)
      *
      * @param mixed $path Configuration path
+     * @param bool $dbValue is $path a database configuration value
      * @return mixed
      */
-    public function determine($path)
+    public function determine($path, $dbValue=false)
     {
         if (array_key_exists($path, $this->confirmedData)) {
             return $this->confirmedData[$path];
@@ -58,7 +43,7 @@ class Config extends \Zend_Config_Ini
         $steps = explode('.', $path);
         $value = $this;
         $step = current($steps);
-        while ($value instanceof \Zend_Config) {
+        while (is_object($value)) {
             $value = $value->$step;
             $step = next($steps);
         }
@@ -75,7 +60,10 @@ class Config extends \Zend_Config_Ini
             }
             $subConfig = $value;
         }
-        if ($this->confirm && in_array($path, $this->confirm->toArray())) {
+        if ($this->confirm && (
+            (is_array($this->confirm) && in_array($path, $this->confirm))
+            || (is_object($this->confirm) && in_array($path, $this->confirm->toArray()))
+        )) {
             $dialog = $this->command->getHelperSet()->get('dialog');
             $confirmation = $dialog->askConfirmation(
                 $this->output,
@@ -89,8 +77,8 @@ class Config extends \Zend_Config_Ini
                 ));
             }
         }
-        $this->confirmedData[$path] = $value;
-        return $value;
+        $this->confirmedData[$path] = $this->placeHolderAdjustedValue($value, $dbValue);
+        return $this->confirmedData[$path];
     }
 
     /**
@@ -104,17 +92,26 @@ class Config extends \Zend_Config_Ini
         if (!$source) {
             throw new \Exception('Magento source path is not set');
         }
-        return $source;
+        return $this->placeHolderAdjustedValue($source);
     }
 
     public function getMagentoBranch()
     {
-        return $this->magento->branch ? $this->magento->branch : null;
+        return $this->placeHolderAdjustedValue($this->magento->branch ? $this->magento->branch : null);
     }
 
     public function getMagentoBaseUrl()
     {
-        return $this->magento->baseUrl;
+        $url = $this->placeHolderAdjustedValue($this->magento->baseUrl);
+        if (substr($url, 0, 4) !== 'http') {
+            $url = 'http://' . $url;
+        }
+        return $url;
+    }
+
+    public function getMagentoVersion()
+    {
+        return $this->common->magento->version ? $this->common->magento->version : null;
     }
 
     /**
@@ -126,10 +123,9 @@ class Config extends \Zend_Config_Ini
     {
         if ($this->magento && $this->magento->sampledata) {
             $value = $this->magento->sampledata;
-            if ($value instanceof \Zend_Config) {
-                return ($value->source) ? $value->source : null;
+            if (is_object($value)) {
+                return is_string($value->source) ? $this->placeHolderAdjustedValue($value->source) : null;
             }
-            return $value;
         }
     }
 
@@ -142,10 +138,16 @@ class Config extends \Zend_Config_Ini
     {
         if ($this->magento && $this->magento->sampledata) {
             $value = $this->magento->sampledata;
-            if ($value instanceof \Zend_Config && $value->branch) {
-                return $value->branch;
+            if (is_object($value) && is_string($value->branch)) {
+                return $this->placeHolderAdjustedValue($value->branch);
             }
         }
+        return 'master';
+    }
+
+    public function getBackupTarget()
+    {
+        return $this->placeHolderAdjustedValue($this->magento->backup && $this->magento->backup->target ? $this->magento->backup->target : null);
     }
 
     /**
@@ -156,13 +158,20 @@ class Config extends \Zend_Config_Ini
     public function getExtensions()
     {
         $extensions = array();
-        foreach ($this->extensions as $name=>$extension) {
+        foreach ($this->extensions->data as $name=>$extension) {
             if (!is_string($extension)) {
-                $extensions[$name] = $extension;
+                $branch = array_key_exists('branch', $extension)
+                    ? $extension['branch']
+                    : 'master';
+                $extensions[$name] = new Config(array(
+                    'source' => $this->homedirAdjustdedValue($extension->source),
+                    'branch' => 'master'
+                ));
             } else {
-                $extensions[$name] = new \StdClass();
-                $extensions[$name]->branch = 'master';
-                $extensions[$name]->source = $extension;
+                $extensions[$name] = new Config(array(
+                    'source' => $this->homedirAdjustdedValue($extension),
+                    'branch' => 'master'
+                ));
             }
         }
         return $extensions;
@@ -172,7 +181,8 @@ class Config extends \Zend_Config_Ini
     {
         if (is_null($this->_dbName)) {
             $path = 'common.db.name';
-            $this->_dbName = $this->determine($path);
+
+            $this->_dbName = $this->determine($path, true);
 
             if ($this->common->db->timestamp) {
                 $this->_dbName .= '_' . time();
@@ -184,7 +194,7 @@ class Config extends \Zend_Config_Ini
 
     public function getDbUser()
     {
-        return $this->common->db->user;
+        return $this->placeHolderAdjustedValue($this->common->db->user, true);
     }
 
     public function getDbHost()
@@ -199,7 +209,7 @@ class Config extends \Zend_Config_Ini
 
     public function getDbPrefix()
     {
-        return $this->common->db->prefix;
+        return $this->placeHolderAdjustedValue($this->common->db->prefix, true);
     }
 
     public function getAdminFirstname()
@@ -225,6 +235,11 @@ class Config extends \Zend_Config_Ini
     public function getAdminPass()
     {
         return $this->magento->adminPass;
+    }
+
+    public function getEncryptionKey()
+    {
+        return $this->magento->encryptionKey;
     }
 
     /**
@@ -268,6 +283,35 @@ class Config extends \Zend_Config_Ini
 
     public function getPlugins()
     {
-        return $this->plugins;
+        return $this->plugins->data;
+    }
+
+    protected function placeHolderAdjustedValue($value, $dbValue = false)
+    {
+        if ($this->getMagentoVersion()) {
+            $version = $this->getMagentoVersion();
+            if ($dbValue) {
+                $version = str_replace('.', '_', $version);
+            }
+            $value = str_replace('%MAGENTO_VERSION%', $version, $value);
+        }
+        if (strpos($value, '%MAGENTO_VERSION%') !== false) {
+            throw new \Exception(
+                'Please define a value for magento.version in your jumpstorm.ini if you are using the placeholder %MAGENTO_VERSION%'
+            );
+        }
+        return $this->homedirAdjustdedValue($value);
+    }
+
+    protected function homedirAdjustdedValue($value)
+    {
+        if (0 === strpos($value, '~')) {
+            if (isset($_SERVER['HOME'])) {
+                $value = str_replace('~', $_SERVER['HOME'], $value);
+            }
+            //the home dir might be saved in other variables
+            //see http://stackoverflow.com/questions/4679233/equivalent-of-envapache-run-user-in-php-cli
+        }
+        return $value;
     }
 }
